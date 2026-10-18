@@ -21,19 +21,18 @@
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-var Binarizer = /** @class */ (function () {
-    function Binarizer(source) {
+class Binarizer {
+    constructor(source) {
         this.source = source;
     }
-    Binarizer.prototype.getLuminanceSource = function () {
+    getLuminanceSource() {
         return this.source;
-    };
-    Binarizer.prototype.getWidth = function () {
+    }
+    getWidth() {
         return this.source.getWidth();
-    };
-    Binarizer.prototype.getHeight = function () {
+    }
+    getHeight() {
         return this.source.getHeight();
-    };
-    return Binarizer;
-}());
+    }
+}
 export default Binarizer;
