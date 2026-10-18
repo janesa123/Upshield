@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Java Formatter class polyfill that works in the JS way.
  */
-export default class Formatter {
-    constructor() {
+var Formatter = /** @class */ (function () {
+    function Formatter() {
         this.buffer = '';
     }
     /**
@@ -12,16 +14,16 @@ export default class Formatter {
      * @param str
      * @param arr
      */
-    static form(str, arr) {
-        let i = -1;
+    Formatter.form = function (str, arr) {
+        var i = -1;
         function callback(exp, p0, p1, p2, p3, p4) {
             if (exp === '%%')
                 return '%';
             if (arr[++i] === undefined)
                 return undefined;
             exp = p2 ? parseInt(p2.substr(1)) : undefined;
-            let base = p3 ? parseInt(p3.substr(1)) : undefined;
-            let val;
+            var base = p3 ? parseInt(p3.substr(1)) : undefined;
+            var val;
             switch (p4) {
                 case 's':
                     val = arr[i];
@@ -46,27 +48,33 @@ export default class Formatter {
                     break;
             }
             val = typeof val === 'object' ? JSON.stringify(val) : (+val).toString(base);
-            let size = parseInt(p1); /* padding size */
-            let ch = p1 && (p1[0] + '') === '0' ? '0' : ' '; /* isnull? */
+            var size = parseInt(p1); /* padding size */
+            var ch = p1 && (p1[0] + '') === '0' ? '0' : ' '; /* isnull? */
             while (val.length < size)
                 val = p0 !== undefined ? val + ch : ch + val; /* isminus? */
             return val;
         }
-        let regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd%])/g;
+        var regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd%])/g;
         return str.replace(regex, callback);
-    }
+    };
     /**
      *
      * @param append The new string to append.
      * @param args Argumets values to be formated.
      */
-    format(append, ...args) {
+    Formatter.prototype.format = function (append) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
         this.buffer += Formatter.form(append, args);
-    }
+    };
     /**
      * Returns the Formatter string value.
      */
-    toString() {
+    Formatter.prototype.toString = function () {
         return this.buffer;
-    }
-}
+    };
+    return Formatter;
+}());
+exports.default = Formatter;

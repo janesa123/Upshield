@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * <p>Encapsulates information about finder patterns in an image, including the location of
  * the three finder patterns, and their estimated module size.</p>
  *
  * @author Sean Owen
  */
-export default class FinderPatternInfo {
-    constructor(patternCenters) {
+var FinderPatternInfo = /** @class */ (function () {
+    function FinderPatternInfo(patternCenters) {
         this.bottomLeft = patternCenters[0];
         this.topLeft = patternCenters[1];
         this.topRight = patternCenters[2];
     }
-    getBottomLeft() {
+    FinderPatternInfo.prototype.getBottomLeft = function () {
         return this.bottomLeft;
-    }
-    getTopLeft() {
+    };
+    FinderPatternInfo.prototype.getTopLeft = function () {
         return this.topLeft;
-    }
-    getTopRight() {
+    };
+    FinderPatternInfo.prototype.getTopRight = function () {
         return this.topRight;
-    }
-}
+    };
+    return FinderPatternInfo;
+}());
+exports.default = FinderPatternInfo;

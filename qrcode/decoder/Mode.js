@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import IllegalArgumentException from '../../IllegalArgumentException';
-export var ModeValues;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ModeValues = void 0;
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
+var ModeValues;
 (function (ModeValues) {
     ModeValues[ModeValues["TERMINATOR"] = 0] = "TERMINATOR";
     ModeValues[ModeValues["NUMERIC"] = 1] = "NUMERIC";
@@ -27,15 +30,15 @@ export var ModeValues;
     ModeValues[ModeValues["FNC1_SECOND_POSITION"] = 8] = "FNC1_SECOND_POSITION";
     /** See GBT 18284-2000; "Hanzi" is a transliteration of this mode name. */
     ModeValues[ModeValues["HANZI"] = 9] = "HANZI";
-})(ModeValues || (ModeValues = {}));
+})(ModeValues = exports.ModeValues || (exports.ModeValues = {}));
 /**
  * <p>See ISO 18004:2006, 6.4.1, Tables 2 and 3. This enum encapsulates the various modes in which
  * data can be encoded to bits in the QR code standard.</p>
  *
  * @author Sean Owen
  */
-export default class Mode {
-    constructor(value, stringValue, characterCountBitsForVersions, bits /*int*/) {
+var Mode = /** @class */ (function () {
+    function Mode(value, stringValue, characterCountBitsForVersions, bits /*int*/) {
         this.value = value;
         this.stringValue = stringValue;
         this.characterCountBitsForVersions = characterCountBitsForVersions;
@@ -48,21 +51,21 @@ export default class Mode {
      * @return Mode encoded by these bits
      * @throws IllegalArgumentException if bits do not correspond to a known mode
      */
-    static forBits(bits /*int*/) {
-        const mode = Mode.FOR_BITS.get(bits);
+    Mode.forBits = function (bits /*int*/) {
+        var mode = Mode.FOR_BITS.get(bits);
         if (undefined === mode) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         return mode;
-    }
+    };
     /**
      * @param version version in question
      * @return number of bits used, in this QR Code symbol {@link Version}, to encode the
      *         count of characters that will follow encoded in this Mode
      */
-    getCharacterCountBits(version) {
-        const versionNumber = version.getVersionNumber();
-        let offset;
+    Mode.prototype.getCharacterCountBits = function (version) {
+        var versionNumber = version.getVersionNumber();
+        var offset;
         if (versionNumber <= 9) {
             offset = 0;
         }
@@ -73,34 +76,36 @@ export default class Mode {
             offset = 2;
         }
         return this.characterCountBitsForVersions[offset];
-    }
-    getValue() {
+    };
+    Mode.prototype.getValue = function () {
         return this.value;
-    }
-    getBits() {
+    };
+    Mode.prototype.getBits = function () {
         return this.bits;
-    }
-    equals(o) {
+    };
+    Mode.prototype.equals = function (o) {
         if (!(o instanceof Mode)) {
             return false;
         }
-        const other = o;
+        var other = o;
         return this.value === other.value;
-    }
-    toString() {
+    };
+    Mode.prototype.toString = function () {
         return this.stringValue;
-    }
-}
-Mode.FOR_BITS = new Map();
-Mode.FOR_VALUE = new Map();
-Mode.TERMINATOR = new Mode(ModeValues.TERMINATOR, 'TERMINATOR', Int32Array.from([0, 0, 0]), 0x00); // Not really a mode...
-Mode.NUMERIC = new Mode(ModeValues.NUMERIC, 'NUMERIC', Int32Array.from([10, 12, 14]), 0x01);
-Mode.ALPHANUMERIC = new Mode(ModeValues.ALPHANUMERIC, 'ALPHANUMERIC', Int32Array.from([9, 11, 13]), 0x02);
-Mode.STRUCTURED_APPEND = new Mode(ModeValues.STRUCTURED_APPEND, 'STRUCTURED_APPEND', Int32Array.from([0, 0, 0]), 0x03); // Not supported
-Mode.BYTE = new Mode(ModeValues.BYTE, 'BYTE', Int32Array.from([8, 16, 16]), 0x04);
-Mode.ECI = new Mode(ModeValues.ECI, 'ECI', Int32Array.from([0, 0, 0]), 0x07); // character counts don't apply
-Mode.KANJI = new Mode(ModeValues.KANJI, 'KANJI', Int32Array.from([8, 10, 12]), 0x08);
-Mode.FNC1_FIRST_POSITION = new Mode(ModeValues.FNC1_FIRST_POSITION, 'FNC1_FIRST_POSITION', Int32Array.from([0, 0, 0]), 0x05);
-Mode.FNC1_SECOND_POSITION = new Mode(ModeValues.FNC1_SECOND_POSITION, 'FNC1_SECOND_POSITION', Int32Array.from([0, 0, 0]), 0x09);
-/** See GBT 18284-2000; "Hanzi" is a transliteration of this mode name. */
-Mode.HANZI = new Mode(ModeValues.HANZI, 'HANZI', Int32Array.from([8, 10, 12]), 0x0D);
+    };
+    Mode.FOR_BITS = new Map();
+    Mode.FOR_VALUE = new Map();
+    Mode.TERMINATOR = new Mode(ModeValues.TERMINATOR, 'TERMINATOR', Int32Array.from([0, 0, 0]), 0x00); // Not really a mode...
+    Mode.NUMERIC = new Mode(ModeValues.NUMERIC, 'NUMERIC', Int32Array.from([10, 12, 14]), 0x01);
+    Mode.ALPHANUMERIC = new Mode(ModeValues.ALPHANUMERIC, 'ALPHANUMERIC', Int32Array.from([9, 11, 13]), 0x02);
+    Mode.STRUCTURED_APPEND = new Mode(ModeValues.STRUCTURED_APPEND, 'STRUCTURED_APPEND', Int32Array.from([0, 0, 0]), 0x03); // Not supported
+    Mode.BYTE = new Mode(ModeValues.BYTE, 'BYTE', Int32Array.from([8, 16, 16]), 0x04);
+    Mode.ECI = new Mode(ModeValues.ECI, 'ECI', Int32Array.from([0, 0, 0]), 0x07); // character counts don't apply
+    Mode.KANJI = new Mode(ModeValues.KANJI, 'KANJI', Int32Array.from([8, 10, 12]), 0x08);
+    Mode.FNC1_FIRST_POSITION = new Mode(ModeValues.FNC1_FIRST_POSITION, 'FNC1_FIRST_POSITION', Int32Array.from([0, 0, 0]), 0x05);
+    Mode.FNC1_SECOND_POSITION = new Mode(ModeValues.FNC1_SECOND_POSITION, 'FNC1_SECOND_POSITION', Int32Array.from([0, 0, 0]), 0x09);
+    /** See GBT 18284-2000; "Hanzi" is a transliteration of this mode name. */
+    Mode.HANZI = new Mode(ModeValues.HANZI, 'HANZI', Int32Array.from([8, 10, 12]), 0x0D);
+    return Mode;
+}());
+exports.default = Mode;

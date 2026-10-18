@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright (c) 1994, 2010, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -22,15 +23,29 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 // package java.io;
 // import java.util.Arrays;
-import Arrays from './Arrays';
-import OutputStream from './OutputStream';
-import Integer from './Integer';
-import IllegalArgumentException from '../IllegalArgumentException';
-import OutOfMemoryError from '../OutOfMemoryError';
-import System from './System';
-import IndexOutOfBoundsException from '../IndexOutOfBoundsException';
+var Arrays_1 = require("./Arrays");
+var OutputStream_1 = require("./OutputStream");
+var Integer_1 = require("./Integer");
+var IllegalArgumentException_1 = require("../IllegalArgumentException");
+var OutOfMemoryError_1 = require("../OutOfMemoryError");
+var System_1 = require("./System");
+var IndexOutOfBoundsException_1 = require("../IndexOutOfBoundsException");
 /**
  * This class implements an output stream in which the data is
  * written into a byte array. The buffer automatically grows as data
@@ -45,7 +60,8 @@ import IndexOutOfBoundsException from '../IndexOutOfBoundsException';
  * @author  Arthur van Hoff
  * @since   JDK1.0
  */
-export default /*public*/ class ByteArrayOutputStream extends OutputStream {
+var ByteArrayOutputStream = /** @class */ (function (_super) {
+    __extends(ByteArrayOutputStream, _super);
     /**
      * Creates a new byte array output stream. The buffer capacity is
      * initially 32 bytes, though its size increases if necessary.
@@ -60,17 +76,19 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      * @param   size   the initial size.
      * @exception  IllegalArgumentException if size is negative.
      */
-    constructor(size = 32) {
-        super();
+    function ByteArrayOutputStream(size) {
+        if (size === void 0) { size = 32; }
+        var _this = _super.call(this) || this;
         /**
          * The number of valid bytes in the buffer.
          */
-        this.count = 0;
+        _this.count = 0;
         if (size < 0) {
-            throw new IllegalArgumentException('Negative initial size: '
+            throw new IllegalArgumentException_1.default('Negative initial size: '
                 + size);
         }
-        this.buf = new Uint8Array(size);
+        _this.buf = new Uint8Array(size);
+        return _this;
     }
     /**
      * Increases the capacity if necessary to ensure that it can hold
@@ -82,40 +100,40 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      * interpreted as a request for the unsatisfiably large capacity
      * {@code (long) Integer.MAX_VALUE + (minCapacity - Integer.MAX_VALUE)}.
      */
-    ensureCapacity(minCapacity) {
+    ByteArrayOutputStream.prototype.ensureCapacity = function (minCapacity) {
         // overflow-conscious code
         if (minCapacity - this.buf.length > 0)
             this.grow(minCapacity);
-    }
+    };
     /**
      * Increases the capacity to ensure that it can hold at least the
      * number of elements specified by the minimum capacity argument.
      *
      * @param minCapacity the desired minimum capacity
      */
-    grow(minCapacity) {
+    ByteArrayOutputStream.prototype.grow = function (minCapacity) {
         // overflow-conscious code
-        let oldCapacity = this.buf.length;
-        let newCapacity = oldCapacity << 1;
+        var oldCapacity = this.buf.length;
+        var newCapacity = oldCapacity << 1;
         if (newCapacity - minCapacity < 0)
             newCapacity = minCapacity;
         if (newCapacity < 0) {
             if (minCapacity < 0) // overflow
-                throw new OutOfMemoryError();
-            newCapacity = Integer.MAX_VALUE;
+                throw new OutOfMemoryError_1.default();
+            newCapacity = Integer_1.default.MAX_VALUE;
         }
-        this.buf = Arrays.copyOfUint8Array(this.buf, newCapacity);
-    }
+        this.buf = Arrays_1.default.copyOfUint8Array(this.buf, newCapacity);
+    };
     /**
      * Writes the specified byte to this byte array output stream.
      *
      * @param   b   the byte to be written.
      */
-    write(b) {
+    ByteArrayOutputStream.prototype.write = function (b) {
         this.ensureCapacity(this.count + 1);
         this.buf[this.count] = /*(byte)*/ b;
         this.count += 1;
-    }
+    };
     /**
      * Writes <code>len</code> bytes from the specified byte array
      * starting at offset <code>off</code> to this byte array output stream.
@@ -124,15 +142,15 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      * @param   off   the start offset in the data.
      * @param   len   the number of bytes to write.
      */
-    writeBytesOffset(b, off, len) {
+    ByteArrayOutputStream.prototype.writeBytesOffset = function (b, off, len) {
         if ((off < 0) || (off > b.length) || (len < 0) ||
             ((off + len) - b.length > 0)) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException_1.default();
         }
         this.ensureCapacity(this.count + len);
-        System.arraycopy(b, off, this.buf, this.count, len);
+        System_1.default.arraycopy(b, off, this.buf, this.count, len);
         this.count += len;
-    }
+    };
     /**
      * Writes the complete contents of this byte array output stream to
      * the specified output stream argument, as if by calling the output
@@ -141,9 +159,9 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      * @param      out   the output stream to which to write the data.
      * @exception  IOException  if an I/O error occurs.
      */
-    writeTo(out) {
+    ByteArrayOutputStream.prototype.writeTo = function (out) {
         out.writeBytesOffset(this.buf, 0, this.count);
-    }
+    };
     /**
      * Resets the <code>count</code> field of this byte array output
      * stream to zero, so that all currently accumulated output in the
@@ -152,9 +170,9 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      *
      * @see     java.io.ByteArrayInputStream#count
      */
-    reset() {
+    ByteArrayOutputStream.prototype.reset = function () {
         this.count = 0;
-    }
+    };
     /**
      * Creates a newly allocated byte array. Its size is the current
      * size of this output stream and the valid contents of the buffer
@@ -163,9 +181,9 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      * @return  the current contents of this output stream, as a byte array.
      * @see     java.io.ByteArrayOutputStream#size()
      */
-    toByteArray() {
-        return Arrays.copyOfUint8Array(this.buf, this.count);
-    }
+    ByteArrayOutputStream.prototype.toByteArray = function () {
+        return Arrays_1.default.copyOfUint8Array(this.buf, this.count);
+    };
     /**
      * Returns the current size of the buffer.
      *
@@ -173,10 +191,10 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      *          of valid bytes in this output stream.
      * @see     java.io.ByteArrayOutputStream#count
      */
-    size() {
+    ByteArrayOutputStream.prototype.size = function () {
         return this.count;
-    }
-    toString(param) {
+    };
+    ByteArrayOutputStream.prototype.toString = function (param) {
         if (!param) {
             return this.toString_void();
         }
@@ -184,7 +202,7 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
             return this.toString_string(param);
         }
         return this.toString_number(param);
-    }
+    };
     /**
      * Converts the buffer's contents into a string decoding bytes using the
      * platform's default character set. The length of the new <tt>String</tt>
@@ -200,9 +218,9 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      * @return String decoded from the buffer's contents.
      * @since  JDK1.1
      */
-    toString_void() {
+    ByteArrayOutputStream.prototype.toString_void = function () {
         return new String(this.buf /*, 0, this.count*/).toString();
-    }
+    };
     /**
      * Converts the buffer's contents into a string by decoding the bytes using
      * the specified {@link java.nio.charset.Charset charsetName}. The length of
@@ -221,9 +239,9 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      *             If the named charset is not supported
      * @since   JDK1.1
      */
-    toString_string(charsetName) {
+    ByteArrayOutputStream.prototype.toString_string = function (charsetName) {
         return new String(this.buf /*, 0, this.count, charsetName*/).toString();
-    }
+    };
     /**
      * Creates a newly allocated string. Its size is the current size of
      * the output stream and the valid contents of the buffer have been
@@ -247,9 +265,9 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      * @see        java.io.ByteArrayOutputStream#toString()
      */
     // @Deprecated
-    toString_number(hibyte) {
+    ByteArrayOutputStream.prototype.toString_number = function (hibyte) {
         return new String(this.buf /*, hibyte, 0, this.count*/).toString();
-    }
+    };
     /**
      * Closing a <tt>ByteArrayOutputStream</tt> has no effect. The methods in
      * this class can be called after the stream has been closed without
@@ -258,6 +276,8 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      *
      * @throws IOException
      */
-    close() {
-    }
-}
+    ByteArrayOutputStream.prototype.close = function () {
+    };
+    return ByteArrayOutputStream;
+}(OutputStream_1.default));
+exports.default = ByteArrayOutputStream;

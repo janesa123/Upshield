@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,33 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import StringBuilder from '../../util/StringBuilder';
+Object.defineProperty(exports, "__esModule", { value: true });
+var StringBuilder_1 = require("../../util/StringBuilder");
 /**
  * @author satorux@google.com (Satoru Takabayashi) - creator
  * @author dswitkin@google.com (Daniel Switkin) - ported from C++
  */
-export default class QRCode {
-    constructor() {
+var QRCode = /** @class */ (function () {
+    function QRCode() {
         this.maskPattern = -1;
     }
-    getMode() {
+    QRCode.prototype.getMode = function () {
         return this.mode;
-    }
-    getECLevel() {
+    };
+    QRCode.prototype.getECLevel = function () {
         return this.ecLevel;
-    }
-    getVersion() {
+    };
+    QRCode.prototype.getVersion = function () {
         return this.version;
-    }
-    getMaskPattern() {
+    };
+    QRCode.prototype.getMaskPattern = function () {
         return this.maskPattern;
-    }
-    getMatrix() {
+    };
+    QRCode.prototype.getMatrix = function () {
         return this.matrix;
-    }
+    };
     /*@Override*/
-    toString() {
-        const result = new StringBuilder(); // (200)
+    QRCode.prototype.toString = function () {
+        var result = new StringBuilder_1.default(); // (200)
         result.append('<<\n');
         result.append(' mode: ');
         result.append(this.mode ? this.mode.toString() : 'null');
@@ -58,25 +60,27 @@ export default class QRCode {
         }
         result.append('>>\n');
         return result.toString();
-    }
-    setMode(value) {
+    };
+    QRCode.prototype.setMode = function (value) {
         this.mode = value;
-    }
-    setECLevel(value) {
+    };
+    QRCode.prototype.setECLevel = function (value) {
         this.ecLevel = value;
-    }
-    setVersion(version) {
+    };
+    QRCode.prototype.setVersion = function (version) {
         this.version = version;
-    }
-    setMaskPattern(value /*int*/) {
+    };
+    QRCode.prototype.setMaskPattern = function (value /*int*/) {
         this.maskPattern = value;
-    }
-    setMatrix(value) {
+    };
+    QRCode.prototype.setMatrix = function (value) {
         this.matrix = value;
-    }
+    };
     // Check if "mask_pattern" is valid.
-    static isValidMaskPattern(maskPattern /*int*/) {
+    QRCode.isValidMaskPattern = function (maskPattern /*int*/) {
         return maskPattern >= 0 && maskPattern < QRCode.NUM_MASK_PATTERNS;
-    }
-}
-QRCode.NUM_MASK_PATTERNS = 8;
+    };
+    QRCode.NUM_MASK_PATTERNS = 8;
+    return QRCode;
+}());
+exports.default = QRCode;

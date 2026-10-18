@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,12 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.qrcode.detector {*/
-import DecodeHintType from '../../DecodeHintType';
-import ResultPoint from '../../ResultPoint';
-import FinderPattern from './FinderPattern';
-import FinderPatternInfo from './FinderPatternInfo';
-import NotFoundException from '../../NotFoundException';
+var DecodeHintType_1 = require("../../DecodeHintType");
+var ResultPoint_1 = require("../../ResultPoint");
+var FinderPattern_1 = require("./FinderPattern");
+var FinderPatternInfo_1 = require("./FinderPatternInfo");
+var NotFoundException_1 = require("../../NotFoundException");
 /*import java.io.Serializable;*/
 /*import java.util.ArrayList;*/
 /*import java.util.Collections;*/
@@ -33,7 +46,7 @@ import NotFoundException from '../../NotFoundException';
  *
  * @author Sean Owen
  */
-export default class FinderPatternFinder {
+var FinderPatternFinder = /** @class */ (function () {
     /**
      * <p>Creates a finder that will search the image for three finder patterns.</p>
      *
@@ -42,46 +55,46 @@ export default class FinderPatternFinder {
     // public constructor(image: BitMatrix) {
     //   this(image, null)
     // }
-    constructor(image, resultPointCallback) {
+    function FinderPatternFinder(image, resultPointCallback) {
         this.image = image;
         this.resultPointCallback = resultPointCallback;
         this.possibleCenters = [];
         this.crossCheckStateCount = new Int32Array(5);
         this.resultPointCallback = resultPointCallback;
     }
-    getImage() {
+    FinderPatternFinder.prototype.getImage = function () {
         return this.image;
-    }
-    getPossibleCenters() {
+    };
+    FinderPatternFinder.prototype.getPossibleCenters = function () {
         return this.possibleCenters;
-    }
-    find(hints) {
-        const tryHarder = (hints !== null && hints !== undefined) && undefined !== hints.get(DecodeHintType.TRY_HARDER);
-        const pureBarcode = (hints !== null && hints !== undefined) && undefined !== hints.get(DecodeHintType.PURE_BARCODE);
-        const image = this.image;
-        const maxI = image.getHeight();
-        const maxJ = image.getWidth();
+    };
+    FinderPatternFinder.prototype.find = function (hints) {
+        var tryHarder = (hints !== null && hints !== undefined) && undefined !== hints.get(DecodeHintType_1.default.TRY_HARDER);
+        var pureBarcode = (hints !== null && hints !== undefined) && undefined !== hints.get(DecodeHintType_1.default.PURE_BARCODE);
+        var image = this.image;
+        var maxI = image.getHeight();
+        var maxJ = image.getWidth();
         // We are looking for black/white/black/white/black modules in
         // 1:1:3:1:1 ratio; this tracks the number of such modules seen so far
         // Let's assume that the maximum version QR Code we support takes up 1/4 the height of the
         // image, and then account for the center being 3 modules in size. This gives the smallest
         // number of pixels the center could be, so skip this often. When trying harder, look for all
         // QR versions regardless of how dense they are.
-        let iSkip = Math.floor((3 * maxI) / (4 * FinderPatternFinder.MAX_MODULES));
+        var iSkip = Math.floor((3 * maxI) / (4 * FinderPatternFinder.MAX_MODULES));
         if (iSkip < FinderPatternFinder.MIN_SKIP || tryHarder) {
             iSkip = FinderPatternFinder.MIN_SKIP;
         }
-        let done = false;
-        const stateCount = new Int32Array(5);
-        for (let i = iSkip - 1; i < maxI && !done; i += iSkip) {
+        var done = false;
+        var stateCount = new Int32Array(5);
+        for (var i = iSkip - 1; i < maxI && !done; i += iSkip) {
             // Get a row of black/white values
             stateCount[0] = 0;
             stateCount[1] = 0;
             stateCount[2] = 0;
             stateCount[3] = 0;
             stateCount[4] = 0;
-            let currentState = 0;
-            for (let j = 0; j < maxJ; j++) {
+            var currentState = 0;
+            for (var j = 0; j < maxJ; j++) {
                 if (image.get(j, i)) {
                     // Black pixel
                     if ((currentState & 1) === 1) { // Counting white pixels
@@ -93,7 +106,7 @@ export default class FinderPatternFinder {
                     if ((currentState & 1) === 0) { // Counting black pixels
                         if (currentState === 4) { // A winner?
                             if (FinderPatternFinder.foundPatternCross(stateCount)) { // Yes
-                                const confirmed = this.handlePossibleCenter(stateCount, i, j, pureBarcode);
+                                var confirmed = this.handlePossibleCenter(stateCount, i, j, pureBarcode);
                                 if (confirmed === true) {
                                     // Start examining every other line. Checking each line turned out to be too
                                     // expensive and didn't improve performance.
@@ -102,7 +115,7 @@ export default class FinderPatternFinder {
                                         done = this.haveMultiplyConfirmedCenters();
                                     }
                                     else {
-                                        const rowSkip = this.findRowSkip();
+                                        var rowSkip = this.findRowSkip();
                                         if (rowSkip > stateCount[2]) {
                                             // Skip rows between row of lower confirmed center
                                             // and top of presumed third confirmed center
@@ -152,7 +165,7 @@ export default class FinderPatternFinder {
                 }
             }
             if (FinderPatternFinder.foundPatternCross(stateCount)) {
-                const confirmed = this.handlePossibleCenter(stateCount, i, maxJ, pureBarcode);
+                var confirmed = this.handlePossibleCenter(stateCount, i, maxJ, pureBarcode);
                 if (confirmed === true) {
                     iSkip = stateCount[0];
                     if (this.hasSkipped) {
@@ -162,26 +175,26 @@ export default class FinderPatternFinder {
                 }
             }
         }
-        const patternInfo = this.selectBestPatterns();
-        ResultPoint.orderBestPatterns(patternInfo);
-        return new FinderPatternInfo(patternInfo);
-    }
+        var patternInfo = this.selectBestPatterns();
+        ResultPoint_1.default.orderBestPatterns(patternInfo);
+        return new FinderPatternInfo_1.default(patternInfo);
+    };
     /**
      * Given a count of black/white/black/white/black pixels just seen and an end position,
      * figures the location of the center of this run.
      */
-    static centerFromEnd(stateCount, end /*int*/) {
+    FinderPatternFinder.centerFromEnd = function (stateCount, end /*int*/) {
         return (end - stateCount[4] - stateCount[3]) - stateCount[2] / 2.0;
-    }
+    };
     /**
      * @param stateCount count of black/white/black/white/black pixels just read
      * @return true iff the proportions of the counts is close enough to the 1/1/3/1/1 ratios
      *         used by finder patterns to be considered a match
      */
-    static foundPatternCross(stateCount) {
-        let totalModuleSize = 0;
-        for (let i = 0; i < 5; i++) {
-            const count = stateCount[i];
+    FinderPatternFinder.foundPatternCross = function (stateCount) {
+        var totalModuleSize = 0;
+        for (var i = 0; i < 5; i++) {
+            var count = stateCount[i];
             if (count === 0) {
                 return false;
             }
@@ -190,24 +203,24 @@ export default class FinderPatternFinder {
         if (totalModuleSize < 7) {
             return false;
         }
-        const moduleSize = totalModuleSize / 7.0;
-        const maxVariance = moduleSize / 2.0;
+        var moduleSize = totalModuleSize / 7.0;
+        var maxVariance = moduleSize / 2.0;
         // Allow less than 50% variance from 1-1-3-1-1 proportions
         return Math.abs(moduleSize - stateCount[0]) < maxVariance &&
             Math.abs(moduleSize - stateCount[1]) < maxVariance &&
             Math.abs(3.0 * moduleSize - stateCount[2]) < 3 * maxVariance &&
             Math.abs(moduleSize - stateCount[3]) < maxVariance &&
             Math.abs(moduleSize - stateCount[4]) < maxVariance;
-    }
-    getCrossCheckStateCount() {
-        const crossCheckStateCount = this.crossCheckStateCount;
+    };
+    FinderPatternFinder.prototype.getCrossCheckStateCount = function () {
+        var crossCheckStateCount = this.crossCheckStateCount;
         crossCheckStateCount[0] = 0;
         crossCheckStateCount[1] = 0;
         crossCheckStateCount[2] = 0;
         crossCheckStateCount[3] = 0;
         crossCheckStateCount[4] = 0;
         return crossCheckStateCount;
-    }
+    };
     /**
      * After a vertical and horizontal scan finds a potential finder pattern, this method
      * "cross-cross-cross-checks" by scanning down diagonally through the center of the possible
@@ -220,11 +233,11 @@ export default class FinderPatternFinder {
      * @param originalStateCountTotal The original state count total.
      * @return true if proportions are withing expected limits
      */
-    crossCheckDiagonal(startI /*int*/, centerJ /*int*/, maxCount /*int*/, originalStateCountTotal /*int*/) {
-        const stateCount = this.getCrossCheckStateCount();
+    FinderPatternFinder.prototype.crossCheckDiagonal = function (startI /*int*/, centerJ /*int*/, maxCount /*int*/, originalStateCountTotal /*int*/) {
+        var stateCount = this.getCrossCheckStateCount();
         // Start counting up, left from center finding black center mass
-        let i = 0;
-        const image = this.image;
+        var i = 0;
+        var image = this.image;
         while (startI >= i && centerJ >= i && image.get(centerJ - i, startI - i)) {
             stateCount[2]++;
             i++;
@@ -251,8 +264,8 @@ export default class FinderPatternFinder {
         if (stateCount[0] > maxCount) {
             return false;
         }
-        const maxI = image.getHeight();
-        const maxJ = image.getWidth();
+        var maxI = image.getHeight();
+        var maxJ = image.getWidth();
         // Now also count down, right from center
         i = 1;
         while (startI + i < maxI && centerJ + i < maxJ && image.get(centerJ + i, startI + i)) {
@@ -281,10 +294,10 @@ export default class FinderPatternFinder {
         }
         // If we found a finder-pattern-like section, but its size is more than 100% different than
         // the original, assume it's a false positive
-        const stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
+        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
         return Math.abs(stateCountTotal - originalStateCountTotal) < 2 * originalStateCountTotal &&
             FinderPatternFinder.foundPatternCross(stateCount);
-    }
+    };
     /**
      * <p>After a horizontal scan finds a potential finder pattern, this method
      * "cross-checks" by scanning down vertically through the center of the possible
@@ -296,12 +309,12 @@ export default class FinderPatternFinder {
      * observed in any reading state, based on the results of the horizontal scan
      * @return vertical center of finder pattern, or {@link Float#NaN} if not found
      */
-    crossCheckVertical(startI /*int*/, centerJ /*int*/, maxCount /*int*/, originalStateCountTotal /*int*/) {
-        const image = this.image;
-        const maxI = image.getHeight();
-        const stateCount = this.getCrossCheckStateCount();
+    FinderPatternFinder.prototype.crossCheckVertical = function (startI /*int*/, centerJ /*int*/, maxCount /*int*/, originalStateCountTotal /*int*/) {
+        var image = this.image;
+        var maxI = image.getHeight();
+        var stateCount = this.getCrossCheckStateCount();
         // Start counting up from center
-        let i = startI;
+        var i = startI;
         while (i >= 0 && image.get(centerJ, i)) {
             stateCount[2]++;
             i--;
@@ -349,23 +362,23 @@ export default class FinderPatternFinder {
         }
         // If we found a finder-pattern-like section, but its size is more than 40% different than
         // the original, assume it's a false positive
-        const stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] +
+        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] +
             stateCount[4];
         if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= 2 * originalStateCountTotal) {
             return NaN;
         }
         return FinderPatternFinder.foundPatternCross(stateCount) ? FinderPatternFinder.centerFromEnd(stateCount, i) : NaN;
-    }
+    };
     /**
      * <p>Like {@link #crossCheckVertical(int, int, int, int)}, and in fact is basically identical,
      * except it reads horizontally instead of vertically. This is used to cross-cross
      * check a vertical cross check and locate the real center of the alignment pattern.</p>
      */
-    crossCheckHorizontal(startJ /*int*/, centerI /*int*/, maxCount /*int*/, originalStateCountTotal /*int*/) {
-        const image = this.image;
-        const maxJ = image.getWidth();
-        const stateCount = this.getCrossCheckStateCount();
-        let j = startJ;
+    FinderPatternFinder.prototype.crossCheckHorizontal = function (startJ /*int*/, centerI /*int*/, maxCount /*int*/, originalStateCountTotal /*int*/) {
+        var image = this.image;
+        var maxJ = image.getWidth();
+        var stateCount = this.getCrossCheckStateCount();
+        var j = startJ;
         while (j >= 0 && image.get(j, centerI)) {
             stateCount[2]++;
             j--;
@@ -411,13 +424,13 @@ export default class FinderPatternFinder {
         }
         // If we found a finder-pattern-like section, but its size is significantly different than
         // the original, assume it's a false positive
-        const stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] +
+        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] +
             stateCount[4];
         if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= originalStateCountTotal) {
             return NaN;
         }
         return FinderPatternFinder.foundPatternCross(stateCount) ? FinderPatternFinder.centerFromEnd(stateCount, j) : NaN;
-    }
+    };
     /**
      * <p>This is called when a horizontal scan finds a possible alignment pattern. It will
      * cross check with a vertical scan, and if successful, will, ah, cross-cross-check
@@ -436,21 +449,21 @@ export default class FinderPatternFinder {
      * @param pureBarcode true if in "pure barcode" mode
      * @return true if a finder pattern candidate was found this time
      */
-    handlePossibleCenter(stateCount, i /*int*/, j /*int*/, pureBarcode) {
-        const stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] +
+    FinderPatternFinder.prototype.handlePossibleCenter = function (stateCount, i /*int*/, j /*int*/, pureBarcode) {
+        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] +
             stateCount[4];
-        let centerJ = FinderPatternFinder.centerFromEnd(stateCount, j);
-        let centerI = this.crossCheckVertical(i, /*(int) */ Math.floor(centerJ), stateCount[2], stateCountTotal);
+        var centerJ = FinderPatternFinder.centerFromEnd(stateCount, j);
+        var centerI = this.crossCheckVertical(i, /*(int) */ Math.floor(centerJ), stateCount[2], stateCountTotal);
         if (!isNaN(centerI)) {
             // Re-cross check
             centerJ = this.crossCheckHorizontal(/*(int) */ Math.floor(centerJ), /*(int) */ Math.floor(centerI), stateCount[2], stateCountTotal);
             if (!isNaN(centerJ) &&
                 (!pureBarcode || this.crossCheckDiagonal(/*(int) */ Math.floor(centerI), /*(int) */ Math.floor(centerJ), stateCount[2], stateCountTotal))) {
-                const estimatedModuleSize = stateCountTotal / 7.0;
-                let found = false;
-                const possibleCenters = this.possibleCenters;
-                for (let index = 0, length = possibleCenters.length; index < length; index++) {
-                    const center = possibleCenters[index];
+                var estimatedModuleSize = stateCountTotal / 7.0;
+                var found = false;
+                var possibleCenters = this.possibleCenters;
+                for (var index = 0, length_1 = possibleCenters.length; index < length_1; index++) {
+                    var center = possibleCenters[index];
                     // Look for about the same center and module size:
                     if (center.aboutEquals(estimatedModuleSize, centerI, centerJ)) {
                         possibleCenters[index] = center.combineEstimate(centerI, centerJ, estimatedModuleSize);
@@ -459,7 +472,7 @@ export default class FinderPatternFinder {
                     }
                 }
                 if (!found) {
-                    const point = new FinderPattern(centerJ, centerI, estimatedModuleSize);
+                    var point = new FinderPattern_1.default(centerJ, centerI, estimatedModuleSize);
                     possibleCenters.push(point);
                     if (this.resultPointCallback !== null && this.resultPointCallback !== undefined) {
                         this.resultPointCallback.foundPossibleResultPoint(point);
@@ -469,52 +482,74 @@ export default class FinderPatternFinder {
             }
         }
         return false;
-    }
+    };
     /**
      * @return number of rows we could safely skip during scanning, based on the first
      *         two finder patterns that have been located. In some cases their position will
      *         allow us to infer that the third pattern must lie below a certain point farther
      *         down in the image.
      */
-    findRowSkip() {
-        const max = this.possibleCenters.length;
+    FinderPatternFinder.prototype.findRowSkip = function () {
+        var e_1, _a;
+        var max = this.possibleCenters.length;
         if (max <= 1) {
             return 0;
         }
-        let firstConfirmedCenter = null;
-        for (const center of this.possibleCenters) {
-            if (center.getCount() >= FinderPatternFinder.CENTER_QUORUM) {
-                if (firstConfirmedCenter == null) {
-                    firstConfirmedCenter = center;
-                }
-                else {
-                    // We have two confirmed centers
-                    // How far down can we skip before resuming looking for the next
-                    // pattern? In the worst case, only the difference between the
-                    // difference in the x / y coordinates of the two centers.
-                    // This is the case where you find top left last.
-                    this.hasSkipped = true;
-                    return /*(int) */ Math.floor((Math.abs(firstConfirmedCenter.getX() - center.getX()) -
-                        Math.abs(firstConfirmedCenter.getY() - center.getY())) / 2);
+        var firstConfirmedCenter = null;
+        try {
+            for (var _b = __values(this.possibleCenters), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var center = _c.value;
+                if (center.getCount() >= FinderPatternFinder.CENTER_QUORUM) {
+                    if (firstConfirmedCenter == null) {
+                        firstConfirmedCenter = center;
+                    }
+                    else {
+                        // We have two confirmed centers
+                        // How far down can we skip before resuming looking for the next
+                        // pattern? In the worst case, only the difference between the
+                        // difference in the x / y coordinates of the two centers.
+                        // This is the case where you find top left last.
+                        this.hasSkipped = true;
+                        return /*(int) */ Math.floor((Math.abs(firstConfirmedCenter.getX() - center.getX()) -
+                            Math.abs(firstConfirmedCenter.getY() - center.getY())) / 2);
+                    }
                 }
             }
         }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
         return 0;
-    }
+    };
     /**
      * @return true iff we have found at least 3 finder patterns that have been detected
      *         at least {@link #CENTER_QUORUM} times each, and, the estimated module size of the
      *         candidates is "pretty similar"
      */
-    haveMultiplyConfirmedCenters() {
-        let confirmedCount = 0;
-        let totalModuleSize = 0.0;
-        const max = this.possibleCenters.length;
-        for (const pattern of this.possibleCenters) {
-            if (pattern.getCount() >= FinderPatternFinder.CENTER_QUORUM) {
-                confirmedCount++;
-                totalModuleSize += pattern.getEstimatedModuleSize();
+    FinderPatternFinder.prototype.haveMultiplyConfirmedCenters = function () {
+        var e_2, _a, e_3, _b;
+        var confirmedCount = 0;
+        var totalModuleSize = 0.0;
+        var max = this.possibleCenters.length;
+        try {
+            for (var _c = __values(this.possibleCenters), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var pattern = _d.value;
+                if (pattern.getCount() >= FinderPatternFinder.CENTER_QUORUM) {
+                    confirmedCount++;
+                    totalModuleSize += pattern.getEstimatedModuleSize();
+                }
             }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+            }
+            finally { if (e_2) throw e_2.error; }
         }
         if (confirmedCount < 3) {
             return false;
@@ -523,52 +558,73 @@ export default class FinderPatternFinder {
         // and that we need to keep looking. We detect this by asking if the estimated module sizes
         // vary too much. We arbitrarily say that when the total deviation from average exceeds
         // 5% of the total module size estimates, it's too much.
-        const average = totalModuleSize / max;
-        let totalDeviation = 0.0;
-        for (const pattern of this.possibleCenters) {
-            totalDeviation += Math.abs(pattern.getEstimatedModuleSize() - average);
+        var average = totalModuleSize / max;
+        var totalDeviation = 0.0;
+        try {
+            for (var _e = __values(this.possibleCenters), _f = _e.next(); !_f.done; _f = _e.next()) {
+                var pattern = _f.value;
+                totalDeviation += Math.abs(pattern.getEstimatedModuleSize() - average);
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
+            }
+            finally { if (e_3) throw e_3.error; }
         }
         return totalDeviation <= 0.05 * totalModuleSize;
-    }
+    };
     /**
      * @return the 3 best {@link FinderPattern}s from our list of candidates. The "best" are
      *         those that have been detected at least {@link #CENTER_QUORUM} times, and whose module
      *         size differs from the average among those patterns the least
      * @throws NotFoundException if 3 such finder patterns do not exist
      */
-    selectBestPatterns() {
-        const startSize = this.possibleCenters.length;
+    FinderPatternFinder.prototype.selectBestPatterns = function () {
+        var e_4, _a, e_5, _b;
+        var startSize = this.possibleCenters.length;
         if (startSize < 3) {
             // Couldn't find enough finder patterns
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-        const possibleCenters = this.possibleCenters;
-        let average;
+        var possibleCenters = this.possibleCenters;
+        var average;
         // Filter outlier possibilities whose module size is too different
         if (startSize > 3) {
             // But we can only afford to do so if we have at least 4 possibilities to choose from
-            let totalModuleSize = 0.0;
-            let square = 0.0;
-            for (const center of this.possibleCenters) {
-                const size = center.getEstimatedModuleSize();
-                totalModuleSize += size;
-                square += size * size;
+            var totalModuleSize = 0.0;
+            var square = 0.0;
+            try {
+                for (var _c = __values(this.possibleCenters), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var center = _d.value;
+                    var size = center.getEstimatedModuleSize();
+                    totalModuleSize += size;
+                    square += size * size;
+                }
+            }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            finally {
+                try {
+                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                }
+                finally { if (e_4) throw e_4.error; }
             }
             average = totalModuleSize / startSize;
-            let stdDev = Math.sqrt(square / startSize - average * average);
+            var stdDev = Math.sqrt(square / startSize - average * average);
             possibleCenters.sort(
             /**
              * <p>Orders by furthest from average</p>
              */
             // FurthestFromAverageComparator implements Comparator<FinderPattern>
-            (center1, center2) => {
-                const dA = Math.abs(center2.getEstimatedModuleSize() - average);
-                const dB = Math.abs(center1.getEstimatedModuleSize() - average);
+            function (center1, center2) {
+                var dA = Math.abs(center2.getEstimatedModuleSize() - average);
+                var dB = Math.abs(center1.getEstimatedModuleSize() - average);
                 return dA < dB ? -1 : dA > dB ? 1 : 0;
             });
-            const limit = Math.max(0.2 * average, stdDev);
-            for (let i = 0; i < possibleCenters.length && possibleCenters.length > 3; i++) {
-                const pattern = possibleCenters[i];
+            var limit = Math.max(0.2 * average, stdDev);
+            for (var i = 0; i < possibleCenters.length && possibleCenters.length > 3; i++) {
+                var pattern = possibleCenters[i];
                 if (Math.abs(pattern.getEstimatedModuleSize() - average) > limit) {
                     possibleCenters.splice(i, 1);
                     i--;
@@ -577,9 +633,19 @@ export default class FinderPatternFinder {
         }
         if (possibleCenters.length > 3) {
             // Throw away all but those first size candidate points we found.
-            let totalModuleSize = 0.0;
-            for (const possibleCenter of possibleCenters) {
-                totalModuleSize += possibleCenter.getEstimatedModuleSize();
+            var totalModuleSize = 0.0;
+            try {
+                for (var possibleCenters_1 = __values(possibleCenters), possibleCenters_1_1 = possibleCenters_1.next(); !possibleCenters_1_1.done; possibleCenters_1_1 = possibleCenters_1.next()) {
+                    var possibleCenter = possibleCenters_1_1.value;
+                    totalModuleSize += possibleCenter.getEstimatedModuleSize();
+                }
+            }
+            catch (e_5_1) { e_5 = { error: e_5_1 }; }
+            finally {
+                try {
+                    if (possibleCenters_1_1 && !possibleCenters_1_1.done && (_b = possibleCenters_1.return)) _b.call(possibleCenters_1);
+                }
+                finally { if (e_5) throw e_5.error; }
             }
             average = totalModuleSize / possibleCenters.length;
             possibleCenters.sort(
@@ -587,10 +653,10 @@ export default class FinderPatternFinder {
              * <p>Orders by {@link FinderPattern#getCount()}, descending.</p>
              */
             // CenterComparator implements Comparator<FinderPattern>
-            (center1, center2) => {
+            function (center1, center2) {
                 if (center2.getCount() === center1.getCount()) {
-                    const dA = Math.abs(center2.getEstimatedModuleSize() - average);
-                    const dB = Math.abs(center1.getEstimatedModuleSize() - average);
+                    var dA = Math.abs(center2.getEstimatedModuleSize() - average);
+                    var dB = Math.abs(center1.getEstimatedModuleSize() - average);
                     return dA < dB ? 1 : dA > dB ? -1 : 0;
                 }
                 else {
@@ -604,8 +670,10 @@ export default class FinderPatternFinder {
             possibleCenters[1],
             possibleCenters[2]
         ];
-    }
-}
-FinderPatternFinder.CENTER_QUORUM = 2;
-FinderPatternFinder.MIN_SKIP = 3; // 1 pixel/module times 3 modules/center
-FinderPatternFinder.MAX_MODULES = 57; // support up to version 10 for mobile clients
+    };
+    FinderPatternFinder.CENTER_QUORUM = 2;
+    FinderPatternFinder.MIN_SKIP = 3; // 1 pixel/module times 3 modules/center
+    FinderPatternFinder.MAX_MODULES = 57; // support up to version 10 for mobile clients
+    return FinderPatternFinder;
+}());
+exports.default = FinderPatternFinder;

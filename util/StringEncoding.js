@@ -1,14 +1,18 @@
-import UnsupportedOperationException from '../UnsupportedOperationException';
-import CharacterSetECI from '../common/CharacterSetECI';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var UnsupportedOperationException_1 = require("../UnsupportedOperationException");
+var CharacterSetECI_1 = require("../common/CharacterSetECI");
 /**
  * Responsible for en/decoding strings.
  */
-export default class StringEncoding {
+var StringEncoding = /** @class */ (function () {
+    function StringEncoding() {
+    }
     /**
      * Decodes some Uint8Array to a string format.
      */
-    static decode(bytes, encoding) {
-        const encodingName = this.encodingName(encoding);
+    StringEncoding.decode = function (bytes, encoding) {
+        var encodingName = this.encodingName(encoding);
         if (this.customDecoder) {
             return this.customDecoder(bytes, encodingName);
         }
@@ -17,21 +21,21 @@ export default class StringEncoding {
             return this.decodeFallback(bytes, encodingName);
         }
         return new TextDecoder(encodingName).decode(bytes);
-    }
+    };
     /**
      * Checks if the decoding method should use the fallback for decoding
      * once Node TextDecoder doesn't support all encoding formats.
      *
      * @param encodingName
      */
-    static shouldDecodeOnFallback(encodingName) {
+    StringEncoding.shouldDecodeOnFallback = function (encodingName) {
         return !StringEncoding.isBrowser() && encodingName === 'ISO-8859-1';
-    }
+    };
     /**
      * Encodes some string into a Uint8Array.
      */
-    static encode(s, encoding) {
-        const encodingName = this.encodingName(encoding);
+    StringEncoding.encode = function (s, encoding) {
+        var encodingName = this.encodingName(encoding);
         if (this.customEncoder) {
             return this.customEncoder(s, encodingName);
         }
@@ -41,36 +45,36 @@ export default class StringEncoding {
         }
         // TextEncoder only encodes to UTF8 by default as specified by encoding.spec.whatwg.org
         return new TextEncoder().encode(s);
-    }
-    static isBrowser() {
+    };
+    StringEncoding.isBrowser = function () {
         return (typeof window !== 'undefined' && {}.toString.call(window) === '[object Window]');
-    }
+    };
     /**
      * Returns the string value from some encoding character set.
      */
-    static encodingName(encoding) {
+    StringEncoding.encodingName = function (encoding) {
         return typeof encoding === 'string'
             ? encoding
             : encoding.getName();
-    }
+    };
     /**
      * Returns character set from some encoding character set.
      */
-    static encodingCharacterSet(encoding) {
-        if (encoding instanceof CharacterSetECI) {
+    StringEncoding.encodingCharacterSet = function (encoding) {
+        if (encoding instanceof CharacterSetECI_1.default) {
             return encoding;
         }
-        return CharacterSetECI.getCharacterSetECIByName(encoding);
-    }
+        return CharacterSetECI_1.default.getCharacterSetECIByName(encoding);
+    };
     /**
      * Runs a fallback for the native decoding funcion.
      */
-    static decodeFallback(bytes, encoding) {
-        const characterSet = this.encodingCharacterSet(encoding);
+    StringEncoding.decodeFallback = function (bytes, encoding) {
+        var characterSet = this.encodingCharacterSet(encoding);
         if (StringEncoding.isDecodeFallbackSupported(characterSet)) {
-            let s = '';
-            for (let i = 0, length = bytes.length; i < length; i++) {
-                let h = bytes[i].toString(16);
+            var s = '';
+            for (var i = 0, length_1 = bytes.length; i < length_1; i++) {
+                var h = bytes[i].toString(16);
                 if (h.length < 2) {
                     h = '0' + h;
                 }
@@ -78,28 +82,30 @@ export default class StringEncoding {
             }
             return decodeURIComponent(s);
         }
-        if (characterSet.equals(CharacterSetECI.UnicodeBigUnmarked)) {
+        if (characterSet.equals(CharacterSetECI_1.default.UnicodeBigUnmarked)) {
             return String.fromCharCode.apply(null, new Uint16Array(bytes.buffer));
         }
-        throw new UnsupportedOperationException(`Encoding ${this.encodingName(encoding)} not supported by fallback.`);
-    }
-    static isDecodeFallbackSupported(characterSet) {
-        return characterSet.equals(CharacterSetECI.UTF8) ||
-            characterSet.equals(CharacterSetECI.ISO8859_1) ||
-            characterSet.equals(CharacterSetECI.ASCII);
-    }
+        throw new UnsupportedOperationException_1.default("Encoding " + this.encodingName(encoding) + " not supported by fallback.");
+    };
+    StringEncoding.isDecodeFallbackSupported = function (characterSet) {
+        return characterSet.equals(CharacterSetECI_1.default.UTF8) ||
+            characterSet.equals(CharacterSetECI_1.default.ISO8859_1) ||
+            characterSet.equals(CharacterSetECI_1.default.ASCII);
+    };
     /**
      * Runs a fallback for the native encoding funcion.
      *
      * @see https://stackoverflow.com/a/17192845/4367683
      */
-    static encodeFallback(s) {
-        const encodedURIstring = btoa(unescape(encodeURIComponent(s)));
-        const charList = encodedURIstring.split('');
-        const uintArray = [];
-        for (let i = 0; i < charList.length; i++) {
+    StringEncoding.encodeFallback = function (s) {
+        var encodedURIstring = btoa(unescape(encodeURIComponent(s)));
+        var charList = encodedURIstring.split('');
+        var uintArray = [];
+        for (var i = 0; i < charList.length; i++) {
             uintArray.push(charList[i].charCodeAt(0));
         }
         return new Uint8Array(uintArray);
-    }
-}
+    };
+    return StringEncoding;
+}());
+exports.default = StringEncoding;

@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,57 +14,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import IllegalArgumentException from '../../IllegalArgumentException';
+Object.defineProperty(exports, "__esModule", { value: true });
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
 /**
  * @author Satoru Takabayashi
  * @author Daniel Switkin
  * @author Sean Owen
  */
-export default class MaskUtil {
-    constructor() {
+var MaskUtil = /** @class */ (function () {
+    function MaskUtil() {
         // do nothing
     }
     /**
      * Apply mask penalty rule 1 and return the penalty. Find repetitive cells with the same color and
      * give penalty to them. Example: 00000 or 11111.
      */
-    static applyMaskPenaltyRule1(matrix) {
+    MaskUtil.applyMaskPenaltyRule1 = function (matrix) {
         return MaskUtil.applyMaskPenaltyRule1Internal(matrix, true) + MaskUtil.applyMaskPenaltyRule1Internal(matrix, false);
-    }
+    };
     /**
      * Apply mask penalty rule 2 and return the penalty. Find 2x2 blocks with the same color and give
      * penalty to them. This is actually equivalent to the spec's rule, which is to find MxN blocks and give a
      * penalty proportional to (M-1)x(N-1), because this is the number of 2x2 blocks inside such a block.
      */
-    static applyMaskPenaltyRule2(matrix) {
-        let penalty = 0;
-        const array = matrix.getArray();
-        const width = matrix.getWidth();
-        const height = matrix.getHeight();
-        for (let y = 0; y < height - 1; y++) {
-            const arrayY = array[y];
-            for (let x = 0; x < width - 1; x++) {
-                const value = arrayY[x];
+    MaskUtil.applyMaskPenaltyRule2 = function (matrix) {
+        var penalty = 0;
+        var array = matrix.getArray();
+        var width = matrix.getWidth();
+        var height = matrix.getHeight();
+        for (var y = 0; y < height - 1; y++) {
+            var arrayY = array[y];
+            for (var x = 0; x < width - 1; x++) {
+                var value = arrayY[x];
                 if (value === arrayY[x + 1] && value === array[y + 1][x] && value === array[y + 1][x + 1]) {
                     penalty++;
                 }
             }
         }
         return MaskUtil.N2 * penalty;
-    }
+    };
     /**
      * Apply mask penalty rule 3 and return the penalty. Find consecutive runs of 1:1:3:1:1:4
      * starting with black, or 4:1:1:3:1:1 starting with white, and give penalty to them.  If we
      * find patterns like 000010111010000, we give penalty once.
      */
-    static applyMaskPenaltyRule3(matrix) {
-        let numPenalties = 0;
-        const array = matrix.getArray();
-        const width = matrix.getWidth();
-        const height = matrix.getHeight();
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                const arrayY = array[y]; // We can at least optimize this access
+    MaskUtil.applyMaskPenaltyRule3 = function (matrix) {
+        var numPenalties = 0;
+        var array = matrix.getArray();
+        var width = matrix.getWidth();
+        var height = matrix.getHeight();
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                var arrayY = array[y]; // We can at least optimize this access
                 if (x + 6 < width &&
                     arrayY[x] === 1 &&
                     arrayY[x + 1] === 0 &&
@@ -89,55 +91,55 @@ export default class MaskUtil {
             }
         }
         return numPenalties * MaskUtil.N3;
-    }
-    static isWhiteHorizontal(rowArray, from /*int*/, to /*int*/) {
+    };
+    MaskUtil.isWhiteHorizontal = function (rowArray, from /*int*/, to /*int*/) {
         from = Math.max(from, 0);
         to = Math.min(to, rowArray.length);
-        for (let i = from; i < to; i++) {
+        for (var i = from; i < to; i++) {
             if (rowArray[i] === 1) {
                 return false;
             }
         }
         return true;
-    }
-    static isWhiteVertical(array, col /*int*/, from /*int*/, to /*int*/) {
+    };
+    MaskUtil.isWhiteVertical = function (array, col /*int*/, from /*int*/, to /*int*/) {
         from = Math.max(from, 0);
         to = Math.min(to, array.length);
-        for (let i = from; i < to; i++) {
+        for (var i = from; i < to; i++) {
             if (array[i][col] === 1) {
                 return false;
             }
         }
         return true;
-    }
+    };
     /**
      * Apply mask penalty rule 4 and return the penalty. Calculate the ratio of dark cells and give
      * penalty if the ratio is far from 50%. It gives 10 penalty for 5% distance.
      */
-    static applyMaskPenaltyRule4(matrix) {
-        let numDarkCells = 0;
-        const array = matrix.getArray();
-        const width = matrix.getWidth();
-        const height = matrix.getHeight();
-        for (let y = 0; y < height; y++) {
-            const arrayY = array[y];
-            for (let x = 0; x < width; x++) {
+    MaskUtil.applyMaskPenaltyRule4 = function (matrix) {
+        var numDarkCells = 0;
+        var array = matrix.getArray();
+        var width = matrix.getWidth();
+        var height = matrix.getHeight();
+        for (var y = 0; y < height; y++) {
+            var arrayY = array[y];
+            for (var x = 0; x < width; x++) {
                 if (arrayY[x] === 1) {
                     numDarkCells++;
                 }
             }
         }
-        const numTotalCells = matrix.getHeight() * matrix.getWidth();
-        const fivePercentVariances = Math.floor(Math.abs(numDarkCells * 2 - numTotalCells) * 10 / numTotalCells);
+        var numTotalCells = matrix.getHeight() * matrix.getWidth();
+        var fivePercentVariances = Math.floor(Math.abs(numDarkCells * 2 - numTotalCells) * 10 / numTotalCells);
         return fivePercentVariances * MaskUtil.N4;
-    }
+    };
     /**
      * Return the mask bit for "getMaskPattern" at "x" and "y". See 8.8 of JISX0510:2004 for mask
      * pattern conditions.
      */
-    static getDataMaskBit(maskPattern /*int*/, x /*int*/, y /*int*/) {
-        let intermediate; /*int*/
-        let temp; /*int*/
+    MaskUtil.getDataMaskBit = function (maskPattern /*int*/, x /*int*/, y /*int*/) {
+        var intermediate; /*int*/
+        var temp; /*int*/
         switch (maskPattern) {
             case 0:
                 intermediate = (y + x) & 0x1;
@@ -167,24 +169,24 @@ export default class MaskUtil {
                 intermediate = ((temp % 3) + ((y + x) & 0x1)) & 0x1;
                 break;
             default:
-                throw new IllegalArgumentException('Invalid mask pattern: ' + maskPattern);
+                throw new IllegalArgumentException_1.default('Invalid mask pattern: ' + maskPattern);
         }
         return intermediate === 0;
-    }
+    };
     /**
      * Helper function for applyMaskPenaltyRule1. We need this for doing this calculation in both
      * vertical and horizontal orders respectively.
      */
-    static applyMaskPenaltyRule1Internal(matrix, isHorizontal) {
-        let penalty = 0;
-        const iLimit = isHorizontal ? matrix.getHeight() : matrix.getWidth();
-        const jLimit = isHorizontal ? matrix.getWidth() : matrix.getHeight();
-        const array = matrix.getArray();
-        for (let i = 0; i < iLimit; i++) {
-            let numSameBitCells = 0;
-            let prevBit = -1;
-            for (let j = 0; j < jLimit; j++) {
-                const bit = isHorizontal ? array[i][j] : array[j][i];
+    MaskUtil.applyMaskPenaltyRule1Internal = function (matrix, isHorizontal) {
+        var penalty = 0;
+        var iLimit = isHorizontal ? matrix.getHeight() : matrix.getWidth();
+        var jLimit = isHorizontal ? matrix.getWidth() : matrix.getHeight();
+        var array = matrix.getArray();
+        for (var i = 0; i < iLimit; i++) {
+            var numSameBitCells = 0;
+            var prevBit = -1;
+            for (var j = 0; j < jLimit; j++) {
+                var bit = isHorizontal ? array[i][j] : array[j][i];
                 if (bit === prevBit) {
                     numSameBitCells++;
                 }
@@ -201,10 +203,12 @@ export default class MaskUtil {
             }
         }
         return penalty;
-    }
-}
-// Penalty weights from section 6.8.2.1
-MaskUtil.N1 = 3;
-MaskUtil.N2 = 3;
-MaskUtil.N3 = 40;
-MaskUtil.N4 = 10;
+    };
+    // Penalty weights from section 6.8.2.1
+    MaskUtil.N1 = 3;
+    MaskUtil.N2 = 3;
+    MaskUtil.N3 = 40;
+    MaskUtil.N4 = 10;
+    return MaskUtil;
+}());
+exports.default = MaskUtil;

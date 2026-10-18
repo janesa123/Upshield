@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,38 +14,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.qrcode.detector {*/
-import ResultPoint from '../../ResultPoint';
+var ResultPoint_1 = require("../../ResultPoint");
 /**
  * <p>Encapsulates an alignment pattern, which are the smaller square patterns found in
  * all but the simplest QR Codes.</p>
  *
  * @author Sean Owen
  */
-export default class AlignmentPattern extends ResultPoint {
-    constructor(posX /*float*/, posY /*float*/, estimatedModuleSize /*float*/) {
-        super(posX, posY);
-        this.estimatedModuleSize = estimatedModuleSize;
+var AlignmentPattern = /** @class */ (function (_super) {
+    __extends(AlignmentPattern, _super);
+    function AlignmentPattern(posX /*float*/, posY /*float*/, estimatedModuleSize /*float*/) {
+        var _this = _super.call(this, posX, posY) || this;
+        _this.estimatedModuleSize = estimatedModuleSize;
+        return _this;
     }
     /**
      * <p>Determines if this alignment pattern "about equals" an alignment pattern at the stated
      * position and size -- meaning, it is at nearly the same center with nearly the same size.</p>
      */
-    aboutEquals(moduleSize /*float*/, i /*float*/, j /*float*/) {
+    AlignmentPattern.prototype.aboutEquals = function (moduleSize /*float*/, i /*float*/, j /*float*/) {
         if (Math.abs(i - this.getY()) <= moduleSize && Math.abs(j - this.getX()) <= moduleSize) {
-            const moduleSizeDiff = Math.abs(moduleSize - this.estimatedModuleSize);
+            var moduleSizeDiff = Math.abs(moduleSize - this.estimatedModuleSize);
             return moduleSizeDiff <= 1.0 || moduleSizeDiff <= this.estimatedModuleSize;
         }
         return false;
-    }
+    };
     /**
      * Combines this object's current estimate of a finder pattern position and module size
      * with a new estimate. It returns a new {@code FinderPattern} containing an average of the two.
      */
-    combineEstimate(i /*float*/, j /*float*/, newModuleSize /*float*/) {
-        const combinedX = (this.getX() + j) / 2.0;
-        const combinedY = (this.getY() + i) / 2.0;
-        const combinedModuleSize = (this.estimatedModuleSize + newModuleSize) / 2.0;
+    AlignmentPattern.prototype.combineEstimate = function (i /*float*/, j /*float*/, newModuleSize /*float*/) {
+        var combinedX = (this.getX() + j) / 2.0;
+        var combinedY = (this.getY() + i) / 2.0;
+        var combinedModuleSize = (this.estimatedModuleSize + newModuleSize) / 2.0;
         return new AlignmentPattern(combinedX, combinedY, combinedModuleSize);
-    }
-}
+    };
+    return AlignmentPattern;
+}(ResultPoint_1.default));
+exports.default = AlignmentPattern;

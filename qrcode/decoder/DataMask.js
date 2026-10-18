@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export var DataMaskValues;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DataMaskValues = void 0;
+var DataMaskValues;
 (function (DataMaskValues) {
     DataMaskValues[DataMaskValues["DATA_MASK_000"] = 0] = "DATA_MASK_000";
     DataMaskValues[DataMaskValues["DATA_MASK_001"] = 1] = "DATA_MASK_001";
@@ -23,7 +26,7 @@ export var DataMaskValues;
     DataMaskValues[DataMaskValues["DATA_MASK_101"] = 5] = "DATA_MASK_101";
     DataMaskValues[DataMaskValues["DATA_MASK_110"] = 6] = "DATA_MASK_110";
     DataMaskValues[DataMaskValues["DATA_MASK_111"] = 7] = "DATA_MASK_111";
-})(DataMaskValues || (DataMaskValues = {}));
+})(DataMaskValues = exports.DataMaskValues || (exports.DataMaskValues = {}));
 /**
  * <p>Encapsulates data masks for the data bits in a QR code, per ISO 18004:2006 6.8. Implementations
  * of this class can un-mask a raw BitMatrix. For simplicity, they will unmask the entire BitMatrix,
@@ -35,9 +38,9 @@ export var DataMaskValues;
  *
  * @author Sean Owen
  */
-export default class DataMask {
+var DataMask = /** @class */ (function () {
     // See ISO 18004:2006 6.8.1
-    constructor(value, isMasked) {
+    function DataMask(value, isMasked) {
         this.value = value;
         this.isMasked = isMasked;
     }
@@ -49,50 +52,52 @@ export default class DataMask {
      * @param bits representation of QR Code bits
      * @param dimension dimension of QR Code, represented by bits, being unmasked
      */
-    unmaskBitMatrix(bits, dimension /*int*/) {
-        for (let i = 0; i < dimension; i++) {
-            for (let j = 0; j < dimension; j++) {
+    DataMask.prototype.unmaskBitMatrix = function (bits, dimension /*int*/) {
+        for (var i = 0; i < dimension; i++) {
+            for (var j = 0; j < dimension; j++) {
                 if (this.isMasked(i, j)) {
                     bits.flip(j, i);
                 }
             }
         }
-    }
-}
-DataMask.values = new Map([
-    /**
-     * 000: mask bits for which (x + y) mod 2 == 0
-     */
-    [DataMaskValues.DATA_MASK_000, new DataMask(DataMaskValues.DATA_MASK_000, (i /*int*/, j /*int*/) => { return ((i + j) & 0x01) === 0; })],
-    /**
-     * 001: mask bits for which x mod 2 == 0
-     */
-    [DataMaskValues.DATA_MASK_001, new DataMask(DataMaskValues.DATA_MASK_001, (i /*int*/, j /*int*/) => { return (i & 0x01) === 0; })],
-    /**
-     * 010: mask bits for which y mod 3 == 0
-     */
-    [DataMaskValues.DATA_MASK_010, new DataMask(DataMaskValues.DATA_MASK_010, (i /*int*/, j /*int*/) => { return j % 3 === 0; })],
-    /**
-     * 011: mask bits for which (x + y) mod 3 == 0
-     */
-    [DataMaskValues.DATA_MASK_011, new DataMask(DataMaskValues.DATA_MASK_011, (i /*int*/, j /*int*/) => { return (i + j) % 3 === 0; })],
-    /**
-     * 100: mask bits for which (x/2 + y/3) mod 2 == 0
-     */
-    [DataMaskValues.DATA_MASK_100, new DataMask(DataMaskValues.DATA_MASK_100, (i /*int*/, j /*int*/) => { return ((Math.floor(i / 2) + Math.floor(j / 3)) & 0x01) === 0; })],
-    /**
-     * 101: mask bits for which xy mod 2 + xy mod 3 == 0
-     * equivalently, such that xy mod 6 == 0
-     */
-    [DataMaskValues.DATA_MASK_101, new DataMask(DataMaskValues.DATA_MASK_101, (i /*int*/, j /*int*/) => { return (i * j) % 6 === 0; })],
-    /**
-     * 110: mask bits for which (xy mod 2 + xy mod 3) mod 2 == 0
-     * equivalently, such that xy mod 6 < 3
-     */
-    [DataMaskValues.DATA_MASK_110, new DataMask(DataMaskValues.DATA_MASK_110, (i /*int*/, j /*int*/) => { return ((i * j) % 6) < 3; })],
-    /**
-     * 111: mask bits for which ((x+y)mod 2 + xy mod 3) mod 2 == 0
-     * equivalently, such that (x + y + xy mod 3) mod 2 == 0
-     */
-    [DataMaskValues.DATA_MASK_111, new DataMask(DataMaskValues.DATA_MASK_111, (i /*int*/, j /*int*/) => { return ((i + j + ((i * j) % 3)) & 0x01) === 0; })],
-]);
+    };
+    DataMask.values = new Map([
+        /**
+         * 000: mask bits for which (x + y) mod 2 == 0
+         */
+        [DataMaskValues.DATA_MASK_000, new DataMask(DataMaskValues.DATA_MASK_000, function (i /*int*/, j /*int*/) { return ((i + j) & 0x01) === 0; })],
+        /**
+         * 001: mask bits for which x mod 2 == 0
+         */
+        [DataMaskValues.DATA_MASK_001, new DataMask(DataMaskValues.DATA_MASK_001, function (i /*int*/, j /*int*/) { return (i & 0x01) === 0; })],
+        /**
+         * 010: mask bits for which y mod 3 == 0
+         */
+        [DataMaskValues.DATA_MASK_010, new DataMask(DataMaskValues.DATA_MASK_010, function (i /*int*/, j /*int*/) { return j % 3 === 0; })],
+        /**
+         * 011: mask bits for which (x + y) mod 3 == 0
+         */
+        [DataMaskValues.DATA_MASK_011, new DataMask(DataMaskValues.DATA_MASK_011, function (i /*int*/, j /*int*/) { return (i + j) % 3 === 0; })],
+        /**
+         * 100: mask bits for which (x/2 + y/3) mod 2 == 0
+         */
+        [DataMaskValues.DATA_MASK_100, new DataMask(DataMaskValues.DATA_MASK_100, function (i /*int*/, j /*int*/) { return ((Math.floor(i / 2) + Math.floor(j / 3)) & 0x01) === 0; })],
+        /**
+         * 101: mask bits for which xy mod 2 + xy mod 3 == 0
+         * equivalently, such that xy mod 6 == 0
+         */
+        [DataMaskValues.DATA_MASK_101, new DataMask(DataMaskValues.DATA_MASK_101, function (i /*int*/, j /*int*/) { return (i * j) % 6 === 0; })],
+        /**
+         * 110: mask bits for which (xy mod 2 + xy mod 3) mod 2 == 0
+         * equivalently, such that xy mod 6 < 3
+         */
+        [DataMaskValues.DATA_MASK_110, new DataMask(DataMaskValues.DATA_MASK_110, function (i /*int*/, j /*int*/) { return ((i * j) % 6) < 3; })],
+        /**
+         * 111: mask bits for which ((x+y)mod 2 + xy mod 3) mod 2 == 0
+         * equivalently, such that (x + y + xy mod 3) mod 2 == 0
+         */
+        [DataMaskValues.DATA_MASK_111, new DataMask(DataMaskValues.DATA_MASK_111, function (i /*int*/, j /*int*/) { return ((i + j + ((i * j) % 3)) & 0x01) === 0; })],
+    ]);
+    return DataMask;
+}());
+exports.default = DataMask;

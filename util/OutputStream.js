@@ -1,5 +1,7 @@
-import IndexOutOfBoundsException from '../IndexOutOfBoundsException';
-import NullPointerException from '../NullPointerException';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var IndexOutOfBoundsException_1 = require("../IndexOutOfBoundsException");
+var NullPointerException_1 = require("../NullPointerException");
 /*
  * Copyright (c) 1994, 2004, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -43,7 +45,9 @@ import NullPointerException from '../NullPointerException';
  * @see     java.io.OutputStream#write(int)
  * @since   JDK1.0
  */
-export default /*public*/ class OutputStream /*implements Closeable, Flushable*/ {
+var OutputStream /*implements Closeable, Flushable*/ = /** @class */ (function () {
+    function OutputStream() {
+    }
     /**
      * Writes <code>b.length</code> bytes from the specified byte array
      * to this output stream. The general contract for <code>write(b)</code>
@@ -54,9 +58,9 @@ export default /*public*/ class OutputStream /*implements Closeable, Flushable*/
      * @exception  IOException  if an I/O error occurs.
      * @see        java.io.OutputStream#write(byte[], int, int)
      */
-    writeBytes(b) {
+    OutputStream.prototype.writeBytes = function (b) {
         this.writeBytesOffset(b, 0, b.length);
-    }
+    };
     /**
      * Writes <code>len</code> bytes from the specified byte array
      * starting at offset <code>off</code> to this output stream.
@@ -85,21 +89,21 @@ export default /*public*/ class OutputStream /*implements Closeable, Flushable*/
      *             an <code>IOException</code> is thrown if the output
      *             stream is closed.
      */
-    writeBytesOffset(b, off, len) {
+    OutputStream.prototype.writeBytesOffset = function (b, off, len) {
         if (b == null) {
-            throw new NullPointerException();
+            throw new NullPointerException_1.default();
         }
         else if ((off < 0) || (off > b.length) || (len < 0) ||
             ((off + len) > b.length) || ((off + len) < 0)) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException_1.default();
         }
         else if (len === 0) {
             return;
         }
-        for (let i = 0; i < len; i++) {
+        for (var i = 0; i < len; i++) {
             this.write(b[off + i]);
         }
-    }
+    };
     /**
      * Flushes this output stream and forces any buffered output bytes
      * to be written out. The general contract of <code>flush</code> is
@@ -118,8 +122,8 @@ export default /*public*/ class OutputStream /*implements Closeable, Flushable*/
      *
      * @exception  IOException  if an I/O error occurs.
      */
-    flush() {
-    }
+    OutputStream.prototype.flush = function () {
+    };
     /**
      * Closes this output stream and releases any system resources
      * associated with this stream. The general contract of <code>close</code>
@@ -130,6 +134,8 @@ export default /*public*/ class OutputStream /*implements Closeable, Flushable*/
      *
      * @exception  IOException  if an I/O error occurs.
      */
-    close() {
-    }
-}
+    OutputStream.prototype.close = function () {
+    };
+    return OutputStream;
+}());
+exports.default = OutputStream;

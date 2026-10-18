@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,84 +14,107 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.qrcode.encoder {*/
 /*import java.util.Arrays;*/
-import Arrays from '../../util/Arrays';
-import StringBuilder from '../../util/StringBuilder';
+var Arrays_1 = require("../../util/Arrays");
+var StringBuilder_1 = require("../../util/StringBuilder");
 /**
  * JAVAPORT: The original code was a 2D array of ints, but since it only ever gets assigned
  * -1, 0, and 1, I'm going to use less memory and go with bytes.
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-export default class ByteMatrix {
-    constructor(width /*int*/, height /*int*/) {
+var ByteMatrix = /** @class */ (function () {
+    function ByteMatrix(width /*int*/, height /*int*/) {
         this.width = width;
         this.height = height;
-        const bytes = new Array(height); // [height][width]
-        for (let i = 0; i !== height; i++) {
+        var bytes = new Array(height); // [height][width]
+        for (var i = 0; i !== height; i++) {
             bytes[i] = new Uint8Array(width);
         }
         this.bytes = bytes;
     }
-    getHeight() {
+    ByteMatrix.prototype.getHeight = function () {
         return this.height;
-    }
-    getWidth() {
+    };
+    ByteMatrix.prototype.getWidth = function () {
         return this.width;
-    }
-    get(x /*int*/, y /*int*/) {
+    };
+    ByteMatrix.prototype.get = function (x /*int*/, y /*int*/) {
         return this.bytes[y][x];
-    }
+    };
     /**
      * @return an internal representation as bytes, in row-major order. array[y][x] represents point (x,y)
      */
-    getArray() {
+    ByteMatrix.prototype.getArray = function () {
         return this.bytes;
-    }
+    };
     // TYPESCRIPTPORT: preffer to let two methods instead of override to avoid type comparison inside
-    setNumber(x /*int*/, y /*int*/, value /*byte|int*/) {
+    ByteMatrix.prototype.setNumber = function (x /*int*/, y /*int*/, value /*byte|int*/) {
         this.bytes[y][x] = value;
-    }
+    };
     // public set(x: number /*int*/, y: number /*int*/, value: number /*int*/): void {
     //   bytes[y][x] = (byte) value
     // }
-    setBoolean(x /*int*/, y /*int*/, value) {
+    ByteMatrix.prototype.setBoolean = function (x /*int*/, y /*int*/, value) {
         this.bytes[y][x] = /*(byte) */ (value ? 1 : 0);
-    }
-    clear(value /*byte*/) {
-        for (const aByte of this.bytes) {
-            Arrays.fill(aByte, value);
+    };
+    ByteMatrix.prototype.clear = function (value /*byte*/) {
+        var e_1, _a;
+        try {
+            for (var _b = __values(this.bytes), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var aByte = _c.value;
+                Arrays_1.default.fill(aByte, value);
+            }
         }
-    }
-    equals(o) {
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
+    ByteMatrix.prototype.equals = function (o) {
         if (!(o instanceof ByteMatrix)) {
             return false;
         }
-        const other = o;
+        var other = o;
         if (this.width !== other.width) {
             return false;
         }
         if (this.height !== other.height) {
             return false;
         }
-        for (let y = 0, height = this.height; y < height; ++y) {
-            const bytesY = this.bytes[y];
-            const otherBytesY = other.bytes[y];
-            for (let x = 0, width = this.width; x < width; ++x) {
+        for (var y = 0, height = this.height; y < height; ++y) {
+            var bytesY = this.bytes[y];
+            var otherBytesY = other.bytes[y];
+            for (var x = 0, width = this.width; x < width; ++x) {
                 if (bytesY[x] !== otherBytesY[x]) {
                     return false;
                 }
             }
         }
         return true;
-    }
+    };
     /*@Override*/
-    toString() {
-        const result = new StringBuilder(); // (2 * width * height + 2)
-        for (let y = 0, height = this.height; y < height; ++y) {
-            const bytesY = this.bytes[y];
-            for (let x = 0, width = this.width; x < width; ++x) {
+    ByteMatrix.prototype.toString = function () {
+        var result = new StringBuilder_1.default(); // (2 * width * height + 2)
+        for (var y = 0, height = this.height; y < height; ++y) {
+            var bytesY = this.bytes[y];
+            for (var x = 0, width = this.width; x < width; ++x) {
                 switch (bytesY[x]) {
                     case 0:
                         result.append(' 0');
@@ -106,5 +130,7 @@ export default class ByteMatrix {
             result.append('\n');
         }
         return result.toString();
-    }
-}
+    };
+    return ByteMatrix;
+}());
+exports.default = ByteMatrix;

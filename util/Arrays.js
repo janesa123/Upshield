@@ -1,7 +1,22 @@
-import System from './System';
-import IllegalArgumentException from '../IllegalArgumentException';
-import ArrayIndexOutOfBoundsException from '../ArrayIndexOutOfBoundsException';
-export default class Arrays {
+"use strict";
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var System_1 = require("./System");
+var IllegalArgumentException_1 = require("../IllegalArgumentException");
+var ArrayIndexOutOfBoundsException_1 = require("../ArrayIndexOutOfBoundsException");
+var Arrays = /** @class */ (function () {
+    function Arrays() {
+    }
     /**
      * Assigns the specified int value to each element of the specified array
      * of ints.
@@ -9,10 +24,10 @@ export default class Arrays {
      * @param a the array to be filled
      * @param val the value to be stored in all elements of the array
      */
-    static fill(a, val) {
-        for (let i = 0, len = a.length; i < len; i++)
+    Arrays.fill = function (a, val) {
+        for (var i = 0, len = a.length; i < len; i++)
             a[i] = val;
-    }
+    };
     /**
      * Assigns the specified int value to each element of the specified
      * range of the specified array of ints.  The range to be filled
@@ -30,38 +45,42 @@ export default class Arrays {
      * @throws ArrayIndexOutOfBoundsException if {@code fromIndex < 0} or
      *         {@code toIndex > a.length}
      */
-    static fillWithin(a, fromIndex, toIndex, val) {
+    Arrays.fillWithin = function (a, fromIndex, toIndex, val) {
         Arrays.rangeCheck(a.length, fromIndex, toIndex);
-        for (let i = fromIndex; i < toIndex; i++)
+        for (var i = fromIndex; i < toIndex; i++)
             a[i] = val;
-    }
+    };
     /**
      * Checks that {@code fromIndex} and {@code toIndex} are in
      * the range and throws an exception if they aren't.
      */
-    static rangeCheck(arrayLength, fromIndex, toIndex) {
+    Arrays.rangeCheck = function (arrayLength, fromIndex, toIndex) {
         if (fromIndex > toIndex) {
-            throw new IllegalArgumentException('fromIndex(' + fromIndex + ') > toIndex(' + toIndex + ')');
+            throw new IllegalArgumentException_1.default('fromIndex(' + fromIndex + ') > toIndex(' + toIndex + ')');
         }
         if (fromIndex < 0) {
-            throw new ArrayIndexOutOfBoundsException(fromIndex);
+            throw new ArrayIndexOutOfBoundsException_1.default(fromIndex);
         }
         if (toIndex > arrayLength) {
-            throw new ArrayIndexOutOfBoundsException(toIndex);
+            throw new ArrayIndexOutOfBoundsException_1.default(toIndex);
         }
-    }
-    static asList(...args) {
+    };
+    Arrays.asList = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
         return args;
-    }
-    static create(rows, cols, value) {
-        let arr = Array.from({ length: rows });
-        return arr.map(x => Array.from({ length: cols }).fill(value));
-    }
-    static createInt32Array(rows, cols, value) {
-        let arr = Array.from({ length: rows });
-        return arr.map(x => Int32Array.from({ length: cols }).fill(value));
-    }
-    static equals(first, second) {
+    };
+    Arrays.create = function (rows, cols, value) {
+        var arr = Array.from({ length: rows });
+        return arr.map(function (x) { return Array.from({ length: cols }).fill(value); });
+    };
+    Arrays.createInt32Array = function (rows, cols, value) {
+        var arr = Array.from({ length: rows });
+        return arr.map(function (x) { return Int32Array.from({ length: cols }).fill(value); });
+    };
+    Arrays.equals = function (first, second) {
         if (!first) {
             return false;
         }
@@ -77,45 +96,56 @@ export default class Arrays {
         if (first.length !== second.length) {
             return false;
         }
-        for (let i = 0, length = first.length; i < length; i++) {
+        for (var i = 0, length_1 = first.length; i < length_1; i++) {
             if (first[i] !== second[i]) {
                 return false;
             }
         }
         return true;
-    }
-    static hashCode(a) {
+    };
+    Arrays.hashCode = function (a) {
+        var e_1, _a;
         if (a === null) {
             return 0;
         }
-        let result = 1;
-        for (const element of a) {
-            result = 31 * result + element;
+        var result = 1;
+        try {
+            for (var a_1 = __values(a), a_1_1 = a_1.next(); !a_1_1.done; a_1_1 = a_1.next()) {
+                var element = a_1_1.value;
+                result = 31 * result + element;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (a_1_1 && !a_1_1.done && (_a = a_1.return)) _a.call(a_1);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         return result;
-    }
-    static fillUint8Array(a, value) {
-        for (let i = 0; i !== a.length; i++) {
+    };
+    Arrays.fillUint8Array = function (a, value) {
+        for (var i = 0; i !== a.length; i++) {
             a[i] = value;
         }
-    }
-    static copyOf(original, newLength) {
+    };
+    Arrays.copyOf = function (original, newLength) {
         return original.slice(0, newLength);
-    }
-    static copyOfUint8Array(original, newLength) {
+    };
+    Arrays.copyOfUint8Array = function (original, newLength) {
         if (original.length <= newLength) {
-            const newArray = new Uint8Array(newLength);
+            var newArray = new Uint8Array(newLength);
             newArray.set(original);
             return newArray;
         }
         return original.slice(0, newLength);
-    }
-    static copyOfRange(original, from, to) {
-        const newLength = to - from;
-        const copy = new Int32Array(newLength);
-        System.arraycopy(original, from, copy, 0, newLength);
+    };
+    Arrays.copyOfRange = function (original, from, to) {
+        var newLength = to - from;
+        var copy = new Int32Array(newLength);
+        System_1.default.arraycopy(original, from, copy, 0, newLength);
         return copy;
-    }
+    };
     /*
     * Returns the index of of the element in a sorted array or (-n-1) where n is the insertion point
     * for the new element.
@@ -131,15 +161,15 @@ export default class Arrays {
     *
     * http://jsfiddle.net/aryzhov/pkfst550/
     */
-    static binarySearch(ar, el, comparator) {
+    Arrays.binarySearch = function (ar, el, comparator) {
         if (undefined === comparator) {
             comparator = Arrays.numberComparator;
         }
-        let m = 0;
-        let n = ar.length - 1;
+        var m = 0;
+        var n = ar.length - 1;
         while (m <= n) {
-            const k = (n + m) >> 1;
-            const cmp = comparator(el, ar[k]);
+            var k = (n + m) >> 1;
+            var cmp = comparator(el, ar[k]);
             if (cmp > 0) {
                 m = k + 1;
             }
@@ -151,8 +181,10 @@ export default class Arrays {
             }
         }
         return -m - 1;
-    }
-    static numberComparator(a, b) {
+    };
+    Arrays.numberComparator = function (a, b) {
         return a - b;
-    }
-}
+    };
+    return Arrays;
+}());
+exports.default = Arrays;

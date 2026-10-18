@@ -1,12 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Ponyfill for Java's Integer class.
  */
-export default class Integer {
-    static numberOfTrailingZeros(i) {
-        let y;
+var Integer = /** @class */ (function () {
+    function Integer() {
+    }
+    Integer.numberOfTrailingZeros = function (i) {
+        var y;
         if (i === 0)
             return 32;
-        let n = 31;
+        var n = 31;
         y = i << 16;
         if (y !== 0) {
             n -= 16;
@@ -28,13 +32,13 @@ export default class Integer {
             i = y;
         }
         return n - ((i << 1) >>> 31);
-    }
-    static numberOfLeadingZeros(i) {
+    };
+    Integer.numberOfLeadingZeros = function (i) {
         // HD, Figure 5-6
         if (i === 0) {
             return 32;
         }
-        let n = 1;
+        var n = 1;
         if (i >>> 16 === 0) {
             n += 16;
             i <<= 16;
@@ -53,17 +57,17 @@ export default class Integer {
         }
         n -= i >>> 31;
         return n;
-    }
-    static toHexString(i) {
+    };
+    Integer.toHexString = function (i) {
         return i.toString(16);
-    }
-    static toBinaryString(intNumber) {
+    };
+    Integer.toBinaryString = function (intNumber) {
         return String(parseInt(String(intNumber), 2));
-    }
+    };
     // Returns the number of one-bits in the two's complement binary representation of the specified int value. This function is sometimes referred to as the population count.
     // Returns:
     // the number of one-bits in the two's complement binary representation of the specified int value.
-    static bitCount(i) {
+    Integer.bitCount = function (i) {
         // HD, Figure 5-2
         i = i - ((i >>> 1) & 0x55555555);
         i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);
@@ -71,18 +75,21 @@ export default class Integer {
         i = i + (i >>> 8);
         i = i + (i >>> 16);
         return i & 0x3f;
-    }
-    static truncDivision(dividend, divisor) {
+    };
+    Integer.truncDivision = function (dividend, divisor) {
         return Math.trunc(dividend / divisor);
-    }
+    };
     /**
      * Converts A string to an integer.
      * @param s A string to convert into a number.
      * @param radix A value between 2 and 36 that specifies the base of the number in numString. If this argument is not supplied, strings with a prefix of '0x' are considered hexadecimal. All other strings are considered decimal.
      */
-    static parseInt(num, radix = undefined) {
+    Integer.parseInt = function (num, radix) {
+        if (radix === void 0) { radix = undefined; }
         return parseInt(num, radix);
-    }
-}
-Integer.MIN_VALUE_32_BITS = -2147483648;
-Integer.MAX_VALUE = Number.MAX_SAFE_INTEGER;
+    };
+    Integer.MIN_VALUE_32_BITS = -2147483648;
+    Integer.MAX_VALUE = Number.MAX_SAFE_INTEGER;
+    return Integer;
+}());
+exports.default = Integer;

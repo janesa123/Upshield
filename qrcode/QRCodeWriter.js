@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,80 +14,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.qrcode {*/
-import BarcodeFormat from '../BarcodeFormat';
-import EncodeHintType from '../EncodeHintType';
-import BitMatrix from '../common/BitMatrix';
-import ErrorCorrectionLevel from './decoder/ErrorCorrectionLevel';
-import Encoder from './encoder/Encoder';
-import IllegalArgumentException from '../IllegalArgumentException';
-import IllegalStateException from '../IllegalStateException';
+var BarcodeFormat_1 = require("../BarcodeFormat");
+var EncodeHintType_1 = require("../EncodeHintType");
+var BitMatrix_1 = require("../common/BitMatrix");
+var ErrorCorrectionLevel_1 = require("./decoder/ErrorCorrectionLevel");
+var Encoder_1 = require("./encoder/Encoder");
+var IllegalArgumentException_1 = require("../IllegalArgumentException");
+var IllegalStateException_1 = require("../IllegalStateException");
 /*import java.util.Map;*/
 /**
  * This object renders a QR Code as a BitMatrix 2D array of greyscale values.
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-export default class QRCodeWriter {
+var QRCodeWriter = /** @class */ (function () {
+    function QRCodeWriter() {
+    }
     /*@Override*/
     // public encode(contents: string, format: BarcodeFormat, width: number /*int*/, height: number /*int*/): BitMatrix
     //     /*throws WriterException */ {
     //   return encode(contents, format, width, height, null)
     // }
     /*@Override*/
-    encode(contents, format, width /*int*/, height /*int*/, hints) {
+    QRCodeWriter.prototype.encode = function (contents, format, width /*int*/, height /*int*/, hints) {
         if (contents.length === 0) {
-            throw new IllegalArgumentException('Found empty contents');
+            throw new IllegalArgumentException_1.default('Found empty contents');
         }
-        if (format !== BarcodeFormat.QR_CODE) {
-            throw new IllegalArgumentException('Can only encode QR_CODE, but got ' + format);
+        if (format !== BarcodeFormat_1.default.QR_CODE) {
+            throw new IllegalArgumentException_1.default('Can only encode QR_CODE, but got ' + format);
         }
         if (width < 0 || height < 0) {
-            throw new IllegalArgumentException(`Requested dimensions are too small: ${width}x${height}`);
+            throw new IllegalArgumentException_1.default("Requested dimensions are too small: " + width + "x" + height);
         }
-        let errorCorrectionLevel = ErrorCorrectionLevel.L;
-        let quietZone = QRCodeWriter.QUIET_ZONE_SIZE;
+        var errorCorrectionLevel = ErrorCorrectionLevel_1.default.L;
+        var quietZone = QRCodeWriter.QUIET_ZONE_SIZE;
         if (hints !== null) {
-            if (undefined !== hints.get(EncodeHintType.ERROR_CORRECTION)) {
-                errorCorrectionLevel = ErrorCorrectionLevel.fromString(hints.get(EncodeHintType.ERROR_CORRECTION).toString());
+            if (undefined !== hints.get(EncodeHintType_1.default.ERROR_CORRECTION)) {
+                errorCorrectionLevel = ErrorCorrectionLevel_1.default.fromString(hints.get(EncodeHintType_1.default.ERROR_CORRECTION).toString());
             }
-            if (undefined !== hints.get(EncodeHintType.MARGIN)) {
-                quietZone = Number.parseInt(hints.get(EncodeHintType.MARGIN).toString(), 10);
+            if (undefined !== hints.get(EncodeHintType_1.default.MARGIN)) {
+                quietZone = Number.parseInt(hints.get(EncodeHintType_1.default.MARGIN).toString(), 10);
             }
         }
-        const code = Encoder.encode(contents, errorCorrectionLevel, hints);
+        var code = Encoder_1.default.encode(contents, errorCorrectionLevel, hints);
         return QRCodeWriter.renderResult(code, width, height, quietZone);
-    }
+    };
     // Note that the input matrix uses 0 == white, 1 == black, while the output matrix uses
     // 0 == black, 255 == white (i.e. an 8 bit greyscale bitmap).
-    static renderResult(code, width /*int*/, height /*int*/, quietZone /*int*/) {
-        const input = code.getMatrix();
+    QRCodeWriter.renderResult = function (code, width /*int*/, height /*int*/, quietZone /*int*/) {
+        var input = code.getMatrix();
         if (input === null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException_1.default();
         }
-        const inputWidth = input.getWidth();
-        const inputHeight = input.getHeight();
-        const qrWidth = inputWidth + (quietZone * 2);
-        const qrHeight = inputHeight + (quietZone * 2);
-        const outputWidth = Math.max(width, qrWidth);
-        const outputHeight = Math.max(height, qrHeight);
-        const multiple = Math.min(Math.floor(outputWidth / qrWidth), Math.floor(outputHeight / qrHeight));
+        var inputWidth = input.getWidth();
+        var inputHeight = input.getHeight();
+        var qrWidth = inputWidth + (quietZone * 2);
+        var qrHeight = inputHeight + (quietZone * 2);
+        var outputWidth = Math.max(width, qrWidth);
+        var outputHeight = Math.max(height, qrHeight);
+        var multiple = Math.min(Math.floor(outputWidth / qrWidth), Math.floor(outputHeight / qrHeight));
         // Padding includes both the quiet zone and the extra white pixels to accommodate the requested
         // dimensions. For example, if input is 25x25 the QR will be 33x33 including the quiet zone.
         // If the requested size is 200x160, the multiple will be 4, for a QR of 132x132. These will
         // handle all the padding from 100x100 (the actual QR) up to 200x160.
-        const leftPadding = Math.floor((outputWidth - (inputWidth * multiple)) / 2);
-        const topPadding = Math.floor((outputHeight - (inputHeight * multiple)) / 2);
-        const output = new BitMatrix(outputWidth, outputHeight);
-        for (let inputY = 0, outputY = topPadding; inputY < inputHeight; inputY++, outputY += multiple) {
+        var leftPadding = Math.floor((outputWidth - (inputWidth * multiple)) / 2);
+        var topPadding = Math.floor((outputHeight - (inputHeight * multiple)) / 2);
+        var output = new BitMatrix_1.default(outputWidth, outputHeight);
+        for (var inputY = 0, outputY = topPadding; inputY < inputHeight; inputY++, outputY += multiple) {
             // Write the contents of this row of the barcode
-            for (let inputX = 0, outputX = leftPadding; inputX < inputWidth; inputX++, outputX += multiple) {
+            for (var inputX = 0, outputX = leftPadding; inputX < inputWidth; inputX++, outputX += multiple) {
                 if (input.get(inputX, inputY) === 1) {
                     output.setRegion(outputX, outputY, multiple, multiple);
                 }
             }
         }
         return output;
-    }
-}
-QRCodeWriter.QUIET_ZONE_SIZE = 4;
+    };
+    QRCodeWriter.QUIET_ZONE_SIZE = 4;
+    return QRCodeWriter;
+}());
+exports.default = QRCodeWriter;

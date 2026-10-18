@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,73 +14,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ErrorCorrectionLevelValues = void 0;
 /*namespace com.google.zxing.qrcode.decoder {*/
-import ArgumentException from '../../ArgumentException';
-import IllegalArgumentException from '../../IllegalArgumentException';
-export var ErrorCorrectionLevelValues;
+var ArgumentException_1 = require("../../ArgumentException");
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
+var ErrorCorrectionLevelValues;
 (function (ErrorCorrectionLevelValues) {
     ErrorCorrectionLevelValues[ErrorCorrectionLevelValues["L"] = 0] = "L";
     ErrorCorrectionLevelValues[ErrorCorrectionLevelValues["M"] = 1] = "M";
     ErrorCorrectionLevelValues[ErrorCorrectionLevelValues["Q"] = 2] = "Q";
     ErrorCorrectionLevelValues[ErrorCorrectionLevelValues["H"] = 3] = "H";
-})(ErrorCorrectionLevelValues || (ErrorCorrectionLevelValues = {}));
+})(ErrorCorrectionLevelValues = exports.ErrorCorrectionLevelValues || (exports.ErrorCorrectionLevelValues = {}));
 /**
  * <p>See ISO 18004:2006, 6.5.1. This enum encapsulates the four error correction levels
  * defined by the QR code standard.</p>
  *
  * @author Sean Owen
  */
-export default class ErrorCorrectionLevel {
-    constructor(value, stringValue, bits /*int*/) {
+var ErrorCorrectionLevel = /** @class */ (function () {
+    function ErrorCorrectionLevel(value, stringValue, bits /*int*/) {
         this.value = value;
         this.stringValue = stringValue;
         this.bits = bits;
         ErrorCorrectionLevel.FOR_BITS.set(bits, this);
         ErrorCorrectionLevel.FOR_VALUE.set(value, this);
     }
-    getValue() {
+    ErrorCorrectionLevel.prototype.getValue = function () {
         return this.value;
-    }
-    getBits() {
+    };
+    ErrorCorrectionLevel.prototype.getBits = function () {
         return this.bits;
-    }
-    static fromString(s) {
+    };
+    ErrorCorrectionLevel.fromString = function (s) {
         switch (s) {
             case 'L': return ErrorCorrectionLevel.L;
             case 'M': return ErrorCorrectionLevel.M;
             case 'Q': return ErrorCorrectionLevel.Q;
             case 'H': return ErrorCorrectionLevel.H;
-            default: throw new ArgumentException(s + 'not available');
+            default: throw new ArgumentException_1.default(s + 'not available');
         }
-    }
-    toString() {
+    };
+    ErrorCorrectionLevel.prototype.toString = function () {
         return this.stringValue;
-    }
-    equals(o) {
+    };
+    ErrorCorrectionLevel.prototype.equals = function (o) {
         if (!(o instanceof ErrorCorrectionLevel)) {
             return false;
         }
-        const other = o;
+        var other = o;
         return this.value === other.value;
-    }
+    };
     /**
      * @param bits int containing the two bits encoding a QR Code's error correction level
      * @return ErrorCorrectionLevel representing the encoded error correction level
      */
-    static forBits(bits /*int*/) {
+    ErrorCorrectionLevel.forBits = function (bits /*int*/) {
         if (bits < 0 || bits >= ErrorCorrectionLevel.FOR_BITS.size) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         return ErrorCorrectionLevel.FOR_BITS.get(bits);
-    }
-}
-ErrorCorrectionLevel.FOR_BITS = new Map();
-ErrorCorrectionLevel.FOR_VALUE = new Map();
-/** L = ~7% correction */
-ErrorCorrectionLevel.L = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.L, 'L', 0x01);
-/** M = ~15% correction */
-ErrorCorrectionLevel.M = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.M, 'M', 0x00);
-/** Q = ~25% correction */
-ErrorCorrectionLevel.Q = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.Q, 'Q', 0x03);
-/** H = ~30% correction */
-ErrorCorrectionLevel.H = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.H, 'H', 0x02);
+    };
+    ErrorCorrectionLevel.FOR_BITS = new Map();
+    ErrorCorrectionLevel.FOR_VALUE = new Map();
+    /** L = ~7% correction */
+    ErrorCorrectionLevel.L = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.L, 'L', 0x01);
+    /** M = ~15% correction */
+    ErrorCorrectionLevel.M = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.M, 'M', 0x00);
+    /** Q = ~25% correction */
+    ErrorCorrectionLevel.Q = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.Q, 'Q', 0x03);
+    /** H = ~30% correction */
+    ErrorCorrectionLevel.H = new ErrorCorrectionLevel(ErrorCorrectionLevelValues.H, 'H', 0x02);
+    return ErrorCorrectionLevel;
+}());
+exports.default = ErrorCorrectionLevel;
