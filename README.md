@@ -1,126 +1,145 @@
-[<img align="right" src="https://raw.github.com/wiki/zxing/zxing/zxing-logo.png"/>][1]
+text-encoding
+==============
 
-# ZXing
+This is a fork of https://github.com/inexorabletash/text-encoding, which
+has been marked as deprecated in the npm registry.
 
-## Project in Maintenance Mode Only
+```
+npm info text-encoding
 
-The project is in maintenance mode, meaning, changes are driven by contributed patches.
-Only bug fixes and minor enhancements will be considered. The Barcode Scanner app can
-no longer be published, so it's unlikely any changes will be accepted for it.
-There is otherwise no active development or roadmap for this project. It is "DIY".
+text-encoding@0.7.0 | (Unlicense OR Apache-2.0) | deps: none | versions: 11
+Polyfill for the Encoding Living Standard's API.
+https://github.com/inexorabletash/text-encoding
 
-### Runs on your favorite ECMAScript ecosystem
+DEPRECATED ⚠️  - no longer maintained
 
-> If it doesn't, we gonna make it.
+keywords: encoding, decoding, living standard
 
-## What is ZXing?
+dist
+.tarball: https://registry.npmjs.org/text-encoding/-/text-encoding-0.7.0.tgz
+.shasum: f895e836e45990624086601798ea98e8f36ee643
+.integrity: sha512-oJQ3f1hrOnbRLOcwKz0Liq2IcrvDeZRHXhd9RgLrsT+DjWY/nty1Hi7v3dtkaEYbPYe0mUoOfzRrMwfXXwgPUA==
+.unpackedSize: 649.6 kB
 
-> [ZXing][1] ("zebra crossing") is an open-source, multi-format 1D/2D barcode image processing library implemented in Java, with ports to other languages.
+maintainers:
+- inexorabletash <inexorabletash@gmail.com>
 
-## Supported Formats
+dist-tags:
+latest: 0.7.0
 
-> See [Projects](https://github.com/zxing-js/library/projects) and [Milestones](https://github.com/zxing-js/library/milestones) for what is currently done and what's planned next. 👀
-
-| 1D product | 1D industrial                        | 2D           |
-| ---------- |--------------------------------------|--------------|
-| UPC-A      | Code 39                              | QR Code      |
-| UPC-E      | Code 93                              | Data Matrix  |
-| EAN-8      | Code 128                             | Aztec        |
-| EAN-13     | Codabar                              | PDF 417      |
-|            | ITF                                  | ~~MaxiCode~~ |
-|            | RSS-14                               |              |
-|            | RSS-Expanded (not production ready!) |              |
-
-
-## Status
-
-[![Maintainer wanted](https://img.shields.io/badge/maintained-help%20wanted-red)](https://npmjs.org/package/@zxing/ngx-scanner)
-[![Greenkeeper badge](https://badges.greenkeeper.io/zxing-js/library.svg)](https://greenkeeper.io/)
-
-[![NPM version](https://img.shields.io/npm/v/@zxing/library.svg?&label=npm)][0]
-[![npm](https://img.shields.io/npm/dm/localeval.svg)][0]
-[![Contributors](https://img.shields.io/github/contributors/zxing-js/library.svg)](https://github.com/zxing-js/library/graphs/contributors)
-[![Commits to deploy](https://img.shields.io/github/commits-since/zxing-js/library/master.svg?label=commits%20to%20deploy)](https://github.com/zxing-js/library/compare/master...develop)
-
-[![Maintainability](https://api.codeclimate.com/v1/badges/2b9c6ae92412ee8e15a9/maintainability)](https://codeclimate.com/github/zxing-js/library/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/2b9c6ae92412ee8e15a9/test_coverage)](https://codeclimate.com/github/zxing-js/library/test_coverage)
-
-### Attention
-
->NOTE: While we do not have the time to actively maintain zxing-js anymore, we are open to new maintainers taking the lead.
-
-## Demo
-
-See [Live Preview](https://zxing-js.github.io/library/) in browser.
-
-**Note:** All the examples are using ES6, be sure is supported in your browser or modify as needed, Chrome recommended.
-
-## Installation
-
-`npm i @zxing/library --save`
-
-or
-
-`yarn add @zxing/library`
-
-## Limitations
-
-On iOS-Devices **with iOS < 14.3** camera access works only in native Safari and not in other Browsers (Chrome,...) or Apps that use an UIWebView or WKWebView. This is not a restriction of this library but of the limited WebRTC support by Apple. The behavior might change in iOS 11.3 (Apr 2018?, not tested) as stated [here](https://developer.apple.com/library/content/releasenotes/General/WhatsNewInSafari/Articles/Safari_11_1.html#//apple_ref/doc/uid/TP40014305-CH14-SW1)
-
-> iOS 14.3 (released in december 2020) now supports WebRTC in 3rd party browsers as well 🎉 
-
-### Browser Support
-
-The browser layer is using the [MediaDevices](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices) web API which is not supported by older browsers.
-
-_You can use external polyfills like [WebRTC adapter](https://github.com/webrtc/adapter) to increase browser compatibility._
-
-Also, note that the library is using the [`TypedArray`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) (`Int32Array`, `Uint8ClampedArray`, etc.) which are not available in older browsers (e.g. Android 4 default browser).
-
-_You can use [core-js](https://github.com/zloirock/core-js) to add support to these browsers._
-
-In the PDF 417 decoder recent addition, the library now makes use of the new `BigInt` type, which [is not supported by all browsers][2] as well. There's no way to polyfill that and ponyfill libraries are **way to big**, but even if PDF 417 decoding relies on `BigInt` the rest of the library shall work ok in browsers that doesn't support it.
-
-_There's no polyfills for `BigInt` in the way it's coded in here._
-
-## Usage
-
-```javascript
-// use with commonJS
-const { MultiFormatReader, BarcodeFormat } = require('@zxing/library');
-// or with ES6 modules
-import { MultiFormatReader, BarcodeFormat } from '@zxing/library';
-
-const hints = new Map();
-const formats = [BarcodeFormat.QR_CODE, BarcodeFormat.DATA_MATRIX/*, ...*/];
-
-hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
-
-const reader = new MultiFormatReader();
-
-const luminanceSource = new RGBLuminanceSource(imgByteArray, imgWidth, imgHeight);
-const binaryBitmap = new BinaryBitmap(new HybridBinarizer(luminanceSource));
-
-reader.decode(binaryBitmap, hints);
+published a year ago by inexorabletash <inexorabletash@gmail.com>
 ```
 
-## Contributing
+This fork is published as `@zxing/text-encoding` and will be available as long
+as it is in use by `@zxing` packages.
 
-See [Contributing Guide](https://github.com/zxing-js/library/blob/master/CONTRIBUTING.md) for information regarding porting approach and reasoning behind some of the approaches taken.
+<hr />
 
-## Contributors
+This is a polyfill for the [Encoding Living
+Standard](https://encoding.spec.whatwg.org/) API for the Web, allowing
+encoding and decoding of textual data to and from Typed Array buffers
+for binary data in JavaScript.
 
-Special thanks to all the contributors who have contributed for this project. We heartly thankful to you all.
+By default it adheres to the spec and does not support *encoding* to
+legacy encodings, only *decoding*. It is also implemented to match the
+specification's algorithms, rather than for performance. The intended
+use is within Web pages, so it has no dependency on server frameworks
+or particular module schemes.
 
-[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/0)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/0)[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/1)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/1)[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/2)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/2)[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/3)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/3)[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/4)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/4)[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/5)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/5)[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/6)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/6)[![](https://sourcerer.io/fame/odahcam/zxing-js/library/images/7)](https://sourcerer.io/fame/odahcam/zxing-js/library/links/7)
+Basic examples and tests are included.
 
-And a special thanks to [@aleris][3] who created the project itself and made available the initial QR code port.
+### Install ###
 
----
+There are a few ways you can get and use the `@zxing/text-encoding` library.
 
-[![Bless](https://cdn.rawgit.com/LunaGao/BlessYourCodeTag/master/tags/alpaca.svg)](http://lunagao.github.io/BlessYourCodeTag/)
+### HTML Page Usage ###
 
-[0]: https://www.npmjs.com/package/@zxing/library
-[1]: https://github.com/zxing/zxing
-[2]: https://caniuse.com/#feat=bigint
-[3]: https://github.com/aleris
+Clone the repo and include the files directly:
+
+```html
+  <!-- Required for non-UTF encodings -->
+  <script src="encoding-indexes.js"></script>
+  <script src="encoding.js"></script>
+```
+
+This is the only use case the developer cares about. If you want those
+fancy module and/or package manager things that are popular these days
+you should probably use a different library.
+
+#### Package Managers ####
+
+The package is published to **npm** as `@zxing/text-encoding`.
+Use through these is not really supported, since they aren't used by
+the developer of the library. Using `require()` in interesting ways
+probably breaks. Patches welcome, as long as they don't break the
+basic use of the files via `<script>`.
+
+### API Overview ###
+
+Basic Usage
+
+```js
+  var uint8array = new TextEncoder().encode(string);
+  var string = new TextDecoder(encoding).decode(uint8array);
+```
+
+Streaming Decode
+
+```js
+  var string = "", decoder = new TextDecoder(encoding), buffer;
+  while (buffer = next_chunk()) {
+    string += decoder.decode(buffer, {stream:true});
+  }
+  string += decoder.decode(); // finish the stream
+```
+
+### Encodings ###
+
+All encodings from the Encoding specification are supported:
+
+utf-8 ibm866 iso-8859-2 iso-8859-3 iso-8859-4 iso-8859-5 iso-8859-6
+iso-8859-7 iso-8859-8 iso-8859-8-i iso-8859-10 iso-8859-13 iso-8859-14
+iso-8859-15 iso-8859-16 koi8-r koi8-u macintosh windows-874
+windows-1250 windows-1251 windows-1252 windows-1253 windows-1254
+windows-1255 windows-1256 windows-1257 windows-1258 x-mac-cyrillic
+gb18030 hz-gb-2312 big5 euc-jp iso-2022-jp shift_jis euc-kr
+replacement utf-16be utf-16le x-user-defined
+
+(Some encodings may be supported under other names, e.g. ascii,
+iso-8859-1, etc. See [Encoding](https://encoding.spec.whatwg.org/) for
+additional labels for each encoding.)
+
+Encodings other than **utf-8**, **utf-16le** and **utf-16be** require
+an additional `encoding-indexes.js` file to be included. It is rather
+large (596kB uncompressed, 188kB gzipped); portions may be deleted if
+support for some encodings is not required.
+
+### Non-Standard Behavior ###
+
+As required by the specification, only encoding to **utf-8** is
+supported. If you want to try it out, you can force a non-standard
+behavior by passing the `NONSTANDARD_allowLegacyEncoding` option to
+TextEncoder and a label. For example:
+
+```js
+var uint8array = new TextEncoder(
+  'windows-1252', { NONSTANDARD_allowLegacyEncoding: true }).encode(text);
+```
+
+But note that the above won't work if you're using the polyfill in a
+browser that natively supports the TextEncoder API natively, since the
+polyfill won't be used!
+
+You can force the polyfill to be used by using this before the polyfill:
+
+```html
+<script>
+window.TextEncoder = window.TextDecoder = null;
+</script>
+```
+
+To support the legacy encodings (which may be stateful), the
+TextEncoder `encode()` method accepts an optional dictionary and
+`stream` option, e.g. `encoder.encode(string, {stream: true});` This
+is not needed for standard encoding since the input is always in
+complete code points.
