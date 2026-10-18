@@ -13,19 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 /*namespace com.google.zxing.oned {*/
 import BarcodeFormat from '../BarcodeFormat';
 import NotFoundException from '../NotFoundException';
@@ -38,11 +25,10 @@ import ResultPoint from '../ResultPoint';
  * @author Evan @dodobelieve
  * @see CodaBarReader
  */
-var CodaBarReader = /** @class */ (function (_super) {
-    __extends(CodaBarReader, _super);
-    function CodaBarReader() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.CODA_BAR_CHAR_SET = {
+export default class CodaBarReader extends OneDReader {
+    constructor() {
+        super(...arguments);
+        this.CODA_BAR_CHAR_SET = {
             nnnnnww: '0',
             nnnnwwn: '1',
             nnnwnnw: '2',
@@ -64,34 +50,33 @@ var CodaBarReader = /** @class */ (function (_super) {
             nnnwnww: 'C',
             nnnwwwn: 'D'
         };
-        return _this;
     }
-    CodaBarReader.prototype.decodeRow = function (rowNumber, row, hints) {
-        var validRowData = this.getValidRowData(row);
+    decodeRow(rowNumber, row, hints) {
+        let validRowData = this.getValidRowData(row);
         if (!validRowData)
             throw new NotFoundException();
-        var retStr = this.codaBarDecodeRow(validRowData.row);
+        let retStr = this.codaBarDecodeRow(validRowData.row);
         if (!retStr)
             throw new NotFoundException();
         return new Result(retStr, null, 0, [new ResultPoint(validRowData.left, rowNumber), new ResultPoint(validRowData.right, rowNumber)], BarcodeFormat.CODABAR, new Date().getTime());
-    };
+    }
     /**
      * converts bit array to valid data array(lengths of black bits and white bits)
      * @param row bit array to convert
      */
-    CodaBarReader.prototype.getValidRowData = function (row) {
-        var booleanArr = row.toArray();
-        var startIndex = booleanArr.indexOf(true);
+    getValidRowData(row) {
+        let booleanArr = row.toArray();
+        let startIndex = booleanArr.indexOf(true);
         if (startIndex === -1)
             return null;
-        var lastIndex = booleanArr.lastIndexOf(true);
+        let lastIndex = booleanArr.lastIndexOf(true);
         if (lastIndex <= startIndex)
             return null;
         booleanArr = booleanArr.slice(startIndex, lastIndex + 1);
-        var result = [];
-        var lastBit = booleanArr[0];
-        var bitLength = 1;
-        for (var i = 1; i < booleanArr.length; i++) {
+        let result = [];
+        let lastBit = booleanArr[0];
+        let bitLength = 1;
+        for (let i = 1; i < booleanArr.length; i++) {
             if (booleanArr[i] === lastBit) {
                 bitLength++;
             }
@@ -106,35 +91,33 @@ var CodaBarReader = /** @class */ (function (_super) {
         if (result.length < 23 && (result.length + 1) % 8 !== 0)
             return null;
         return { row: result, left: startIndex, right: lastIndex };
-    };
+    }
     /**
      * decode codabar code
      * @param row row to cecode
      */
-    CodaBarReader.prototype.codaBarDecodeRow = function (row) {
-        var code = [];
-        var barThreshold = Math.ceil(row.reduce(function (pre, item) { return (pre + item) / 2; }, 0));
+    codaBarDecodeRow(row) {
+        const code = [];
+        const barThreshold = Math.ceil(row.reduce((pre, item) => (pre + item) / 2, 0));
         // Read one encoded character at a time.
         while (row.length > 0) {
-            var seg = row.splice(0, 8).splice(0, 7);
-            var key = seg.map(function (len) { return (len < barThreshold ? 'n' : 'w'); }).join('');
+            const seg = row.splice(0, 8).splice(0, 7);
+            const key = seg.map(len => (len < barThreshold ? 'n' : 'w')).join('');
             if (this.CODA_BAR_CHAR_SET[key] === undefined)
                 return null;
             code.push(this.CODA_BAR_CHAR_SET[key]);
         }
-        var strCode = code.join('');
+        let strCode = code.join('');
         if (this.validCodaBarString(strCode))
             return strCode;
         return null;
-    };
+    }
     /**
      * check if the string is a CodaBar string
      * @param src string to determine
      */
-    CodaBarReader.prototype.validCodaBarString = function (src) {
-        var reg = /^[A-D].{1,}[A-D]$/;
+    validCodaBarString(src) {
+        let reg = /^[A-D].{1,}[A-D]$/;
         return reg.test(src);
-    };
-    return CodaBarReader;
-}(OneDReader));
-export default CodaBarReader;
+    }
+}

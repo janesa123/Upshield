@@ -1,10 +1,8 @@
-var DecodedObject = /** @class */ (function () {
-    function DecodedObject(newPosition) {
+export default class DecodedObject {
+    constructor(newPosition) {
         this.newPosition = newPosition;
     }
-    DecodedObject.prototype.getNewPosition = function () {
+    getNewPosition() {
         return this.newPosition;
-    };
-    return DecodedObject;
-}());
-export default DecodedObject;
+    }
+}

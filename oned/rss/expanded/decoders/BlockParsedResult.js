@@ -1,5 +1,5 @@
-var BlockParsedResult = /** @class */ (function () {
-    function BlockParsedResult(finished, decodedInformation) {
+export default class BlockParsedResult {
+    constructor(finished, decodedInformation) {
         if (decodedInformation) {
             this.decodedInformation = null;
         }
@@ -8,12 +8,10 @@ var BlockParsedResult = /** @class */ (function () {
             this.decodedInformation = decodedInformation;
         }
     }
-    BlockParsedResult.prototype.getDecodedInformation = function () {
+    getDecodedInformation() {
         return this.decodedInformation;
-    };
-    BlockParsedResult.prototype.isFinished = function () {
+    }
+    isFinished() {
         return this.finished;
-    };
-    return BlockParsedResult;
-}());
-export default BlockParsedResult;
+    }
+}
