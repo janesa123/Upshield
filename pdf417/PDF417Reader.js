@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,27 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417;
 // import com.google.zxing.BarcodeFormat;
-import BarcodeFormat from '../BarcodeFormat';
+var BarcodeFormat_1 = require("../BarcodeFormat");
 // import com.google.zxing.ChecksumException;
-import ChecksumException from '../ChecksumException';
+var ChecksumException_1 = require("../ChecksumException");
 // import com.google.zxing.FormatException;
-import FormatException from '../FormatException';
+var FormatException_1 = require("../FormatException");
 // import com.google.zxing.NotFoundException;
-import NotFoundException from '../NotFoundException';
+var NotFoundException_1 = require("../NotFoundException");
 // import com.google.zxing.Result;
-import Result from '../Result';
+var Result_1 = require("../Result");
 // import com.google.zxing.common.DecoderResult;
 // import com.google.zxing.multi.MultipleBarcodeReader;
 // import com.google.zxing.pdf417.decoder.PDF417ScanningDecoder;
 // import com.google.zxing.pdf417.detector.Detector;
 // import com.google.zxing.pdf417.detector.PDF417DetectorResult;
-import PDF417Common from './PDF417Common';
-import Integer from '../util/Integer';
-import ResultMetadataType from '../ResultMetadataType';
-import Detector from './detector/Detector';
-import PDF417ScanningDecoder from './decoder/PDF417ScanningDecoder';
+var PDF417Common_1 = require("./PDF417Common");
+var Integer_1 = require("../util/Integer");
+var ResultMetadataType_1 = require("../ResultMetadataType");
+var Detector_1 = require("./detector/Detector");
+var PDF417ScanningDecoder_1 = require("./decoder/PDF417ScanningDecoder");
 // import java.util.ArrayList;
 // import java.util.List;
 // import java.util.Map;
@@ -42,7 +55,9 @@ import PDF417ScanningDecoder from './decoder/PDF417ScanningDecoder';
  *
  * @author Guenther Grau
  */
-export default /*public final*/ class PDF417Reader {
+var PDF417Reader = /** @class */ (function () {
+    function PDF417Reader() {
+    }
     // private static /*final Result[]*/ EMPTY_RESULT_ARRAY: Result[] = new Result([0]);
     /**
      * Locates and decodes a PDF417 code in an image.
@@ -53,13 +68,14 @@ export default /*public final*/ class PDF417Reader {
      * @throws ChecksumException
      */
     // @Override
-    decode(image, hints = null) {
-        let result = PDF417Reader.decode(image, hints, false);
+    PDF417Reader.prototype.decode = function (image, hints) {
+        if (hints === void 0) { hints = null; }
+        var result = PDF417Reader.decode(image, hints, false);
         if (result == null || result.length === 0 || result[0] == null) {
-            throw NotFoundException.getNotFoundInstance();
+            throw NotFoundException_1.default.getNotFoundInstance();
         }
         return result[0];
-    }
+    };
     /**
      *
      * @param BinaryBitmap
@@ -67,17 +83,18 @@ export default /*public final*/ class PDF417Reader {
      * @throws NotFoundException
      */
     //   @Override
-    decodeMultiple(image, hints = null) {
+    PDF417Reader.prototype.decodeMultiple = function (image, hints) {
+        if (hints === void 0) { hints = null; }
         try {
             return PDF417Reader.decode(image, hints, true);
         }
         catch (ignored) {
-            if (ignored instanceof FormatException || ignored instanceof ChecksumException) {
-                throw NotFoundException.getNotFoundInstance();
+            if (ignored instanceof FormatException_1.default || ignored instanceof ChecksumException_1.default) {
+                throw NotFoundException_1.default.getNotFoundInstance();
             }
             throw ignored;
         }
-    }
+    };
     /**
      *
      * @param image
@@ -88,45 +105,58 @@ export default /*public final*/ class PDF417Reader {
      * @throws FormatExceptionß
      * @throws ChecksumException
      */
-    static decode(image, hints, multiple) {
-        const results = new Array();
-        const detectorResult = Detector.detectMultiple(image, hints, multiple);
-        for (const points of detectorResult.getPoints()) {
-            const decoderResult = PDF417ScanningDecoder.decode(detectorResult.getBits(), points[4], points[5], points[6], points[7], PDF417Reader.getMinCodewordWidth(points), PDF417Reader.getMaxCodewordWidth(points));
-            const result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), undefined, points, BarcodeFormat.PDF_417);
-            result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, decoderResult.getECLevel());
-            const pdf417ResultMetadata = decoderResult.getOther();
-            if (pdf417ResultMetadata != null) {
-                result.putMetadata(ResultMetadataType.PDF417_EXTRA_METADATA, pdf417ResultMetadata);
+    PDF417Reader.decode = function (image, hints, multiple) {
+        var e_1, _a;
+        var results = new Array();
+        var detectorResult = Detector_1.default.detectMultiple(image, hints, multiple);
+        try {
+            for (var _b = __values(detectorResult.getPoints()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var points = _c.value;
+                var decoderResult = PDF417ScanningDecoder_1.default.decode(detectorResult.getBits(), points[4], points[5], points[6], points[7], PDF417Reader.getMinCodewordWidth(points), PDF417Reader.getMaxCodewordWidth(points));
+                var result = new Result_1.default(decoderResult.getText(), decoderResult.getRawBytes(), undefined, points, BarcodeFormat_1.default.PDF_417);
+                result.putMetadata(ResultMetadataType_1.default.ERROR_CORRECTION_LEVEL, decoderResult.getECLevel());
+                var pdf417ResultMetadata = decoderResult.getOther();
+                if (pdf417ResultMetadata != null) {
+                    result.putMetadata(ResultMetadataType_1.default.PDF417_EXTRA_METADATA, pdf417ResultMetadata);
+                }
+                results.push(result);
             }
-            results.push(result);
         }
-        return results.map(x => x);
-    }
-    static getMaxWidth(p1, p2) {
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return results.map(function (x) { return x; });
+    };
+    PDF417Reader.getMaxWidth = function (p1, p2) {
         if (p1 == null || p2 == null) {
             return 0;
         }
         return Math.trunc(Math.abs(p1.getX() - p2.getX()));
-    }
-    static getMinWidth(p1, p2) {
+    };
+    PDF417Reader.getMinWidth = function (p1, p2) {
         if (p1 == null || p2 == null) {
-            return Integer.MAX_VALUE;
+            return Integer_1.default.MAX_VALUE;
         }
         return Math.trunc(Math.abs(p1.getX() - p2.getX()));
-    }
-    static getMaxCodewordWidth(p) {
-        return Math.floor(Math.max(Math.max(PDF417Reader.getMaxWidth(p[0], p[4]), PDF417Reader.getMaxWidth(p[6], p[2]) * PDF417Common.MODULES_IN_CODEWORD /
-            PDF417Common.MODULES_IN_STOP_PATTERN), Math.max(PDF417Reader.getMaxWidth(p[1], p[5]), PDF417Reader.getMaxWidth(p[7], p[3]) * PDF417Common.MODULES_IN_CODEWORD /
-            PDF417Common.MODULES_IN_STOP_PATTERN)));
-    }
-    static getMinCodewordWidth(p) {
-        return Math.floor(Math.min(Math.min(PDF417Reader.getMinWidth(p[0], p[4]), PDF417Reader.getMinWidth(p[6], p[2]) * PDF417Common.MODULES_IN_CODEWORD /
-            PDF417Common.MODULES_IN_STOP_PATTERN), Math.min(PDF417Reader.getMinWidth(p[1], p[5]), PDF417Reader.getMinWidth(p[7], p[3]) * PDF417Common.MODULES_IN_CODEWORD /
-            PDF417Common.MODULES_IN_STOP_PATTERN)));
-    }
+    };
+    PDF417Reader.getMaxCodewordWidth = function (p) {
+        return Math.floor(Math.max(Math.max(PDF417Reader.getMaxWidth(p[0], p[4]), PDF417Reader.getMaxWidth(p[6], p[2]) * PDF417Common_1.default.MODULES_IN_CODEWORD /
+            PDF417Common_1.default.MODULES_IN_STOP_PATTERN), Math.max(PDF417Reader.getMaxWidth(p[1], p[5]), PDF417Reader.getMaxWidth(p[7], p[3]) * PDF417Common_1.default.MODULES_IN_CODEWORD /
+            PDF417Common_1.default.MODULES_IN_STOP_PATTERN)));
+    };
+    PDF417Reader.getMinCodewordWidth = function (p) {
+        return Math.floor(Math.min(Math.min(PDF417Reader.getMinWidth(p[0], p[4]), PDF417Reader.getMinWidth(p[6], p[2]) * PDF417Common_1.default.MODULES_IN_CODEWORD /
+            PDF417Common_1.default.MODULES_IN_STOP_PATTERN), Math.min(PDF417Reader.getMinWidth(p[1], p[5]), PDF417Reader.getMinWidth(p[7], p[3]) * PDF417Common_1.default.MODULES_IN_CODEWORD /
+            PDF417Common_1.default.MODULES_IN_STOP_PATTERN)));
+    };
     // @Override
-    reset() {
+    PDF417Reader.prototype.reset = function () {
         // nothing needs to be reset
-    }
-}
+    };
+    return PDF417Reader;
+}());
+exports.default = PDF417Reader;

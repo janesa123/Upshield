@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2013 ZXing authors
  *
@@ -13,51 +14,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417.decoder;
 /**
  * @author Guenther Grau
  */
-export default /*final*/ class Codeword {
-    constructor(startX, endX, bucket, value) {
+var Codeword = /** @class */ (function () {
+    function Codeword(startX, endX, bucket, value) {
         this.rowNumber = Codeword.BARCODE_ROW_UNKNOWN;
         this.startX = Math.trunc(startX);
         this.endX = Math.trunc(endX);
         this.bucket = Math.trunc(bucket);
         this.value = Math.trunc(value);
     }
-    hasValidRowNumber() {
+    Codeword.prototype.hasValidRowNumber = function () {
         return this.isValidRowNumber(this.rowNumber);
-    }
-    isValidRowNumber(rowNumber) {
+    };
+    Codeword.prototype.isValidRowNumber = function (rowNumber) {
         return rowNumber !== Codeword.BARCODE_ROW_UNKNOWN && this.bucket === (rowNumber % 3) * 3;
-    }
-    setRowNumberAsRowIndicatorColumn() {
+    };
+    Codeword.prototype.setRowNumberAsRowIndicatorColumn = function () {
         this.rowNumber = Math.trunc((Math.trunc(this.value / 30)) * 3 + Math.trunc(this.bucket / 3));
-    }
-    getWidth() {
+    };
+    Codeword.prototype.getWidth = function () {
         return this.endX - this.startX;
-    }
-    getStartX() {
+    };
+    Codeword.prototype.getStartX = function () {
         return this.startX;
-    }
-    getEndX() {
+    };
+    Codeword.prototype.getEndX = function () {
         return this.endX;
-    }
-    getBucket() {
+    };
+    Codeword.prototype.getBucket = function () {
         return this.bucket;
-    }
-    getValue() {
+    };
+    Codeword.prototype.getValue = function () {
         return this.value;
-    }
-    getRowNumber() {
+    };
+    Codeword.prototype.getRowNumber = function () {
         return this.rowNumber;
-    }
-    setRowNumber(rowNumber) {
+    };
+    Codeword.prototype.setRowNumber = function (rowNumber) {
         this.rowNumber = rowNumber;
-    }
+    };
     //   @Override
-    toString() {
+    Codeword.prototype.toString = function () {
         return this.rowNumber + '|' + this.value;
-    }
-}
-Codeword.BARCODE_ROW_UNKNOWN = -1;
+    };
+    Codeword.BARCODE_ROW_UNKNOWN = -1;
+    return Codeword;
+}());
+exports.default = Codeword;

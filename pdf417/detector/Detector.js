@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2009 ZXing authors
 *
@@ -13,12 +14,24 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // import com.google.zxing.NotFoundException;
 // import com.google.zxing.ResultPoint;
-import ResultPoint from '../../ResultPoint';
-import System from '../../util/System';
-import Arrays from '../../util/Arrays';
-import PDF417DetectorResult from './PDF417DetectorResult';
+var ResultPoint_1 = require("../../ResultPoint");
+var System_1 = require("../../util/System");
+var Arrays_1 = require("../../util/Arrays");
+var PDF417DetectorResult_1 = require("./PDF417DetectorResult");
 // import java.util.ArrayList;
 // import java.util.Arrays;
 // import java.util.List;
@@ -31,7 +44,9 @@ import PDF417DetectorResult from './PDF417DetectorResult';
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Guenther Grau
  */
-export default /*public*/ /*final*/ class Detector {
+var Detector = /** @class */ (function () {
+    function Detector() {
+    }
     /**
      * <p>Detects a PDF417 Code in an image. Only checks 0 and 180 degree rotations.</p>
      *
@@ -42,19 +57,19 @@ export default /*public*/ /*final*/ class Detector {
      * @return {@link PDF417DetectorResult} encapsulating results of detecting a PDF417 code
      * @throws NotFoundException if no PDF417 Code can be found
      */
-    static detectMultiple(image, hints, multiple) {
+    Detector.detectMultiple = function (image, hints, multiple) {
         // TODO detection improvement, tryHarder could try several different luminance thresholds/blackpoints or even
         // different binarizers
         // boolean tryHarder = hints != null && hints.containsKey(DecodeHintType.TRY_HARDER);
-        let bitMatrix = image.getBlackMatrix();
-        let barcodeCoordinates = Detector.detect(multiple, bitMatrix);
+        var bitMatrix = image.getBlackMatrix();
+        var barcodeCoordinates = Detector.detect(multiple, bitMatrix);
         if (!barcodeCoordinates.length) {
             bitMatrix = bitMatrix.clone();
             bitMatrix.rotate180();
             barcodeCoordinates = Detector.detect(multiple, bitMatrix);
         }
-        return new PDF417DetectorResult(bitMatrix, barcodeCoordinates);
-    }
+        return new PDF417DetectorResult_1.default(bitMatrix, barcodeCoordinates);
+    };
     /**
      * Detects PDF417 codes in an image. Only checks 0 degree rotation
      * @param multiple if true, then the image is searched for multiple codes. If false, then at most one code will
@@ -62,13 +77,14 @@ export default /*public*/ /*final*/ class Detector {
      * @param bitMatrix bit matrix to detect barcodes in
      * @return List of ResultPoint arrays containing the coordinates of found barcodes
      */
-    static detect(multiple, bitMatrix) {
-        const barcodeCoordinates = new Array();
-        let row = 0;
-        let column = 0;
-        let foundBarcodeInRow = false;
+    Detector.detect = function (multiple, bitMatrix) {
+        var e_1, _a;
+        var barcodeCoordinates = new Array();
+        var row = 0;
+        var column = 0;
+        var foundBarcodeInRow = false;
         while (row < bitMatrix.getHeight()) {
-            const vertices = Detector.findVertices(bitMatrix, row, column);
+            var vertices = Detector.findVertices(bitMatrix, row, column);
             if (vertices[0] == null && vertices[3] == null) {
                 if (!foundBarcodeInRow) {
                     // we didn't find any barcode so that's the end of searching
@@ -78,13 +94,23 @@ export default /*public*/ /*final*/ class Detector {
                 // below the lowest barcode we found so far.
                 foundBarcodeInRow = false;
                 column = 0;
-                for (const barcodeCoordinate of barcodeCoordinates) {
-                    if (barcodeCoordinate[1] != null) {
-                        row = Math.trunc(Math.max(row, barcodeCoordinate[1].getY()));
+                try {
+                    for (var barcodeCoordinates_1 = (e_1 = void 0, __values(barcodeCoordinates)), barcodeCoordinates_1_1 = barcodeCoordinates_1.next(); !barcodeCoordinates_1_1.done; barcodeCoordinates_1_1 = barcodeCoordinates_1.next()) {
+                        var barcodeCoordinate = barcodeCoordinates_1_1.value;
+                        if (barcodeCoordinate[1] != null) {
+                            row = Math.trunc(Math.max(row, barcodeCoordinate[1].getY()));
+                        }
+                        if (barcodeCoordinate[3] != null) {
+                            row = Math.max(row, Math.trunc(barcodeCoordinate[3].getY()));
+                        }
                     }
-                    if (barcodeCoordinate[3] != null) {
-                        row = Math.max(row, Math.trunc(barcodeCoordinate[3].getY()));
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (barcodeCoordinates_1_1 && !barcodeCoordinates_1_1.done && (_a = barcodeCoordinates_1.return)) _a.call(barcodeCoordinates_1);
                     }
+                    finally { if (e_1) throw e_1.error; }
                 }
                 row += Detector.ROW_STEP;
                 continue;
@@ -106,7 +132,7 @@ export default /*public*/ /*final*/ class Detector {
             }
         }
         return barcodeCoordinates;
-    }
+    };
     /**
      * Locate the vertices and the codewords area of a black blob using the Start
      * and Stop patterns as locators.
@@ -122,11 +148,11 @@ export default /*public*/ /*final*/ class Detector {
      *           vertices[6] x, y top right codeword area
      *           vertices[7] x, y bottom right codeword area
      */
-    static findVertices(matrix, startRow, startColumn) {
-        const height = matrix.getHeight();
-        const width = matrix.getWidth();
+    Detector.findVertices = function (matrix, startRow, startColumn) {
+        var height = matrix.getHeight();
+        var width = matrix.getWidth();
         // const result = new ResultPoint[8];
-        const result = new Array(8);
+        var result = new Array(8);
         Detector.copyToResult(result, Detector.findRowsWithPattern(matrix, height, width, startRow, startColumn, Detector.START_PATTERN), Detector.INDEXES_START_PATTERN);
         if (result[4] != null) {
             startColumn = Math.trunc(result[4].getX());
@@ -134,22 +160,22 @@ export default /*public*/ /*final*/ class Detector {
         }
         Detector.copyToResult(result, Detector.findRowsWithPattern(matrix, height, width, startRow, startColumn, Detector.STOP_PATTERN), Detector.INDEXES_STOP_PATTERN);
         return result;
-    }
-    static copyToResult(result, tmpResult, destinationIndexes) {
-        for (let i = 0; i < destinationIndexes.length; i++) {
+    };
+    Detector.copyToResult = function (result, tmpResult, destinationIndexes) {
+        for (var i = 0; i < destinationIndexes.length; i++) {
             result[destinationIndexes[i]] = tmpResult[i];
         }
-    }
-    static findRowsWithPattern(matrix, height, width, startRow, startColumn, pattern) {
+    };
+    Detector.findRowsWithPattern = function (matrix, height, width, startRow, startColumn, pattern) {
         // const result = new ResultPoint[4];
-        const result = new Array(4);
-        let found = false;
-        const counters = new Int32Array(pattern.length);
+        var result = new Array(4);
+        var found = false;
+        var counters = new Int32Array(pattern.length);
         for (; startRow < height; startRow += Detector.ROW_STEP) {
-            let loc = Detector.findGuardPattern(matrix, startColumn, startRow, width, false, pattern, counters);
+            var loc = Detector.findGuardPattern(matrix, startColumn, startRow, width, false, pattern, counters);
             if (loc != null) {
                 while (startRow > 0) {
-                    const previousRowLoc = Detector.findGuardPattern(matrix, startColumn, --startRow, width, false, pattern, counters);
+                    var previousRowLoc = Detector.findGuardPattern(matrix, startColumn, --startRow, width, false, pattern, counters);
                     if (previousRowLoc != null) {
                         loc = previousRowLoc;
                     }
@@ -158,19 +184,19 @@ export default /*public*/ /*final*/ class Detector {
                         break;
                     }
                 }
-                result[0] = new ResultPoint(loc[0], startRow);
-                result[1] = new ResultPoint(loc[1], startRow);
+                result[0] = new ResultPoint_1.default(loc[0], startRow);
+                result[1] = new ResultPoint_1.default(loc[1], startRow);
                 found = true;
                 break;
             }
         }
-        let stopRow = startRow + 1;
+        var stopRow = startRow + 1;
         // Last row of the current symbol that contains pattern
         if (found) {
-            let skippedRowCount = 0;
-            let previousRowLoc = Int32Array.from([Math.trunc(result[0].getX()), Math.trunc(result[1].getX())]);
+            var skippedRowCount = 0;
+            var previousRowLoc = Int32Array.from([Math.trunc(result[0].getX()), Math.trunc(result[1].getX())]);
             for (; stopRow < height; stopRow++) {
-                const loc = Detector.findGuardPattern(matrix, previousRowLoc[0], stopRow, width, false, pattern, counters);
+                var loc = Detector.findGuardPattern(matrix, previousRowLoc[0], stopRow, width, false, pattern, counters);
                 // a found pattern is only considered to belong to the same barcode if the start and end positions
                 // don't differ too much. Pattern drift should be not bigger than two for consecutive rows. With
                 // a higher number of skipped rows drift could be larger. To keep it simple for now, we allow a slightly
@@ -191,14 +217,14 @@ export default /*public*/ /*final*/ class Detector {
                 }
             }
             stopRow -= skippedRowCount + 1;
-            result[2] = new ResultPoint(previousRowLoc[0], stopRow);
-            result[3] = new ResultPoint(previousRowLoc[1], stopRow);
+            result[2] = new ResultPoint_1.default(previousRowLoc[0], stopRow);
+            result[3] = new ResultPoint_1.default(previousRowLoc[1], stopRow);
         }
         if (stopRow - startRow < Detector.BARCODE_MIN_HEIGHT) {
-            Arrays.fill(result, null);
+            Arrays_1.default.fill(result, null);
         }
         return result;
-    }
+    };
     /**
      * @param matrix row of black/white values to search
      * @param column x position to start search
@@ -209,19 +235,19 @@ export default /*public*/ /*final*/ class Detector {
      * @param counters array of counters, as long as pattern, to re-use
      * @return start/end horizontal offset of guard pattern, as an array of two ints.
      */
-    static findGuardPattern(matrix, column, row, width, whiteFirst, pattern, counters) {
-        Arrays.fillWithin(counters, 0, counters.length, 0);
-        let patternStart = column;
-        let pixelDrift = 0;
+    Detector.findGuardPattern = function (matrix, column, row, width, whiteFirst, pattern, counters) {
+        Arrays_1.default.fillWithin(counters, 0, counters.length, 0);
+        var patternStart = column;
+        var pixelDrift = 0;
         // if there are black pixels left of the current pixel shift to the left, but only for MAX_PIXEL_DRIFT pixels
         while (matrix.get(patternStart, row) && patternStart > 0 && pixelDrift++ < Detector.MAX_PIXEL_DRIFT) {
             patternStart--;
         }
-        let x = patternStart;
-        let counterPosition = 0;
-        let patternLength = pattern.length;
-        for (let isWhite = whiteFirst; x < width; x++) {
-            let pixel = matrix.get(x, row);
+        var x = patternStart;
+        var counterPosition = 0;
+        var patternLength = pattern.length;
+        for (var isWhite = whiteFirst; x < width; x++) {
+            var pixel = matrix.get(x, row);
             if (pixel !== isWhite) {
                 counters[counterPosition]++;
             }
@@ -231,7 +257,7 @@ export default /*public*/ /*final*/ class Detector {
                         return new Int32Array([patternStart, x]);
                     }
                     patternStart += counters[0] + counters[1];
-                    System.arraycopy(counters, 2, counters, 0, counterPosition - 1);
+                    System_1.default.arraycopy(counters, 2, counters, 0, counterPosition - 1);
                     counters[counterPosition - 1] = 0;
                     counters[counterPosition] = 0;
                     counterPosition--;
@@ -248,7 +274,7 @@ export default /*public*/ /*final*/ class Detector {
             return new Int32Array([patternStart, x - 1]);
         }
         return null;
-    }
+    };
     /**
      * Determines how closely a set of observed counts of runs of black/white
      * values matches a given target pattern. This is reported as the ratio of
@@ -260,11 +286,11 @@ export default /*public*/ /*final*/ class Detector {
      * @param maxIndividualVariance The most any counter can differ before we give up
      * @return ratio of total variance between counters and pattern compared to total pattern size
      */
-    static patternMatchVariance(counters, pattern, maxIndividualVariance) {
-        let numCounters = counters.length;
-        let total = 0;
-        let patternLength = 0;
-        for (let i = 0; i < numCounters; i++) {
+    Detector.patternMatchVariance = function (counters, pattern, maxIndividualVariance) {
+        var numCounters = counters.length;
+        var total = 0;
+        var patternLength = 0;
+        for (var i = 0; i < numCounters; i++) {
             total += counters[i];
             patternLength += pattern[i];
         }
@@ -276,36 +302,38 @@ export default /*public*/ /*final*/ class Detector {
         // We're going to fake floating-point math in integers. We just need to use more bits.
         // Scale up patternLength so that intermediate values below like scaledCounter will have
         // more "significant digits".
-        let unitBarWidth = total / patternLength;
+        var unitBarWidth = total / patternLength;
         maxIndividualVariance *= unitBarWidth;
-        let totalVariance = 0.0;
-        for (let x = 0; x < numCounters; x++) {
-            let counter = counters[x];
-            let scaledPattern = pattern[x] * unitBarWidth;
-            let variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
+        var totalVariance = 0.0;
+        for (var x = 0; x < numCounters; x++) {
+            var counter = counters[x];
+            var scaledPattern = pattern[x] * unitBarWidth;
+            var variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
             if (variance > maxIndividualVariance) {
                 return /*Float.POSITIVE_INFINITY*/ Infinity;
             }
             totalVariance += variance;
         }
         return totalVariance / total;
-    }
-}
-Detector.INDEXES_START_PATTERN = Int32Array.from([0, 4, 1, 5]);
-Detector.INDEXES_STOP_PATTERN = Int32Array.from([6, 2, 7, 3]);
-Detector.MAX_AVG_VARIANCE = 0.42;
-Detector.MAX_INDIVIDUAL_VARIANCE = 0.8;
-// B S B S B S B S Bar/Space pattern
-// 11111111 0 1 0 1 0 1 000
-Detector.START_PATTERN = Int32Array.from([8, 1, 1, 1, 1, 1, 1, 3]);
-// 1111111 0 1 000 1 0 1 00 1
-Detector.STOP_PATTERN = Int32Array.from([7, 1, 1, 3, 1, 1, 1, 2, 1]);
-Detector.MAX_PIXEL_DRIFT = 3;
-Detector.MAX_PATTERN_DRIFT = 5;
-// if we set the value too low, then we don't detect the correct height of the bar if the start patterns are damaged.
-// if we set the value too high, then we might detect the start pattern from a neighbor barcode.
-Detector.SKIPPED_ROW_COUNT_MAX = 25;
-// A PDF471 barcode should have at least 3 rows, with each row being >= 3 times the module width. Therefore it should be at least
-// 9 pixels tall. To be conservative, we use about half the size to ensure we don't miss it.
-Detector.ROW_STEP = 5;
-Detector.BARCODE_MIN_HEIGHT = 10;
+    };
+    Detector.INDEXES_START_PATTERN = Int32Array.from([0, 4, 1, 5]);
+    Detector.INDEXES_STOP_PATTERN = Int32Array.from([6, 2, 7, 3]);
+    Detector.MAX_AVG_VARIANCE = 0.42;
+    Detector.MAX_INDIVIDUAL_VARIANCE = 0.8;
+    // B S B S B S B S Bar/Space pattern
+    // 11111111 0 1 0 1 0 1 000
+    Detector.START_PATTERN = Int32Array.from([8, 1, 1, 1, 1, 1, 1, 3]);
+    // 1111111 0 1 000 1 0 1 00 1
+    Detector.STOP_PATTERN = Int32Array.from([7, 1, 1, 3, 1, 1, 1, 2, 1]);
+    Detector.MAX_PIXEL_DRIFT = 3;
+    Detector.MAX_PATTERN_DRIFT = 5;
+    // if we set the value too low, then we don't detect the correct height of the bar if the start patterns are damaged.
+    // if we set the value too high, then we might detect the start pattern from a neighbor barcode.
+    Detector.SKIPPED_ROW_COUNT_MAX = 25;
+    // A PDF471 barcode should have at least 3 rows, with each row being >= 3 times the module width. Therefore it should be at least
+    // 9 pixels tall. To be conservative, we use about half the size to ensure we don't miss it.
+    Detector.ROW_STEP = 5;
+    Detector.BARCODE_MIN_HEIGHT = 10;
+    return Detector;
+}());
+exports.default = Detector;

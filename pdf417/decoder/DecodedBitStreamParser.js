@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,26 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417.decoder;
 // import com.google.zxing.FormatException;
-import FormatException from '../../FormatException';
+var FormatException_1 = require("../../FormatException");
 // import com.google.zxing.common.CharacterSetECI;
-import CharacterSetECI from '../../common/CharacterSetECI';
+var CharacterSetECI_1 = require("../../common/CharacterSetECI");
 // import com.google.zxing.common.DecoderResult;
-import DecoderResult from '../../common/DecoderResult';
+var DecoderResult_1 = require("../../common/DecoderResult");
 // import com.google.zxing.pdf417.PDF417ResultMetadata;
-import PDF417ResultMetadata from '../PDF417ResultMetadata';
+var PDF417ResultMetadata_1 = require("../PDF417ResultMetadata");
 // import java.io.ByteArrayOutputStream;
 // import java.math.BigInteger;
 // import java.nio.charset.Charset;
 // import java.nio.charset.StandardCharsets;
 // import java.util.Arrays;
-import Arrays from '../../util/Arrays';
-import StringBuilder from '../../util/StringBuilder';
-import Integer from '../../util/Integer';
-import Long from '../../util/Long';
-import ByteArrayOutputStream from '../../util/ByteArrayOutputStream';
-import StringEncoding from '../../util/StringEncoding';
+var Arrays_1 = require("../../util/Arrays");
+var StringBuilder_1 = require("../../util/StringBuilder");
+var Integer_1 = require("../../util/Integer");
+var Long_1 = require("../../util/Long");
+var ByteArrayOutputStream_1 = require("../../util/ByteArrayOutputStream");
+var StringEncoding_1 = require("../../util/StringEncoding");
 /*private*/ var Mode;
 (function (Mode) {
     Mode[Mode["ALPHA"] = 0] = "ALPHA";
@@ -63,7 +65,7 @@ function getBigIntConstructor() {
 /**
  * Used to store the BigInt constructor.
  */
-let BigInteger;
+var BigInteger;
 /**
  * This function creates a bigint value. It allows browsers
  * that doesn't support BigInt to run the rest of the library
@@ -80,12 +82,12 @@ function createBigInt(num) {
 }
 function getEXP900() {
     // in Java - array with length = 16
-    let EXP900 = [];
+    var EXP900 = [];
     EXP900[0] = createBigInt(1);
-    let nineHundred = createBigInt(900);
+    var nineHundred = createBigInt(900);
     EXP900[1] = nineHundred;
     // in Java - array with length = 16
-    for (let i /*int*/ = 2; i < 16; i++) {
+    for (var i /*int*/ = 2; i < 16; i++) {
         EXP900[i] = EXP900[i - 1] * nineHundred;
     }
     return EXP900;
@@ -96,7 +98,9 @@ function getEXP900() {
  * @author SITA Lab (kevin.osullivan@sita.aero)
  * @author Guenther Grau
  */
-export default /*final*/ class DecodedBitStreamParser {
+var DecodedBitStreamParser = /** @class */ (function () {
+    function DecodedBitStreamParser() {
+    }
     //   private DecodedBitStreamParser() {
     // }
     /**
@@ -106,11 +110,11 @@ export default /*final*/ class DecodedBitStreamParser {
      *
      * @throws FormatException
      */
-    static decode(codewords, ecLevel) {
+    DecodedBitStreamParser.decode = function (codewords, ecLevel) {
         // pass encoding to result (will be used for decode symbols in byte mode)
-        let result = new StringBuilder('');
+        var result = new StringBuilder_1.default('');
         // let encoding: Charset = StandardCharsets.ISO_8859_1;
-        let encoding = CharacterSetECI.ISO8859_1;
+        var encoding = CharacterSetECI_1.default.ISO8859_1;
         /**
          * @note the next command is specific from this TypeScript library
          * because TS can't properly cast some values to char and
@@ -120,9 +124,9 @@ export default /*final*/ class DecodedBitStreamParser {
          */
         result.enableDecoding(encoding);
         // Get compaction mode
-        let codeIndex = 1;
-        let code = codewords[codeIndex++];
-        let resultMetadata = new PDF417ResultMetadata();
+        var codeIndex = 1;
+        var code = codewords[codeIndex++];
+        var resultMetadata = new PDF417ResultMetadata_1.default();
         while (codeIndex < codewords[0]) {
             switch (code) {
                 case DecodedBitStreamParser.TEXT_COMPACTION_MODE_LATCH:
@@ -139,7 +143,7 @@ export default /*final*/ class DecodedBitStreamParser {
                     codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex, result);
                     break;
                 case DecodedBitStreamParser.ECI_CHARSET:
-                    let charsetECI = CharacterSetECI.getCharacterSetECIByValue(codewords[codeIndex++]);
+                    var charsetECI = CharacterSetECI_1.default.getCharacterSetECIByValue(codewords[codeIndex++]);
                     // encoding = Charset.forName(charsetECI.getName());
                     break;
                 case DecodedBitStreamParser.ECI_GENERAL_PURPOSE:
@@ -156,7 +160,7 @@ export default /*final*/ class DecodedBitStreamParser {
                 case DecodedBitStreamParser.BEGIN_MACRO_PDF417_OPTIONAL_FIELD:
                 case DecodedBitStreamParser.MACRO_PDF417_TERMINATOR:
                     // Should not see these outside a macro block
-                    throw new FormatException();
+                    throw new FormatException_1.default();
                 default:
                     // Default to text compaction. During testing numerous barcodes
                     // appeared to be missing the starting mode. In these cases defaulting
@@ -169,16 +173,16 @@ export default /*final*/ class DecodedBitStreamParser {
                 code = codewords[codeIndex++];
             }
             else {
-                throw FormatException.getFormatInstance();
+                throw FormatException_1.default.getFormatInstance();
             }
         }
         if (result.length() === 0) {
-            throw FormatException.getFormatInstance();
+            throw FormatException_1.default.getFormatInstance();
         }
-        let decoderResult = new DecoderResult(null, result.toString(), null, ecLevel);
+        var decoderResult = new DecoderResult_1.default(null, result.toString(), null, ecLevel);
         decoderResult.setOther(resultMetadata);
         return decoderResult;
-    }
+    };
     /**
      *
      * @param int
@@ -192,20 +196,20 @@ export default /*final*/ class DecodedBitStreamParser {
      * @throws FormatException
      */
     // @SuppressWarnings("deprecation")
-    static decodeMacroBlock(codewords, codeIndex, resultMetadata) {
+    DecodedBitStreamParser.decodeMacroBlock = function (codewords, codeIndex, resultMetadata) {
         if (codeIndex + DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS > codewords[0]) {
             // we must have at least two bytes left for the segment index
-            throw FormatException.getFormatInstance();
+            throw FormatException_1.default.getFormatInstance();
         }
-        let segmentIndexArray = new Int32Array(DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS);
-        for (let i /*int*/ = 0; i < DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS; i++, codeIndex++) {
+        var segmentIndexArray = new Int32Array(DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS);
+        for (var i /*int*/ = 0; i < DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS; i++, codeIndex++) {
             segmentIndexArray[i] = codewords[codeIndex];
         }
-        resultMetadata.setSegmentIndex(Integer.parseInt(DecodedBitStreamParser.decodeBase900toBase10(segmentIndexArray, DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS)));
-        let fileId = new StringBuilder();
+        resultMetadata.setSegmentIndex(Integer_1.default.parseInt(DecodedBitStreamParser.decodeBase900toBase10(segmentIndexArray, DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS)));
+        var fileId = new StringBuilder_1.default();
         codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex, fileId);
         resultMetadata.setFileId(fileId.toString());
-        let optionalFieldsStart = -1;
+        var optionalFieldsStart = -1;
         if (codewords[codeIndex] === DecodedBitStreamParser.BEGIN_MACRO_PDF417_OPTIONAL_FIELD) {
             optionalFieldsStart = codeIndex + 1;
         }
@@ -215,42 +219,42 @@ export default /*final*/ class DecodedBitStreamParser {
                     codeIndex++;
                     switch (codewords[codeIndex]) {
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_NAME:
-                            let fileName = new StringBuilder();
+                            var fileName = new StringBuilder_1.default();
                             codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex + 1, fileName);
                             resultMetadata.setFileName(fileName.toString());
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SENDER:
-                            let sender = new StringBuilder();
+                            var sender = new StringBuilder_1.default();
                             codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex + 1, sender);
                             resultMetadata.setSender(sender.toString());
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_ADDRESSEE:
-                            let addressee = new StringBuilder();
+                            var addressee = new StringBuilder_1.default();
                             codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex + 1, addressee);
                             resultMetadata.setAddressee(addressee.toString());
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SEGMENT_COUNT:
-                            let segmentCount = new StringBuilder();
+                            var segmentCount = new StringBuilder_1.default();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, segmentCount);
-                            resultMetadata.setSegmentCount(Integer.parseInt(segmentCount.toString()));
+                            resultMetadata.setSegmentCount(Integer_1.default.parseInt(segmentCount.toString()));
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_TIME_STAMP:
-                            let timestamp = new StringBuilder();
+                            var timestamp = new StringBuilder_1.default();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, timestamp);
-                            resultMetadata.setTimestamp(Long.parseLong(timestamp.toString()));
+                            resultMetadata.setTimestamp(Long_1.default.parseLong(timestamp.toString()));
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_CHECKSUM:
-                            let checksum = new StringBuilder();
+                            var checksum = new StringBuilder_1.default();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, checksum);
-                            resultMetadata.setChecksum(Integer.parseInt(checksum.toString()));
+                            resultMetadata.setChecksum(Integer_1.default.parseInt(checksum.toString()));
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_SIZE:
-                            let fileSize = new StringBuilder();
+                            var fileSize = new StringBuilder_1.default();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, fileSize);
-                            resultMetadata.setFileSize(Long.parseLong(fileSize.toString()));
+                            resultMetadata.setFileSize(Long_1.default.parseLong(fileSize.toString()));
                             break;
                         default:
-                            throw FormatException.getFormatInstance();
+                            throw FormatException_1.default.getFormatInstance();
                     }
                     break;
                 case DecodedBitStreamParser.MACRO_PDF417_TERMINATOR:
@@ -258,20 +262,20 @@ export default /*final*/ class DecodedBitStreamParser {
                     resultMetadata.setLastSegment(true);
                     break;
                 default:
-                    throw FormatException.getFormatInstance();
+                    throw FormatException_1.default.getFormatInstance();
             }
         }
         // copy optional fields to additional options
         if (optionalFieldsStart !== -1) {
-            let optionalFieldsLength = codeIndex - optionalFieldsStart;
+            var optionalFieldsLength = codeIndex - optionalFieldsStart;
             if (resultMetadata.isLastSegment()) {
                 // do not include terminator
                 optionalFieldsLength--;
             }
-            resultMetadata.setOptionalData(Arrays.copyOfRange(codewords, optionalFieldsStart, optionalFieldsStart + optionalFieldsLength));
+            resultMetadata.setOptionalData(Arrays_1.default.copyOfRange(codewords, optionalFieldsStart, optionalFieldsStart + optionalFieldsLength));
         }
         return codeIndex;
-    }
+    };
     /**
      * Text Compaction mode (see 5.4.1.5) permits all printable ASCII characters to be
      * encoded, i.e. values 32 - 126 inclusive in accordance with ISO/IEC 646 (IRV), as
@@ -282,15 +286,15 @@ export default /*final*/ class DecodedBitStreamParser {
      * @param result    The decoded data is appended to the result.
      * @return The next index into the codeword array.
      */
-    static textCompaction(codewords, codeIndex, result) {
+    DecodedBitStreamParser.textCompaction = function (codewords, codeIndex, result) {
         // 2 character per codeword
-        let textCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
+        var textCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
         // Used to hold the byte compaction value if there is a mode shift
-        let byteCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
-        let index = 0;
-        let end = false;
+        var byteCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
+        var index = 0;
+        var end = false;
         while ((codeIndex < codewords[0]) && !end) {
-            let code = codewords[codeIndex++];
+            var code = codewords[codeIndex++];
             if (code < DecodedBitStreamParser.TEXT_COMPACTION_MODE_LATCH) {
                 textCompactionData[index] = code / 30;
                 textCompactionData[index + 1] = code % 30;
@@ -328,7 +332,7 @@ export default /*final*/ class DecodedBitStreamParser {
         }
         DecodedBitStreamParser.decodeTextCompaction(textCompactionData, byteCompactionData, index, result);
         return codeIndex;
-    }
+    };
     /**
      * The Text Compaction mode includes all the printable ASCII characters
      * (i.e. values from 32 to 126) and three ASCII control characters: HT or tab
@@ -345,17 +349,17 @@ export default /*final*/ class DecodedBitStreamParser {
      * @param length             The size of the text compaction and byte compaction data.
      * @param result             The decoded data is appended to the result.
      */
-    static decodeTextCompaction(textCompactionData, byteCompactionData, length, result) {
+    DecodedBitStreamParser.decodeTextCompaction = function (textCompactionData, byteCompactionData, length, result) {
         // Beginning from an initial state of the Alpha sub-mode
         // The default compaction mode for PDF417 in effect at the start of each symbol shall always be Text
         // Compaction mode Alpha sub-mode (alphabetic: uppercase). A latch codeword from another mode to the Text
         // Compaction mode shall always switch to the Text Compaction Alpha sub-mode.
-        let subMode = Mode.ALPHA;
-        let priorToShiftMode = Mode.ALPHA;
-        let i = 0;
+        var subMode = Mode.ALPHA;
+        var priorToShiftMode = Mode.ALPHA;
+        var i = 0;
         while (i < length) {
-            let subModeCh = textCompactionData[i];
-            let ch = /*char*/ '';
+            var subModeCh = textCompactionData[i];
+            var ch = /*char*/ '';
             switch (subMode) {
                 case Mode.ALPHA:
                     // Alpha (alphabetic: uppercase)
@@ -521,7 +525,7 @@ export default /*final*/ class DecodedBitStreamParser {
             }
             i++;
         }
-    }
+    };
     /**
      * Byte Compaction mode (see 5.4.3) permits all 256 possible 8-bit byte values to be encoded.
      * This includes all ASCII characters value 0 to 127 inclusive and provides for international
@@ -534,17 +538,17 @@ export default /*final*/ class DecodedBitStreamParser {
      * @param result    The decoded data is appended to the result.
      * @return The next index into the codeword array.
      */
-    static /*int*/ byteCompaction(mode, codewords, encoding, codeIndex, result) {
-        let decodedBytes = new ByteArrayOutputStream();
-        let count = 0;
-        let value = /*long*/ 0;
-        let end = false;
+    DecodedBitStreamParser.byteCompaction = function (mode, codewords, encoding, codeIndex, result) {
+        var decodedBytes = new ByteArrayOutputStream_1.default();
+        var count = 0;
+        var value = /*long*/ 0;
+        var end = false;
         switch (mode) {
             case DecodedBitStreamParser.BYTE_COMPACTION_MODE_LATCH:
                 // Total number of Byte Compaction characters to be encoded
                 // is not a multiple of 6
-                let byteCompactedCodewords = new Int32Array(6);
-                let nextCode = codewords[codeIndex++];
+                var byteCompactedCodewords = new Int32Array(6);
+                var nextCode = codewords[codeIndex++];
                 while ((codeIndex < codewords[0]) && !end) {
                     byteCompactedCodewords[count++] = nextCode;
                     // Base 900
@@ -566,7 +570,7 @@ export default /*final*/ class DecodedBitStreamParser {
                             if ((count % 5 === 0) && (count > 0)) {
                                 // Decode every 5 codewords
                                 // Convert to Base 256
-                                for (let j /*int*/ = 0; j < 6; ++j) {
+                                for (var j /*int*/ = 0; j < 6; ++j) {
                                     /* @note
                                      * JavaScript stores numbers as 64 bits floating point numbers, but all bitwise operations are performed on 32 bits binary numbers.
                                      * So the next bitwise operation could not be done with simple numbers
@@ -586,7 +590,7 @@ export default /*final*/ class DecodedBitStreamParser {
                 // If Byte Compaction mode is invoked with codeword 901,
                 // the last group of codewords is interpreted directly
                 // as one byte per codeword, without compaction.
-                for (let i /*int*/ = 0; i < count; i++) {
+                for (var i /*int*/ = 0; i < count; i++) {
                     decodedBytes.write(/*(byte)*/ byteCompactedCodewords[i]);
                 }
                 break;
@@ -594,7 +598,7 @@ export default /*final*/ class DecodedBitStreamParser {
                 // Total number of Byte Compaction characters to be encoded
                 // is an integer multiple of 6
                 while (codeIndex < codewords[0] && !end) {
-                    let code = codewords[codeIndex++];
+                    var code = codewords[codeIndex++];
                     if (code < DecodedBitStreamParser.TEXT_COMPACTION_MODE_LATCH) {
                         count++;
                         // Base 900
@@ -621,7 +625,7 @@ export default /*final*/ class DecodedBitStreamParser {
                          * JavaScript stores numbers as 64 bits floating point numbers, but all bitwise operations are performed on 32 bits binary numbers.
                          * So the next bitwise operation could not be done with simple numbers
                         */
-                        for (let j /*int*/ = 0; j < 6; ++j) {
+                        for (var j /*int*/ = 0; j < 6; ++j) {
                             decodedBytes.write(/*(byte)*/ Number(createBigInt(value) >> createBigInt(8 * (5 - j))));
                         }
                         value = 0;
@@ -630,9 +634,9 @@ export default /*final*/ class DecodedBitStreamParser {
                 }
                 break;
         }
-        result.append(StringEncoding.decode(decodedBytes.toByteArray(), encoding));
+        result.append(StringEncoding_1.default.decode(decodedBytes.toByteArray(), encoding));
         return codeIndex;
-    }
+    };
     /**
      * Numeric Compaction mode (see 5.4.4) permits efficient encoding of numeric data strings.
      *
@@ -643,12 +647,12 @@ export default /*final*/ class DecodedBitStreamParser {
      *
      * @throws FormatException
      */
-    static numericCompaction(codewords, codeIndex /*int*/, result) {
-        let count = 0;
-        let end = false;
-        let numericCodewords = new Int32Array(DecodedBitStreamParser.MAX_NUMERIC_CODEWORDS);
+    DecodedBitStreamParser.numericCompaction = function (codewords, codeIndex /*int*/, result) {
+        var count = 0;
+        var end = false;
+        var numericCodewords = new Int32Array(DecodedBitStreamParser.MAX_NUMERIC_CODEWORDS);
         while (codeIndex < codewords[0] && !end) {
-            let code = codewords[codeIndex++];
+            var code = codewords[codeIndex++];
             if (codeIndex === codewords[0]) {
                 end = true;
             }
@@ -679,7 +683,7 @@ export default /*final*/ class DecodedBitStreamParser {
             }
         }
         return codeIndex;
-    }
+    };
     /**
      * Convert a list of Numeric Compacted codewords from Base 900 to Base 10.
      *
@@ -724,49 +728,51 @@ export default /*final*/ class DecodedBitStreamParser {
      *
      * @throws FormatException
      */
-    static decodeBase900toBase10(codewords, count) {
-        let result = createBigInt(0);
-        for (let i /*int*/ = 0; i < count; i++) {
+    DecodedBitStreamParser.decodeBase900toBase10 = function (codewords, count) {
+        var result = createBigInt(0);
+        for (var i /*int*/ = 0; i < count; i++) {
             result += DecodedBitStreamParser.EXP900[count - i - 1] * createBigInt(codewords[i]);
         }
-        let resultString = result.toString();
+        var resultString = result.toString();
         if (resultString.charAt(0) !== '1') {
-            throw new FormatException();
+            throw new FormatException_1.default();
         }
         return resultString.substring(1);
-    }
-}
-DecodedBitStreamParser.TEXT_COMPACTION_MODE_LATCH = 900;
-DecodedBitStreamParser.BYTE_COMPACTION_MODE_LATCH = 901;
-DecodedBitStreamParser.NUMERIC_COMPACTION_MODE_LATCH = 902;
-DecodedBitStreamParser.BYTE_COMPACTION_MODE_LATCH_6 = 924;
-DecodedBitStreamParser.ECI_USER_DEFINED = 925;
-DecodedBitStreamParser.ECI_GENERAL_PURPOSE = 926;
-DecodedBitStreamParser.ECI_CHARSET = 927;
-DecodedBitStreamParser.BEGIN_MACRO_PDF417_CONTROL_BLOCK = 928;
-DecodedBitStreamParser.BEGIN_MACRO_PDF417_OPTIONAL_FIELD = 923;
-DecodedBitStreamParser.MACRO_PDF417_TERMINATOR = 922;
-DecodedBitStreamParser.MODE_SHIFT_TO_BYTE_COMPACTION_MODE = 913;
-DecodedBitStreamParser.MAX_NUMERIC_CODEWORDS = 15;
-DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_NAME = 0;
-DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SEGMENT_COUNT = 1;
-DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_TIME_STAMP = 2;
-DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SENDER = 3;
-DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_ADDRESSEE = 4;
-DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_SIZE = 5;
-DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_CHECKSUM = 6;
-DecodedBitStreamParser.PL = 25;
-DecodedBitStreamParser.LL = 27;
-DecodedBitStreamParser.AS = 27;
-DecodedBitStreamParser.ML = 28;
-DecodedBitStreamParser.AL = 28;
-DecodedBitStreamParser.PS = 29;
-DecodedBitStreamParser.PAL = 29;
-DecodedBitStreamParser.PUNCT_CHARS = ';<>@[\\]_`~!\r\t,:\n-.$/"|*()?{}\'';
-DecodedBitStreamParser.MIXED_CHARS = '0123456789&\r\t,:#-.$/+%*=^';
-/**
- * Table containing values for the exponent of 900.
- * This is used in the numeric compaction decode algorithm.
- */
-DecodedBitStreamParser.EXP900 = getBigIntConstructor() ? getEXP900() : [];
-DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS = 2;
+    };
+    DecodedBitStreamParser.TEXT_COMPACTION_MODE_LATCH = 900;
+    DecodedBitStreamParser.BYTE_COMPACTION_MODE_LATCH = 901;
+    DecodedBitStreamParser.NUMERIC_COMPACTION_MODE_LATCH = 902;
+    DecodedBitStreamParser.BYTE_COMPACTION_MODE_LATCH_6 = 924;
+    DecodedBitStreamParser.ECI_USER_DEFINED = 925;
+    DecodedBitStreamParser.ECI_GENERAL_PURPOSE = 926;
+    DecodedBitStreamParser.ECI_CHARSET = 927;
+    DecodedBitStreamParser.BEGIN_MACRO_PDF417_CONTROL_BLOCK = 928;
+    DecodedBitStreamParser.BEGIN_MACRO_PDF417_OPTIONAL_FIELD = 923;
+    DecodedBitStreamParser.MACRO_PDF417_TERMINATOR = 922;
+    DecodedBitStreamParser.MODE_SHIFT_TO_BYTE_COMPACTION_MODE = 913;
+    DecodedBitStreamParser.MAX_NUMERIC_CODEWORDS = 15;
+    DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_NAME = 0;
+    DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SEGMENT_COUNT = 1;
+    DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_TIME_STAMP = 2;
+    DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SENDER = 3;
+    DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_ADDRESSEE = 4;
+    DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_SIZE = 5;
+    DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_CHECKSUM = 6;
+    DecodedBitStreamParser.PL = 25;
+    DecodedBitStreamParser.LL = 27;
+    DecodedBitStreamParser.AS = 27;
+    DecodedBitStreamParser.ML = 28;
+    DecodedBitStreamParser.AL = 28;
+    DecodedBitStreamParser.PS = 29;
+    DecodedBitStreamParser.PAL = 29;
+    DecodedBitStreamParser.PUNCT_CHARS = ';<>@[\\]_`~!\r\t,:\n-.$/"|*()?{}\'';
+    DecodedBitStreamParser.MIXED_CHARS = '0123456789&\r\t,:#-.$/+%*=^';
+    /**
+     * Table containing values for the exponent of 900.
+     * This is used in the numeric compaction decode algorithm.
+     */
+    DecodedBitStreamParser.EXP900 = getBigIntConstructor() ? getEXP900() : [];
+    DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS = 2;
+    return DecodedBitStreamParser;
+}());
+exports.default = DecodedBitStreamParser;

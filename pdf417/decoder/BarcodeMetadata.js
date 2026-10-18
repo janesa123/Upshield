@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2013 ZXing authors
  *
@@ -13,31 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417.decoder;
 /**
  * @author Guenther Grau
  */
-export default /*final*/ class BarcodeMetadata {
-    constructor(columnCount, rowCountUpperPart, rowCountLowerPart, errorCorrectionLevel) {
+var BarcodeMetadata = /** @class */ (function () {
+    function BarcodeMetadata(columnCount, rowCountUpperPart, rowCountLowerPart, errorCorrectionLevel) {
         this.columnCount = columnCount;
         this.errorCorrectionLevel = errorCorrectionLevel;
         this.rowCountUpperPart = rowCountUpperPart;
         this.rowCountLowerPart = rowCountLowerPart;
         this.rowCount = rowCountUpperPart + rowCountLowerPart;
     }
-    getColumnCount() {
+    BarcodeMetadata.prototype.getColumnCount = function () {
         return this.columnCount;
-    }
-    getErrorCorrectionLevel() {
+    };
+    BarcodeMetadata.prototype.getErrorCorrectionLevel = function () {
         return this.errorCorrectionLevel;
-    }
-    getRowCount() {
+    };
+    BarcodeMetadata.prototype.getRowCount = function () {
         return this.rowCount;
-    }
-    getRowCountUpperPart() {
+    };
+    BarcodeMetadata.prototype.getRowCountUpperPart = function () {
         return this.rowCountUpperPart;
-    }
-    getRowCountLowerPart() {
+    };
+    BarcodeMetadata.prototype.getRowCountLowerPart = function () {
         return this.rowCountLowerPart;
-    }
-}
+    };
+    return BarcodeMetadata;
+}());
+exports.default = BarcodeMetadata;

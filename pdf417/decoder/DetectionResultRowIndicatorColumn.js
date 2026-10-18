@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2013 ZXing authors
  *
@@ -13,50 +14,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // import com.google.zxing.pdf417.PDF417Common;
-import PDF417Common from '../PDF417Common';
-import BarcodeMetadata from './BarcodeMetadata';
-import DetectionResultColumn from './DetectionResultColumn';
-import BarcodeValue from './BarcodeValue';
+var PDF417Common_1 = require("../PDF417Common");
+var BarcodeMetadata_1 = require("./BarcodeMetadata");
+var DetectionResultColumn_1 = require("./DetectionResultColumn");
+var BarcodeValue_1 = require("./BarcodeValue");
 /**
  * @author Guenther Grau
  */
-export default /*final*/ class DetectionResultRowIndicatorColumn extends DetectionResultColumn {
-    constructor(boundingBox, isLeft) {
-        super(boundingBox);
-        this._isLeft = isLeft;
+var DetectionResultRowIndicatorColumn = /** @class */ (function (_super) {
+    __extends(DetectionResultRowIndicatorColumn, _super);
+    function DetectionResultRowIndicatorColumn(boundingBox, isLeft) {
+        var _this = _super.call(this, boundingBox) || this;
+        _this._isLeft = isLeft;
+        return _this;
     }
-    setRowNumbers() {
-        for (let codeword /*Codeword*/ of this.getCodewords()) {
-            if (codeword != null) {
-                codeword.setRowNumberAsRowIndicatorColumn();
+    DetectionResultRowIndicatorColumn.prototype.setRowNumbers = function () {
+        var e_1, _a;
+        try {
+            for (var _b = __values(this.getCodewords()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var codeword = _c.value /*Codeword*/;
+                if (codeword != null) {
+                    codeword.setRowNumberAsRowIndicatorColumn();
+                }
             }
         }
-    }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
     // TODO implement properly
     // TODO maybe we should add missing codewords to store the correct row number to make
     // finding row numbers for other columns easier
     // use row height count to make detection of invalid row numbers more reliable
-    adjustCompleteIndicatorColumnRowNumbers(barcodeMetadata) {
-        let codewords = this.getCodewords();
+    DetectionResultRowIndicatorColumn.prototype.adjustCompleteIndicatorColumnRowNumbers = function (barcodeMetadata) {
+        var codewords = this.getCodewords();
         this.setRowNumbers();
         this.removeIncorrectCodewords(codewords, barcodeMetadata);
-        let boundingBox = this.getBoundingBox();
-        let top = this._isLeft ? boundingBox.getTopLeft() : boundingBox.getTopRight();
-        let bottom = this._isLeft ? boundingBox.getBottomLeft() : boundingBox.getBottomRight();
-        let firstRow = this.imageRowToCodewordIndex(Math.trunc(top.getY()));
-        let lastRow = this.imageRowToCodewordIndex(Math.trunc(bottom.getY()));
+        var boundingBox = this.getBoundingBox();
+        var top = this._isLeft ? boundingBox.getTopLeft() : boundingBox.getTopRight();
+        var bottom = this._isLeft ? boundingBox.getBottomLeft() : boundingBox.getBottomRight();
+        var firstRow = this.imageRowToCodewordIndex(Math.trunc(top.getY()));
+        var lastRow = this.imageRowToCodewordIndex(Math.trunc(bottom.getY()));
         // We need to be careful using the average row height. Barcode could be skewed so that we have smaller and
         // taller rows
         // float averageRowHeight = (lastRow - firstRow) / /*(float)*/ barcodeMetadata.getRowCount();
-        let barcodeRow = -1;
-        let maxRowHeight = 1;
-        let currentRowHeight = 0;
-        for (let codewordsRow /*int*/ = firstRow; codewordsRow < lastRow; codewordsRow++) {
+        var barcodeRow = -1;
+        var maxRowHeight = 1;
+        var currentRowHeight = 0;
+        for (var codewordsRow /*int*/ = firstRow; codewordsRow < lastRow; codewordsRow++) {
             if (codewords[codewordsRow] == null) {
                 continue;
             }
-            let codeword = codewords[codewordsRow];
+            var codeword = codewords[codewordsRow];
             //      float expectedRowNumber = (codewordsRow - firstRow) / averageRowHeight;
             //      if (Math.abs(codeword.getRowNumber() - expectedRowNumber) > 2) {
             //        SimpleLog.log(LEVEL.WARNING,
@@ -64,7 +103,7 @@ export default /*final*/ class DetectionResultRowIndicatorColumn extends Detecti
             //                expectedRowNumber + ", RealRow: " + codeword.getRowNumber() + ", value: " + codeword.getValue());
             //        codewords[codewordsRow] = null;
             //      }
-            let rowDifference = codeword.getRowNumber() - barcodeRow;
+            var rowDifference = codeword.getRowNumber() - barcodeRow;
             // TODO improve handling with case where first row indicator doesn't start with 0
             if (rowDifference === 0) {
                 currentRowHeight++;
@@ -80,15 +119,15 @@ export default /*final*/ class DetectionResultRowIndicatorColumn extends Detecti
                 codewords[codewordsRow] = null;
             }
             else {
-                let checkedRows;
+                var checkedRows = void 0;
                 if (maxRowHeight > 2) {
                     checkedRows = (maxRowHeight - 2) * rowDifference;
                 }
                 else {
                     checkedRows = rowDifference;
                 }
-                let closePreviousCodewordFound = checkedRows >= codewordsRow;
-                for (let i /*int*/ = 1; i <= checkedRows && !closePreviousCodewordFound; i++) {
+                var closePreviousCodewordFound = checkedRows >= codewordsRow;
+                for (var i /*int*/ = 1; i <= checkedRows && !closePreviousCodewordFound; i++) {
                     // there must be (height * rowDifference) number of codewords missing. For now we assume height = 1.
                     // This should hopefully get rid of most problems already.
                     closePreviousCodewordFound = codewords[codewordsRow - i] != null;
@@ -103,47 +142,58 @@ export default /*final*/ class DetectionResultRowIndicatorColumn extends Detecti
             }
         }
         // return (int) (averageRowHeight + 0.5);
-    }
-    getRowHeights() {
-        let barcodeMetadata = this.getBarcodeMetadata();
+    };
+    DetectionResultRowIndicatorColumn.prototype.getRowHeights = function () {
+        var e_2, _a;
+        var barcodeMetadata = this.getBarcodeMetadata();
         if (barcodeMetadata == null) {
             return null;
         }
         this.adjustIncompleteIndicatorColumnRowNumbers(barcodeMetadata);
-        let result = new Int32Array(barcodeMetadata.getRowCount());
-        for (let codeword /*Codeword*/ of this.getCodewords()) {
-            if (codeword != null) {
-                let rowNumber = codeword.getRowNumber();
-                if (rowNumber >= result.length) {
-                    // We have more rows than the barcode metadata allows for, ignore them.
-                    continue;
-                }
-                result[rowNumber]++;
-            } // else throw exception?
+        var result = new Int32Array(barcodeMetadata.getRowCount());
+        try {
+            for (var _b = __values(this.getCodewords()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var codeword = _c.value /*Codeword*/;
+                if (codeword != null) {
+                    var rowNumber = codeword.getRowNumber();
+                    if (rowNumber >= result.length) {
+                        // We have more rows than the barcode metadata allows for, ignore them.
+                        continue;
+                    }
+                    result[rowNumber]++;
+                } // else throw exception?
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
         }
         return result;
-    }
+    };
     // TODO maybe we should add missing codewords to store the correct row number to make
     // finding row numbers for other columns easier
     // use row height count to make detection of invalid row numbers more reliable
-    adjustIncompleteIndicatorColumnRowNumbers(barcodeMetadata) {
-        let boundingBox = this.getBoundingBox();
-        let top = this._isLeft ? boundingBox.getTopLeft() : boundingBox.getTopRight();
-        let bottom = this._isLeft ? boundingBox.getBottomLeft() : boundingBox.getBottomRight();
-        let firstRow = this.imageRowToCodewordIndex(Math.trunc(top.getY()));
-        let lastRow = this.imageRowToCodewordIndex(Math.trunc(bottom.getY()));
+    DetectionResultRowIndicatorColumn.prototype.adjustIncompleteIndicatorColumnRowNumbers = function (barcodeMetadata) {
+        var boundingBox = this.getBoundingBox();
+        var top = this._isLeft ? boundingBox.getTopLeft() : boundingBox.getTopRight();
+        var bottom = this._isLeft ? boundingBox.getBottomLeft() : boundingBox.getBottomRight();
+        var firstRow = this.imageRowToCodewordIndex(Math.trunc(top.getY()));
+        var lastRow = this.imageRowToCodewordIndex(Math.trunc(bottom.getY()));
         // float averageRowHeight = (lastRow - firstRow) / /*(float)*/ barcodeMetadata.getRowCount();
-        let codewords = this.getCodewords();
-        let barcodeRow = -1;
-        let maxRowHeight = 1;
-        let currentRowHeight = 0;
-        for (let codewordsRow /*int*/ = firstRow; codewordsRow < lastRow; codewordsRow++) {
+        var codewords = this.getCodewords();
+        var barcodeRow = -1;
+        var maxRowHeight = 1;
+        var currentRowHeight = 0;
+        for (var codewordsRow /*int*/ = firstRow; codewordsRow < lastRow; codewordsRow++) {
             if (codewords[codewordsRow] == null) {
                 continue;
             }
-            let codeword = codewords[codewordsRow];
+            var codeword = codewords[codewordsRow];
             codeword.setRowNumberAsRowIndicatorColumn();
-            let rowDifference = codeword.getRowNumber() - barcodeRow;
+            var rowDifference = codeword.getRowNumber() - barcodeRow;
             // TODO improve handling with case where first row indicator doesn't start with 0
             if (rowDifference === 0) {
                 currentRowHeight++;
@@ -162,35 +212,46 @@ export default /*final*/ class DetectionResultRowIndicatorColumn extends Detecti
             }
         }
         // return (int) (averageRowHeight + 0.5);
-    }
-    getBarcodeMetadata() {
-        let codewords = this.getCodewords();
-        let barcodeColumnCount = new BarcodeValue();
-        let barcodeRowCountUpperPart = new BarcodeValue();
-        let barcodeRowCountLowerPart = new BarcodeValue();
-        let barcodeECLevel = new BarcodeValue();
-        for (let codeword /*Codeword*/ of codewords) {
-            if (codeword == null) {
-                continue;
+    };
+    DetectionResultRowIndicatorColumn.prototype.getBarcodeMetadata = function () {
+        var e_3, _a;
+        var codewords = this.getCodewords();
+        var barcodeColumnCount = new BarcodeValue_1.default();
+        var barcodeRowCountUpperPart = new BarcodeValue_1.default();
+        var barcodeRowCountLowerPart = new BarcodeValue_1.default();
+        var barcodeECLevel = new BarcodeValue_1.default();
+        try {
+            for (var codewords_1 = __values(codewords), codewords_1_1 = codewords_1.next(); !codewords_1_1.done; codewords_1_1 = codewords_1.next()) {
+                var codeword = codewords_1_1.value /*Codeword*/;
+                if (codeword == null) {
+                    continue;
+                }
+                codeword.setRowNumberAsRowIndicatorColumn();
+                var rowIndicatorValue = codeword.getValue() % 30;
+                var codewordRowNumber = codeword.getRowNumber();
+                if (!this._isLeft) {
+                    codewordRowNumber += 2;
+                }
+                switch (codewordRowNumber % 3) {
+                    case 0:
+                        barcodeRowCountUpperPart.setValue(rowIndicatorValue * 3 + 1);
+                        break;
+                    case 1:
+                        barcodeECLevel.setValue(rowIndicatorValue / 3);
+                        barcodeRowCountLowerPart.setValue(rowIndicatorValue % 3);
+                        break;
+                    case 2:
+                        barcodeColumnCount.setValue(rowIndicatorValue + 1);
+                        break;
+                }
             }
-            codeword.setRowNumberAsRowIndicatorColumn();
-            let rowIndicatorValue = codeword.getValue() % 30;
-            let codewordRowNumber = codeword.getRowNumber();
-            if (!this._isLeft) {
-                codewordRowNumber += 2;
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (codewords_1_1 && !codewords_1_1.done && (_a = codewords_1.return)) _a.call(codewords_1);
             }
-            switch (codewordRowNumber % 3) {
-                case 0:
-                    barcodeRowCountUpperPart.setValue(rowIndicatorValue * 3 + 1);
-                    break;
-                case 1:
-                    barcodeECLevel.setValue(rowIndicatorValue / 3);
-                    barcodeRowCountLowerPart.setValue(rowIndicatorValue % 3);
-                    break;
-                case 2:
-                    barcodeColumnCount.setValue(rowIndicatorValue + 1);
-                    break;
-            }
+            finally { if (e_3) throw e_3.error; }
         }
         // Maybe we should check if we have ambiguous values?
         if ((barcodeColumnCount.getValue().length === 0) ||
@@ -198,24 +259,24 @@ export default /*final*/ class DetectionResultRowIndicatorColumn extends Detecti
             (barcodeRowCountLowerPart.getValue().length === 0) ||
             (barcodeECLevel.getValue().length === 0) ||
             barcodeColumnCount.getValue()[0] < 1 ||
-            barcodeRowCountUpperPart.getValue()[0] + barcodeRowCountLowerPart.getValue()[0] < PDF417Common.MIN_ROWS_IN_BARCODE ||
-            barcodeRowCountUpperPart.getValue()[0] + barcodeRowCountLowerPart.getValue()[0] > PDF417Common.MAX_ROWS_IN_BARCODE) {
+            barcodeRowCountUpperPart.getValue()[0] + barcodeRowCountLowerPart.getValue()[0] < PDF417Common_1.default.MIN_ROWS_IN_BARCODE ||
+            barcodeRowCountUpperPart.getValue()[0] + barcodeRowCountLowerPart.getValue()[0] > PDF417Common_1.default.MAX_ROWS_IN_BARCODE) {
             return null;
         }
-        let barcodeMetadata = new BarcodeMetadata(barcodeColumnCount.getValue()[0], barcodeRowCountUpperPart.getValue()[0], barcodeRowCountLowerPart.getValue()[0], barcodeECLevel.getValue()[0]);
+        var barcodeMetadata = new BarcodeMetadata_1.default(barcodeColumnCount.getValue()[0], barcodeRowCountUpperPart.getValue()[0], barcodeRowCountLowerPart.getValue()[0], barcodeECLevel.getValue()[0]);
         this.removeIncorrectCodewords(codewords, barcodeMetadata);
         return barcodeMetadata;
-    }
-    removeIncorrectCodewords(codewords, barcodeMetadata) {
+    };
+    DetectionResultRowIndicatorColumn.prototype.removeIncorrectCodewords = function (codewords, barcodeMetadata) {
         // Remove codewords which do not match the metadata
         // TODO Maybe we should keep the incorrect codewords for the start and end positions?
-        for (let codewordRow /*int*/ = 0; codewordRow < codewords.length; codewordRow++) {
-            let codeword = codewords[codewordRow];
+        for (var codewordRow /*int*/ = 0; codewordRow < codewords.length; codewordRow++) {
+            var codeword = codewords[codewordRow];
             if (codewords[codewordRow] == null) {
                 continue;
             }
-            let rowIndicatorValue = codeword.getValue() % 30;
-            let codewordRowNumber = codeword.getRowNumber();
+            var rowIndicatorValue = codeword.getValue() % 30;
+            var codewordRowNumber = codeword.getRowNumber();
             if (codewordRowNumber > barcodeMetadata.getRowCount()) {
                 codewords[codewordRow] = null;
                 continue;
@@ -242,12 +303,14 @@ export default /*final*/ class DetectionResultRowIndicatorColumn extends Detecti
                     break;
             }
         }
-    }
-    isLeft() {
+    };
+    DetectionResultRowIndicatorColumn.prototype.isLeft = function () {
         return this._isLeft;
-    }
+    };
     // @Override
-    toString() {
-        return 'IsLeft: ' + this._isLeft + '\n' + super.toString();
-    }
-}
+    DetectionResultRowIndicatorColumn.prototype.toString = function () {
+        return 'IsLeft: ' + this._isLeft + '\n' + _super.prototype.toString.call(this);
+    };
+    return DetectionResultRowIndicatorColumn;
+}(DetectionResultColumn_1.default));
+exports.default = DetectionResultRowIndicatorColumn;

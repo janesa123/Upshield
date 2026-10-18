@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2013 ZXing authors
 *
@@ -13,16 +14,17 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417.decoder;
 // import com.google.zxing.NotFoundException;
-import NotFoundException from '../../NotFoundException';
+var NotFoundException_1 = require("../../NotFoundException");
 // import com.google.zxing.ResultPoint;
-import ResultPoint from '../../ResultPoint';
+var ResultPoint_1 = require("../../ResultPoint");
 /**
  * @author Guenther Grau
  */
-export default /*final*/ class BoundingBox {
-    constructor(image, topLeft, bottomLeft, topRight, bottomRight) {
+var BoundingBox = /** @class */ (function () {
+    function BoundingBox(image, topLeft, bottomLeft, topRight, bottomRight) {
         if (image instanceof BoundingBox) {
             this.constructor_2(image);
         }
@@ -40,19 +42,19 @@ export default /*final*/ class BoundingBox {
      *
      * @throws NotFoundException
      */
-    constructor_1(image, topLeft, bottomLeft, topRight, bottomRight) {
-        const leftUnspecified = topLeft == null || bottomLeft == null;
-        const rightUnspecified = topRight == null || bottomRight == null;
+    BoundingBox.prototype.constructor_1 = function (image, topLeft, bottomLeft, topRight, bottomRight) {
+        var leftUnspecified = topLeft == null || bottomLeft == null;
+        var rightUnspecified = topRight == null || bottomRight == null;
         if (leftUnspecified && rightUnspecified) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
         if (leftUnspecified) {
-            topLeft = new ResultPoint(0, topRight.getY());
-            bottomLeft = new ResultPoint(0, bottomRight.getY());
+            topLeft = new ResultPoint_1.default(0, topRight.getY());
+            bottomLeft = new ResultPoint_1.default(0, bottomRight.getY());
         }
         else if (rightUnspecified) {
-            topRight = new ResultPoint(image.getWidth() - 1, topLeft.getY());
-            bottomRight = new ResultPoint(image.getWidth() - 1, bottomLeft.getY());
+            topRight = new ResultPoint_1.default(image.getWidth() - 1, topLeft.getY());
+            bottomRight = new ResultPoint_1.default(image.getWidth() - 1, bottomLeft.getY());
         }
         this.image = image;
         this.topLeft = topLeft;
@@ -63,8 +65,8 @@ export default /*final*/ class BoundingBox {
         this.maxX = Math.trunc(Math.max(topRight.getX(), bottomRight.getX()));
         this.minY = Math.trunc(Math.min(topLeft.getY(), topRight.getY()));
         this.maxY = Math.trunc(Math.max(bottomLeft.getY(), bottomRight.getY()));
-    }
-    constructor_2(boundingBox) {
+    };
+    BoundingBox.prototype.constructor_2 = function (boundingBox) {
         this.image = boundingBox.image;
         this.topLeft = boundingBox.getTopLeft();
         this.bottomLeft = boundingBox.getBottomLeft();
@@ -74,11 +76,11 @@ export default /*final*/ class BoundingBox {
         this.maxX = boundingBox.getMaxX();
         this.minY = boundingBox.getMinY();
         this.maxY = boundingBox.getMaxY();
-    }
+    };
     /**
      * @throws NotFoundException
      */
-    static merge(leftBox, rightBox) {
+    BoundingBox.merge = function (leftBox, rightBox) {
         if (leftBox == null) {
             return rightBox;
         }
@@ -86,22 +88,22 @@ export default /*final*/ class BoundingBox {
             return leftBox;
         }
         return new BoundingBox(leftBox.image, leftBox.topLeft, leftBox.bottomLeft, rightBox.topRight, rightBox.bottomRight);
-    }
+    };
     /**
      * @throws NotFoundException
      */
-    addMissingRows(missingStartRows, missingEndRows, isLeft) {
-        let newTopLeft = this.topLeft;
-        let newBottomLeft = this.bottomLeft;
-        let newTopRight = this.topRight;
-        let newBottomRight = this.bottomRight;
+    BoundingBox.prototype.addMissingRows = function (missingStartRows, missingEndRows, isLeft) {
+        var newTopLeft = this.topLeft;
+        var newBottomLeft = this.bottomLeft;
+        var newTopRight = this.topRight;
+        var newBottomRight = this.bottomRight;
         if (missingStartRows > 0) {
-            let top = isLeft ? this.topLeft : this.topRight;
-            let newMinY = Math.trunc(top.getY() - missingStartRows);
+            var top_1 = isLeft ? this.topLeft : this.topRight;
+            var newMinY = Math.trunc(top_1.getY() - missingStartRows);
             if (newMinY < 0) {
                 newMinY = 0;
             }
-            let newTop = new ResultPoint(top.getX(), newMinY);
+            var newTop = new ResultPoint_1.default(top_1.getX(), newMinY);
             if (isLeft) {
                 newTopLeft = newTop;
             }
@@ -110,12 +112,12 @@ export default /*final*/ class BoundingBox {
             }
         }
         if (missingEndRows > 0) {
-            let bottom = isLeft ? this.bottomLeft : this.bottomRight;
-            let newMaxY = Math.trunc(bottom.getY() + missingEndRows);
+            var bottom = isLeft ? this.bottomLeft : this.bottomRight;
+            var newMaxY = Math.trunc(bottom.getY() + missingEndRows);
             if (newMaxY >= this.image.getHeight()) {
                 newMaxY = this.image.getHeight() - 1;
             }
-            let newBottom = new ResultPoint(bottom.getX(), newMaxY);
+            var newBottom = new ResultPoint_1.default(bottom.getX(), newMaxY);
             if (isLeft) {
                 newBottomLeft = newBottom;
             }
@@ -124,29 +126,31 @@ export default /*final*/ class BoundingBox {
             }
         }
         return new BoundingBox(this.image, newTopLeft, newBottomLeft, newTopRight, newBottomRight);
-    }
-    getMinX() {
+    };
+    BoundingBox.prototype.getMinX = function () {
         return this.minX;
-    }
-    getMaxX() {
+    };
+    BoundingBox.prototype.getMaxX = function () {
         return this.maxX;
-    }
-    getMinY() {
+    };
+    BoundingBox.prototype.getMinY = function () {
         return this.minY;
-    }
-    getMaxY() {
+    };
+    BoundingBox.prototype.getMaxY = function () {
         return this.maxY;
-    }
-    getTopLeft() {
+    };
+    BoundingBox.prototype.getTopLeft = function () {
         return this.topLeft;
-    }
-    getTopRight() {
+    };
+    BoundingBox.prototype.getTopRight = function () {
         return this.topRight;
-    }
-    getBottomLeft() {
+    };
+    BoundingBox.prototype.getBottomLeft = function () {
         return this.bottomLeft;
-    }
-    getBottomRight() {
+    };
+    BoundingBox.prototype.getBottomRight = function () {
         return this.bottomRight;
-    }
-}
+    };
+    return BoundingBox;
+}());
+exports.default = BoundingBox;

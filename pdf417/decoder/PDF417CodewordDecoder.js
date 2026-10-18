@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2013 ZXing authors
 *
@@ -13,57 +14,60 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417.decoder;
 // import com.google.zxing.common.detector.MathUtils;
-import MathUtils from '../../common/detector/MathUtils';
+var MathUtils_1 = require("../../common/detector/MathUtils");
 // import com.google.zxing.pdf417.PDF417Common;
-import PDF417Common from '../PDF417Common';
-import Float from '../../util/Float';
+var PDF417Common_1 = require("../PDF417Common");
+var Float_1 = require("../../util/Float");
 /**
  * @author Guenther Grau
  * @author creatale GmbH (christoph.schulz@creatale.de)
  */
-export default /*final*/ class PDF417CodewordDecoder {
+var PDF417CodewordDecoder = /** @class */ (function () {
+    function PDF417CodewordDecoder() {
+    }
     /* @note
      * this action have to be performed before first use of class
      * - static constructor
      * working with 32bit float (based from Java logic)
     */
-    static initialize() {
+    PDF417CodewordDecoder.initialize = function () {
         // Pre-computes the symbol ratio table.
-        for ( /*int*/let i = 0; i < PDF417Common.SYMBOL_TABLE.length; i++) {
-            let currentSymbol = PDF417Common.SYMBOL_TABLE[i];
-            let currentBit = currentSymbol & 0x1;
-            for ( /*int*/let j = 0; j < PDF417Common.BARS_IN_MODULE; j++) {
-                let size = 0.0;
+        for ( /*int*/var i = 0; i < PDF417Common_1.default.SYMBOL_TABLE.length; i++) {
+            var currentSymbol = PDF417Common_1.default.SYMBOL_TABLE[i];
+            var currentBit = currentSymbol & 0x1;
+            for ( /*int*/var j = 0; j < PDF417Common_1.default.BARS_IN_MODULE; j++) {
+                var size = 0.0;
                 while ((currentSymbol & 0x1) === currentBit) {
                     size += 1.0;
                     currentSymbol >>= 1;
                 }
                 currentBit = currentSymbol & 0x1;
                 if (!PDF417CodewordDecoder.RATIOS_TABLE[i]) {
-                    PDF417CodewordDecoder.RATIOS_TABLE[i] = new Array(PDF417Common.BARS_IN_MODULE);
+                    PDF417CodewordDecoder.RATIOS_TABLE[i] = new Array(PDF417Common_1.default.BARS_IN_MODULE);
                 }
-                PDF417CodewordDecoder.RATIOS_TABLE[i][PDF417Common.BARS_IN_MODULE - j - 1] = Math.fround(size / PDF417Common.MODULES_IN_CODEWORD);
+                PDF417CodewordDecoder.RATIOS_TABLE[i][PDF417Common_1.default.BARS_IN_MODULE - j - 1] = Math.fround(size / PDF417Common_1.default.MODULES_IN_CODEWORD);
             }
         }
         this.bSymbolTableReady = true;
-    }
-    static getDecodedValue(moduleBitCount) {
-        let decodedValue = PDF417CodewordDecoder.getDecodedCodewordValue(PDF417CodewordDecoder.sampleBitCounts(moduleBitCount));
+    };
+    PDF417CodewordDecoder.getDecodedValue = function (moduleBitCount) {
+        var decodedValue = PDF417CodewordDecoder.getDecodedCodewordValue(PDF417CodewordDecoder.sampleBitCounts(moduleBitCount));
         if (decodedValue !== -1) {
             return decodedValue;
         }
         return PDF417CodewordDecoder.getClosestDecodedValue(moduleBitCount);
-    }
-    static sampleBitCounts(moduleBitCount) {
-        let bitCountSum = MathUtils.sum(moduleBitCount);
-        let result = new Int32Array(PDF417Common.BARS_IN_MODULE);
-        let bitCountIndex = 0;
-        let sumPreviousBits = 0;
-        for ( /*int*/let i = 0; i < PDF417Common.MODULES_IN_CODEWORD; i++) {
-            let sampleIndex = bitCountSum / (2 * PDF417Common.MODULES_IN_CODEWORD) +
-                (i * bitCountSum) / PDF417Common.MODULES_IN_CODEWORD;
+    };
+    PDF417CodewordDecoder.sampleBitCounts = function (moduleBitCount) {
+        var bitCountSum = MathUtils_1.default.sum(moduleBitCount);
+        var result = new Int32Array(PDF417Common_1.default.BARS_IN_MODULE);
+        var bitCountIndex = 0;
+        var sumPreviousBits = 0;
+        for ( /*int*/var i = 0; i < PDF417Common_1.default.MODULES_IN_CODEWORD; i++) {
+            var sampleIndex = bitCountSum / (2 * PDF417Common_1.default.MODULES_IN_CODEWORD) +
+                (i * bitCountSum) / PDF417Common_1.default.MODULES_IN_CODEWORD;
             if (sumPreviousBits + moduleBitCount[bitCountIndex] <= sampleIndex) {
                 sumPreviousBits += moduleBitCount[bitCountIndex];
                 bitCountIndex++;
@@ -71,39 +75,39 @@ export default /*final*/ class PDF417CodewordDecoder {
             result[bitCountIndex]++;
         }
         return result;
-    }
-    static getDecodedCodewordValue(moduleBitCount) {
-        let decodedValue = PDF417CodewordDecoder.getBitValue(moduleBitCount);
-        return PDF417Common.getCodeword(decodedValue) === -1 ? -1 : decodedValue;
-    }
-    static getBitValue(moduleBitCount) {
-        let result = /*long*/ 0;
-        for (let /*int*/ i = 0; i < moduleBitCount.length; i++) {
-            for ( /*int*/let bit = 0; bit < moduleBitCount[i]; bit++) {
+    };
+    PDF417CodewordDecoder.getDecodedCodewordValue = function (moduleBitCount) {
+        var decodedValue = PDF417CodewordDecoder.getBitValue(moduleBitCount);
+        return PDF417Common_1.default.getCodeword(decodedValue) === -1 ? -1 : decodedValue;
+    };
+    PDF417CodewordDecoder.getBitValue = function (moduleBitCount) {
+        var result = /*long*/ 0;
+        for (var /*int*/ i = 0; i < moduleBitCount.length; i++) {
+            for ( /*int*/var bit = 0; bit < moduleBitCount[i]; bit++) {
                 result = (result << 1) | (i % 2 === 0 ? 1 : 0);
             }
         }
         return Math.trunc(result);
-    }
+    };
     // working with 32bit float (as in Java)
-    static getClosestDecodedValue(moduleBitCount) {
-        let bitCountSum = MathUtils.sum(moduleBitCount);
-        let bitCountRatios = new Array(PDF417Common.BARS_IN_MODULE);
+    PDF417CodewordDecoder.getClosestDecodedValue = function (moduleBitCount) {
+        var bitCountSum = MathUtils_1.default.sum(moduleBitCount);
+        var bitCountRatios = new Array(PDF417Common_1.default.BARS_IN_MODULE);
         if (bitCountSum > 1) {
-            for (let /*int*/ i = 0; i < bitCountRatios.length; i++) {
+            for (var /*int*/ i = 0; i < bitCountRatios.length; i++) {
                 bitCountRatios[i] = Math.fround(moduleBitCount[i] / bitCountSum);
             }
         }
-        let bestMatchError = Float.MAX_VALUE;
-        let bestMatch = -1;
+        var bestMatchError = Float_1.default.MAX_VALUE;
+        var bestMatch = -1;
         if (!this.bSymbolTableReady) {
             PDF417CodewordDecoder.initialize();
         }
-        for ( /*int*/let j = 0; j < PDF417CodewordDecoder.RATIOS_TABLE.length; j++) {
-            let error = 0.0;
-            let ratioTableRow = PDF417CodewordDecoder.RATIOS_TABLE[j];
-            for ( /*int*/let k = 0; k < PDF417Common.BARS_IN_MODULE; k++) {
-                let diff = Math.fround(ratioTableRow[k] - bitCountRatios[k]);
+        for ( /*int*/var j = 0; j < PDF417CodewordDecoder.RATIOS_TABLE.length; j++) {
+            var error = 0.0;
+            var ratioTableRow = PDF417CodewordDecoder.RATIOS_TABLE[j];
+            for ( /*int*/var k = 0; k < PDF417Common_1.default.BARS_IN_MODULE; k++) {
+                var diff = Math.fround(ratioTableRow[k] - bitCountRatios[k]);
                 error += Math.fround(diff * diff);
                 if (error >= bestMatchError) {
                     break;
@@ -111,12 +115,14 @@ export default /*final*/ class PDF417CodewordDecoder {
             }
             if (error < bestMatchError) {
                 bestMatchError = error;
-                bestMatch = PDF417Common.SYMBOL_TABLE[j];
+                bestMatch = PDF417Common_1.default.SYMBOL_TABLE[j];
             }
         }
         return bestMatch;
-    }
-}
-// flag that the table is ready for use
-PDF417CodewordDecoder.bSymbolTableReady = false;
-PDF417CodewordDecoder.RATIOS_TABLE = new Array(PDF417Common.SYMBOL_TABLE.length).map(x => x = new Array(PDF417Common.BARS_IN_MODULE));
+    };
+    // flag that the table is ready for use
+    PDF417CodewordDecoder.bSymbolTableReady = false;
+    PDF417CodewordDecoder.RATIOS_TABLE = new Array(PDF417Common_1.default.SYMBOL_TABLE.length).map(function (x) { return x = new Array(PDF417Common_1.default.BARS_IN_MODULE); });
+    return PDF417CodewordDecoder;
+}());
+exports.default = PDF417CodewordDecoder;

@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2012 ZXing authors
 *
@@ -13,11 +14,23 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417.decoder.ec;
 // import com.google.zxing.ChecksumException;
-import ChecksumException from '../../../ChecksumException';
-import ModulusPoly from './ModulusPoly';
-import ModulusGF from './ModulusGF';
+var ChecksumException_1 = require("../../../ChecksumException");
+var ModulusPoly_1 = require("./ModulusPoly");
+var ModulusGF_1 = require("./ModulusGF");
 /**
  * <p>PDF417 error correction implementation.</p>
  *
@@ -27,9 +40,9 @@ import ModulusGF from './ModulusGF';
  * @author Sean Owen
  * @see com.google.zxing.common.reedsolomon.ReedSolomonDecoder
  */
-export default /*public final*/ class ErrorCorrection {
-    constructor() {
-        this.field = ModulusGF.PDF417_GF;
+var ErrorCorrection = /** @class */ (function () {
+    function ErrorCorrection() {
+        this.field = ModulusGF_1.default.PDF417_GF;
     }
     /**
      * @param received received codewords
@@ -38,12 +51,13 @@ export default /*public final*/ class ErrorCorrection {
      * @return number of errors
      * @throws ChecksumException if errors cannot be corrected, maybe because of too many errors
      */
-    decode(received, numECCodewords, erasures) {
-        let poly = new ModulusPoly(this.field, received);
-        let S = new Int32Array(numECCodewords);
-        let error = false;
-        for (let i /*int*/ = numECCodewords; i > 0; i--) {
-            let evaluation = poly.evaluateAt(this.field.exp(i));
+    ErrorCorrection.prototype.decode = function (received, numECCodewords, erasures) {
+        var e_1, _a;
+        var poly = new ModulusPoly_1.default(this.field, received);
+        var S = new Int32Array(numECCodewords);
+        var error = false;
+        for (var i /*int*/ = numECCodewords; i > 0; i--) {
+            var evaluation = poly.evaluateAt(this.field.exp(i));
             S[numECCodewords - i] = evaluation;
             if (evaluation !== 0) {
                 error = true;
@@ -52,32 +66,42 @@ export default /*public final*/ class ErrorCorrection {
         if (!error) {
             return 0;
         }
-        let knownErrors = this.field.getOne();
+        var knownErrors = this.field.getOne();
         if (erasures != null) {
-            for (const erasure of erasures) {
-                let b = this.field.exp(received.length - 1 - erasure);
-                // Add (1 - bx) term:
-                let term = new ModulusPoly(this.field, new Int32Array([this.field.subtract(0, b), 1]));
-                knownErrors = knownErrors.multiply(term);
+            try {
+                for (var erasures_1 = __values(erasures), erasures_1_1 = erasures_1.next(); !erasures_1_1.done; erasures_1_1 = erasures_1.next()) {
+                    var erasure = erasures_1_1.value;
+                    var b = this.field.exp(received.length - 1 - erasure);
+                    // Add (1 - bx) term:
+                    var term = new ModulusPoly_1.default(this.field, new Int32Array([this.field.subtract(0, b), 1]));
+                    knownErrors = knownErrors.multiply(term);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (erasures_1_1 && !erasures_1_1.done && (_a = erasures_1.return)) _a.call(erasures_1);
+                }
+                finally { if (e_1) throw e_1.error; }
             }
         }
-        let syndrome = new ModulusPoly(this.field, S);
+        var syndrome = new ModulusPoly_1.default(this.field, S);
         // syndrome = syndrome.multiply(knownErrors);
-        let sigmaOmega = this.runEuclideanAlgorithm(this.field.buildMonomial(numECCodewords, 1), syndrome, numECCodewords);
-        let sigma = sigmaOmega[0];
-        let omega = sigmaOmega[1];
+        var sigmaOmega = this.runEuclideanAlgorithm(this.field.buildMonomial(numECCodewords, 1), syndrome, numECCodewords);
+        var sigma = sigmaOmega[0];
+        var omega = sigmaOmega[1];
         // sigma = sigma.multiply(knownErrors);
-        let errorLocations = this.findErrorLocations(sigma);
-        let errorMagnitudes = this.findErrorMagnitudes(omega, sigma, errorLocations);
-        for (let i /*int*/ = 0; i < errorLocations.length; i++) {
-            let position = received.length - 1 - this.field.log(errorLocations[i]);
+        var errorLocations = this.findErrorLocations(sigma);
+        var errorMagnitudes = this.findErrorMagnitudes(omega, sigma, errorLocations);
+        for (var i /*int*/ = 0; i < errorLocations.length; i++) {
+            var position = received.length - 1 - this.field.log(errorLocations[i]);
             if (position < 0) {
-                throw ChecksumException.getChecksumInstance();
+                throw ChecksumException_1.default.getChecksumInstance();
             }
             received[position] = this.field.subtract(received[position], errorMagnitudes[i]);
         }
         return errorLocations.length;
-    }
+    };
     /**
      *
      * @param ModulusPoly
@@ -88,87 +112,89 @@ export default /*public final*/ class ErrorCorrection {
      * @param R
      * @throws ChecksumException
      */
-    runEuclideanAlgorithm(a, b, R) {
+    ErrorCorrection.prototype.runEuclideanAlgorithm = function (a, b, R) {
         // Assume a's degree is >= b's
         if (a.getDegree() < b.getDegree()) {
-            let temp = a;
+            var temp = a;
             a = b;
             b = temp;
         }
-        let rLast = a;
-        let r = b;
-        let tLast = this.field.getZero();
-        let t = this.field.getOne();
+        var rLast = a;
+        var r = b;
+        var tLast = this.field.getZero();
+        var t = this.field.getOne();
         // Run Euclidean algorithm until r's degree is less than R/2
         while (r.getDegree() >= Math.round(R / 2)) {
-            let rLastLast = rLast;
-            let tLastLast = tLast;
+            var rLastLast = rLast;
+            var tLastLast = tLast;
             rLast = r;
             tLast = t;
             // Divide rLastLast by rLast, with quotient in q and remainder in r
             if (rLast.isZero()) {
                 // Oops, Euclidean algorithm already terminated?
-                throw ChecksumException.getChecksumInstance();
+                throw ChecksumException_1.default.getChecksumInstance();
             }
             r = rLastLast;
-            let q = this.field.getZero();
-            let denominatorLeadingTerm = rLast.getCoefficient(rLast.getDegree());
-            let dltInverse = this.field.inverse(denominatorLeadingTerm);
+            var q = this.field.getZero();
+            var denominatorLeadingTerm = rLast.getCoefficient(rLast.getDegree());
+            var dltInverse = this.field.inverse(denominatorLeadingTerm);
             while (r.getDegree() >= rLast.getDegree() && !r.isZero()) {
-                let degreeDiff = r.getDegree() - rLast.getDegree();
-                let scale = this.field.multiply(r.getCoefficient(r.getDegree()), dltInverse);
+                var degreeDiff = r.getDegree() - rLast.getDegree();
+                var scale = this.field.multiply(r.getCoefficient(r.getDegree()), dltInverse);
                 q = q.add(this.field.buildMonomial(degreeDiff, scale));
                 r = r.subtract(rLast.multiplyByMonomial(degreeDiff, scale));
             }
             t = q.multiply(tLast).subtract(tLastLast).negative();
         }
-        let sigmaTildeAtZero = t.getCoefficient(0);
+        var sigmaTildeAtZero = t.getCoefficient(0);
         if (sigmaTildeAtZero === 0) {
-            throw ChecksumException.getChecksumInstance();
+            throw ChecksumException_1.default.getChecksumInstance();
         }
-        let inverse = this.field.inverse(sigmaTildeAtZero);
-        let sigma = t.multiply(inverse);
-        let omega = r.multiply(inverse);
+        var inverse = this.field.inverse(sigmaTildeAtZero);
+        var sigma = t.multiply(inverse);
+        var omega = r.multiply(inverse);
         return [sigma, omega];
-    }
+    };
     /**
      *
      * @param errorLocator
      * @throws ChecksumException
      */
-    findErrorLocations(errorLocator) {
+    ErrorCorrection.prototype.findErrorLocations = function (errorLocator) {
         // This is a direct application of Chien's search
-        let numErrors = errorLocator.getDegree();
-        let result = new Int32Array(numErrors);
-        let e = 0;
-        for (let i /*int*/ = 1; i < this.field.getSize() && e < numErrors; i++) {
+        var numErrors = errorLocator.getDegree();
+        var result = new Int32Array(numErrors);
+        var e = 0;
+        for (var i /*int*/ = 1; i < this.field.getSize() && e < numErrors; i++) {
             if (errorLocator.evaluateAt(i) === 0) {
                 result[e] = this.field.inverse(i);
                 e++;
             }
         }
         if (e !== numErrors) {
-            throw ChecksumException.getChecksumInstance();
+            throw ChecksumException_1.default.getChecksumInstance();
         }
         return result;
-    }
-    findErrorMagnitudes(errorEvaluator, errorLocator, errorLocations) {
-        let errorLocatorDegree = errorLocator.getDegree();
-        let formalDerivativeCoefficients = new Int32Array(errorLocatorDegree);
-        for (let i /*int*/ = 1; i <= errorLocatorDegree; i++) {
+    };
+    ErrorCorrection.prototype.findErrorMagnitudes = function (errorEvaluator, errorLocator, errorLocations) {
+        var errorLocatorDegree = errorLocator.getDegree();
+        var formalDerivativeCoefficients = new Int32Array(errorLocatorDegree);
+        for (var i /*int*/ = 1; i <= errorLocatorDegree; i++) {
             formalDerivativeCoefficients[errorLocatorDegree - i] =
                 this.field.multiply(i, errorLocator.getCoefficient(i));
         }
-        let formalDerivative = new ModulusPoly(this.field, formalDerivativeCoefficients);
+        var formalDerivative = new ModulusPoly_1.default(this.field, formalDerivativeCoefficients);
         // This is directly applying Forney's Formula
-        let s = errorLocations.length;
-        let result = new Int32Array(s);
-        for (let i /*int*/ = 0; i < s; i++) {
-            let xiInverse = this.field.inverse(errorLocations[i]);
-            let numerator = this.field.subtract(0, errorEvaluator.evaluateAt(xiInverse));
-            let denominator = this.field.inverse(formalDerivative.evaluateAt(xiInverse));
+        var s = errorLocations.length;
+        var result = new Int32Array(s);
+        for (var i /*int*/ = 0; i < s; i++) {
+            var xiInverse = this.field.inverse(errorLocations[i]);
+            var numerator = this.field.subtract(0, errorEvaluator.evaluateAt(xiInverse));
+            var denominator = this.field.inverse(formalDerivative.evaluateAt(xiInverse));
             result[i] = this.field.multiply(numerator, denominator);
         }
         return result;
-    }
-}
+    };
+    return ErrorCorrection;
+}());
+exports.default = ErrorCorrection;

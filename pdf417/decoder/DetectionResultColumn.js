@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2013 ZXing authors
  *
@@ -13,26 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417.decoder;
 // import java.util.Formatter;
-import Formatter from '../../util/Formatter';
-import BoundingBox from './BoundingBox';
+var Formatter_1 = require("../../util/Formatter");
+var BoundingBox_1 = require("./BoundingBox");
 /**
  * @author Guenther Grau
  */
-export default class DetectionResultColumn {
-    constructor(boundingBox) {
-        this.boundingBox = new BoundingBox(boundingBox);
+var DetectionResultColumn = /** @class */ (function () {
+    function DetectionResultColumn(boundingBox) {
+        this.boundingBox = new BoundingBox_1.default(boundingBox);
         // this.codewords = new Codeword[boundingBox.getMaxY() - boundingBox.getMinY() + 1];
         this.codewords = new Array(boundingBox.getMaxY() - boundingBox.getMinY() + 1);
     }
-    /*final*/ getCodewordNearby(imageRow) {
-        let codeword = this.getCodeword(imageRow);
+    /*final*/ DetectionResultColumn.prototype.getCodewordNearby = function (imageRow) {
+        var codeword = this.getCodeword(imageRow);
         if (codeword != null) {
             return codeword;
         }
-        for (let i = 1; i < DetectionResultColumn.MAX_NEARBY_DISTANCE; i++) {
-            let nearImageRow = this.imageRowToCodewordIndex(imageRow) - i;
+        for (var i = 1; i < DetectionResultColumn.MAX_NEARBY_DISTANCE; i++) {
+            var nearImageRow = this.imageRowToCodewordIndex(imageRow) - i;
             if (nearImageRow >= 0) {
                 codeword = this.codewords[nearImageRow];
                 if (codeword != null) {
@@ -48,34 +61,47 @@ export default class DetectionResultColumn {
             }
         }
         return null;
-    }
-    /*final int*/ imageRowToCodewordIndex(imageRow) {
+    };
+    /*final int*/ DetectionResultColumn.prototype.imageRowToCodewordIndex = function (imageRow) {
         return imageRow - this.boundingBox.getMinY();
-    }
-    /*final void*/ setCodeword(imageRow, codeword) {
+    };
+    /*final void*/ DetectionResultColumn.prototype.setCodeword = function (imageRow, codeword) {
         this.codewords[this.imageRowToCodewordIndex(imageRow)] = codeword;
-    }
-    /*final*/ getCodeword(imageRow) {
+    };
+    /*final*/ DetectionResultColumn.prototype.getCodeword = function (imageRow) {
         return this.codewords[this.imageRowToCodewordIndex(imageRow)];
-    }
-    /*final*/ getBoundingBox() {
+    };
+    /*final*/ DetectionResultColumn.prototype.getBoundingBox = function () {
         return this.boundingBox;
-    }
-    /*final*/ getCodewords() {
+    };
+    /*final*/ DetectionResultColumn.prototype.getCodewords = function () {
         return this.codewords;
-    }
+    };
     // @Override
-    toString() {
-        const formatter = new Formatter();
-        let row = 0;
-        for (const codeword of this.codewords) {
-            if (codeword == null) {
-                formatter.format('%3d:    |   %n', row++);
-                continue;
+    DetectionResultColumn.prototype.toString = function () {
+        var e_1, _a;
+        var formatter = new Formatter_1.default();
+        var row = 0;
+        try {
+            for (var _b = __values(this.codewords), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var codeword = _c.value;
+                if (codeword == null) {
+                    formatter.format('%3d:    |   %n', row++);
+                    continue;
+                }
+                formatter.format('%3d: %3d|%3d%n', row++, codeword.getRowNumber(), codeword.getValue());
             }
-            formatter.format('%3d: %3d|%3d%n', row++, codeword.getRowNumber(), codeword.getValue());
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         return formatter.toString();
-    }
-}
-DetectionResultColumn.MAX_NEARBY_DISTANCE = 5;
+    };
+    DetectionResultColumn.MAX_NEARBY_DISTANCE = 5;
+    return DetectionResultColumn;
+}());
+exports.default = DetectionResultColumn;

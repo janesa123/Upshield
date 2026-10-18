@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2013 ZXing authors
  *
@@ -13,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // package com.google.zxing.pdf417;
 /**
  * @author Guenther Grau
  */
-export default /*public final*/ class PDF417ResultMetadata {
-    constructor() {
+var PDF417ResultMetadata = /** @class */ (function () {
+    function PDF417ResultMetadata() {
         this.segmentCount = -1;
         this.fileSize = -1;
         this.timestamp = -1;
@@ -29,111 +31,113 @@ export default /*public final*/ class PDF417ResultMetadata {
      *
      * @return File segment index
      */
-    getSegmentIndex() {
+    PDF417ResultMetadata.prototype.getSegmentIndex = function () {
         return this.segmentIndex;
-    }
-    setSegmentIndex(segmentIndex) {
+    };
+    PDF417ResultMetadata.prototype.setSegmentIndex = function (segmentIndex) {
         this.segmentIndex = segmentIndex;
-    }
+    };
     /**
      * Is the same for each related PDF417 symbol
      *
      * @return File ID
      */
-    getFileId() {
+    PDF417ResultMetadata.prototype.getFileId = function () {
         return this.fileId;
-    }
-    setFileId(fileId) {
+    };
+    PDF417ResultMetadata.prototype.setFileId = function (fileId) {
         this.fileId = fileId;
-    }
+    };
     /**
      * @return always null
      * @deprecated use dedicated already parsed fields
      */
     //   @Deprecated
-    getOptionalData() {
+    PDF417ResultMetadata.prototype.getOptionalData = function () {
         return this.optionalData;
-    }
+    };
     /**
      * @param optionalData old optional data format as int array
      * @deprecated parse and use new fields
      */
     //   @Deprecated
-    setOptionalData(optionalData) {
+    PDF417ResultMetadata.prototype.setOptionalData = function (optionalData) {
         this.optionalData = optionalData;
-    }
+    };
     /**
      * @return true if it is the last segment
      */
-    isLastSegment() {
+    PDF417ResultMetadata.prototype.isLastSegment = function () {
         return this.lastSegment;
-    }
-    setLastSegment(lastSegment) {
+    };
+    PDF417ResultMetadata.prototype.setLastSegment = function (lastSegment) {
         this.lastSegment = lastSegment;
-    }
+    };
     /**
      * @return count of segments, -1 if not set
      */
-    getSegmentCount() {
+    PDF417ResultMetadata.prototype.getSegmentCount = function () {
         return this.segmentCount;
-    }
-    setSegmentCount(segmentCount /*int*/) {
+    };
+    PDF417ResultMetadata.prototype.setSegmentCount = function (segmentCount /*int*/) {
         this.segmentCount = segmentCount;
-    }
-    getSender() {
+    };
+    PDF417ResultMetadata.prototype.getSender = function () {
         return this.sender || null;
-    }
-    setSender(sender) {
+    };
+    PDF417ResultMetadata.prototype.setSender = function (sender) {
         this.sender = sender;
-    }
-    getAddressee() {
+    };
+    PDF417ResultMetadata.prototype.getAddressee = function () {
         return this.addressee || null;
-    }
-    setAddressee(addressee) {
+    };
+    PDF417ResultMetadata.prototype.setAddressee = function (addressee) {
         this.addressee = addressee;
-    }
+    };
     /**
      * Filename of the encoded file
      *
      * @return filename
      */
-    getFileName() {
+    PDF417ResultMetadata.prototype.getFileName = function () {
         return this.fileName;
-    }
-    setFileName(fileName) {
+    };
+    PDF417ResultMetadata.prototype.setFileName = function (fileName) {
         this.fileName = fileName;
-    }
+    };
     /**
      * filesize in bytes of the encoded file
      *
      * @return filesize in bytes, -1 if not set
      */
-    getFileSize() {
+    PDF417ResultMetadata.prototype.getFileSize = function () {
         return this.fileSize;
-    }
-    setFileSize(fileSize /*long*/) {
+    };
+    PDF417ResultMetadata.prototype.setFileSize = function (fileSize /*long*/) {
         this.fileSize = fileSize;
-    }
+    };
     /**
      * 16-bit CRC checksum using CCITT-16
      *
      * @return crc checksum, -1 if not set
      */
-    getChecksum() {
+    PDF417ResultMetadata.prototype.getChecksum = function () {
         return this.checksum;
-    }
-    setChecksum(checksum /*int*/) {
+    };
+    PDF417ResultMetadata.prototype.setChecksum = function (checksum /*int*/) {
         this.checksum = checksum;
-    }
+    };
     /**
      * unix epock timestamp, elapsed seconds since 1970-01-01
      *
      * @return elapsed seconds, -1 if not set
      */
-    getTimestamp() {
+    PDF417ResultMetadata.prototype.getTimestamp = function () {
         return this.timestamp;
-    }
-    setTimestamp(timestamp /*long*/) {
+    };
+    PDF417ResultMetadata.prototype.setTimestamp = function (timestamp /*long*/) {
         this.timestamp = timestamp;
-    }
-}
+    };
+    return PDF417ResultMetadata;
+}());
+exports.default = PDF417ResultMetadata;

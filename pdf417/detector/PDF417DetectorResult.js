@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2007 ZXing authors
 *
@@ -13,19 +14,22 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+Object.defineProperty(exports, "__esModule", { value: true });
 // import java.util.List;
 /**
  * @author Guenther Grau
  */
-export default /*public final*/ class PDF417DetectorResult {
-    constructor(bits, points) {
+var PDF417DetectorResult = /** @class */ (function () {
+    function PDF417DetectorResult(bits, points) {
         this.bits = bits;
         this.points = points;
     }
-    getBits() {
+    PDF417DetectorResult.prototype.getBits = function () {
         return this.bits;
-    }
-    getPoints() {
+    };
+    PDF417DetectorResult.prototype.getPoints = function () {
         return this.points;
-    }
-}
+    };
+    return PDF417DetectorResult;
+}());
+exports.default = PDF417DetectorResult;
