@@ -1,3 +1,4 @@
+"use strict";
 /**
  * This file contains some types to make our
  * lifes easier when copy and pasting Java code.
@@ -6,3 +7,4 @@
  * but without the need to sacrifice ourselves with boring
  * and annoying things.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
