@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright (C) 2010 ZXing authors
  *
@@ -13,28 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common {*/
 /*import java.nio.charset.Charset;*/
 /*import java.util.Map;*/
-import DecodeHintType from '../DecodeHintType';
-import CharacterSetECI from './CharacterSetECI';
-import StringEncoding from '../util/StringEncoding';
+var DecodeHintType_1 = require("../DecodeHintType");
+var CharacterSetECI_1 = require("./CharacterSetECI");
+var StringEncoding_1 = require("../util/StringEncoding");
 /**
  * Common string-related functions.
  *
  * @author Sean Owen
  * @author Alex Dupre
  */
-export default class StringUtils {
+var StringUtils = /** @class */ (function () {
+    function StringUtils() {
+    }
     // SHIFT_JIS.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING) ||
     // EUC_JP.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING);
-    static castAsNonUtf8Char(code, encoding = null) {
+    StringUtils.castAsNonUtf8Char = function (code, encoding) {
+        if (encoding === void 0) { encoding = null; }
         // ISO 8859-1 is the Java default as UTF-8 is JavaScripts
         // you can see this method as a Java version of String.fromCharCode
-        const e = encoding ? encoding.getName() : this.ISO88591;
+        var e = encoding ? encoding.getName() : this.ISO88591;
         // use passed format (fromCharCode will return UTF8 encoding)
-        return StringEncoding.decode(new Uint8Array([code]), e);
-    }
+        return StringEncoding_1.default.decode(new Uint8Array([code]), e);
+    };
     /**
      * @param bytes bytes encoding a string, whose encoding should be guessed
      * @param hints decode hints if applicable
@@ -42,38 +47,38 @@ export default class StringUtils {
      *  {@link #SHIFT_JIS}, {@link #UTF8}, {@link #ISO88591}, or the platform
      *  default encoding if none of these can possibly be correct
      */
-    static guessEncoding(bytes, hints) {
-        if (hints !== null && hints !== undefined && undefined !== hints.get(DecodeHintType.CHARACTER_SET)) {
-            return hints.get(DecodeHintType.CHARACTER_SET).toString();
+    StringUtils.guessEncoding = function (bytes, hints) {
+        if (hints !== null && hints !== undefined && undefined !== hints.get(DecodeHintType_1.default.CHARACTER_SET)) {
+            return hints.get(DecodeHintType_1.default.CHARACTER_SET).toString();
         }
         // For now, merely tries to distinguish ISO-8859-1, UTF-8 and Shift_JIS,
         // which should be by far the most common encodings.
-        const length = bytes.length;
-        let canBeISO88591 = true;
-        let canBeShiftJIS = true;
-        let canBeUTF8 = true;
-        let utf8BytesLeft = 0;
+        var length = bytes.length;
+        var canBeISO88591 = true;
+        var canBeShiftJIS = true;
+        var canBeUTF8 = true;
+        var utf8BytesLeft = 0;
         // int utf8LowChars = 0
-        let utf2BytesChars = 0;
-        let utf3BytesChars = 0;
-        let utf4BytesChars = 0;
-        let sjisBytesLeft = 0;
+        var utf2BytesChars = 0;
+        var utf3BytesChars = 0;
+        var utf4BytesChars = 0;
+        var sjisBytesLeft = 0;
         // int sjisLowChars = 0
-        let sjisKatakanaChars = 0;
+        var sjisKatakanaChars = 0;
         // int sjisDoubleBytesChars = 0
-        let sjisCurKatakanaWordLength = 0;
-        let sjisCurDoubleBytesWordLength = 0;
-        let sjisMaxKatakanaWordLength = 0;
-        let sjisMaxDoubleBytesWordLength = 0;
+        var sjisCurKatakanaWordLength = 0;
+        var sjisCurDoubleBytesWordLength = 0;
+        var sjisMaxKatakanaWordLength = 0;
+        var sjisMaxDoubleBytesWordLength = 0;
         // int isoLowChars = 0
         // int isoHighChars = 0
-        let isoHighOther = 0;
-        const utf8bom = bytes.length > 3 &&
+        var isoHighOther = 0;
+        var utf8bom = bytes.length > 3 &&
             bytes[0] === /*(byte) */ 0xEF &&
             bytes[1] === /*(byte) */ 0xBB &&
             bytes[2] === /*(byte) */ 0xBF;
-        for (let i = 0; i < length && (canBeISO88591 || canBeShiftJIS || canBeUTF8); i++) {
-            const value = bytes[i] & 0xFF;
+        for (var i = 0; i < length && (canBeISO88591 || canBeShiftJIS || canBeUTF8); i++) {
+            var value = bytes[i] & 0xFF;
             // UTF-8 stuff
             if (canBeUTF8) {
                 if (utf8BytesLeft > 0) {
@@ -200,7 +205,7 @@ export default class StringUtils {
         }
         // Otherwise, we take a wild guess with platform encoding
         return StringUtils.PLATFORM_DEFAULT_ENCODING;
-    }
+    };
     /**
      *
      * @see https://stackoverflow.com/a/13439711/4367683
@@ -208,16 +213,20 @@ export default class StringUtils {
      * @param append The new string to append.
      * @param args Argumets values to be formated.
      */
-    static format(append, ...args) {
-        let i = -1;
+    StringUtils.format = function (append) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        var i = -1;
         function callback(exp, p0, p1, p2, p3, p4) {
             if (exp === '%%')
                 return '%';
             if (args[++i] === undefined)
                 return undefined;
             exp = p2 ? parseInt(p2.substr(1)) : undefined;
-            let base = p3 ? parseInt(p3.substr(1)) : undefined;
-            let val;
+            var base = p3 ? parseInt(p3.substr(1)) : undefined;
+            var val;
             switch (p4) {
                 case 's':
                     val = args[i];
@@ -242,38 +251,41 @@ export default class StringUtils {
                     break;
             }
             val = typeof val === 'object' ? JSON.stringify(val) : (+val).toString(base);
-            let size = parseInt(p1); /* padding size */
-            let ch = p1 && (p1[0] + '') === '0' ? '0' : ' '; /* isnull? */
+            var size = parseInt(p1); /* padding size */
+            var ch = p1 && (p1[0] + '') === '0' ? '0' : ' '; /* isnull? */
             while (val.length < size)
                 val = p0 !== undefined ? val + ch : ch + val; /* isminus? */
             return val;
         }
-        let regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd%])/g;
+        var regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd%])/g;
         return append.replace(regex, callback);
-    }
+    };
     /**
      *
      */
-    static getBytes(str, encoding) {
-        return StringEncoding.encode(str, encoding);
-    }
+    StringUtils.getBytes = function (str, encoding) {
+        return StringEncoding_1.default.encode(str, encoding);
+    };
     /**
      * Returns the charcode at the specified index or at index zero.
      */
-    static getCharCode(str, index = 0) {
+    StringUtils.getCharCode = function (str, index) {
+        if (index === void 0) { index = 0; }
         return str.charCodeAt(index);
-    }
+    };
     /**
      * Returns char for given charcode
      */
-    static getCharAt(charCode) {
+    StringUtils.getCharAt = function (charCode) {
         return String.fromCharCode(charCode);
-    }
-}
-StringUtils.SHIFT_JIS = CharacterSetECI.SJIS.getName(); // "SJIS"
-StringUtils.GB2312 = 'GB2312';
-StringUtils.ISO88591 = CharacterSetECI.ISO8859_1.getName(); // "ISO8859_1"
-StringUtils.EUC_JP = 'EUC_JP';
-StringUtils.UTF8 = CharacterSetECI.UTF8.getName(); // "UTF8"
-StringUtils.PLATFORM_DEFAULT_ENCODING = StringUtils.UTF8; // "UTF8"//Charset.defaultCharset().name()
-StringUtils.ASSUME_SHIFT_JIS = false;
+    };
+    StringUtils.SHIFT_JIS = CharacterSetECI_1.default.SJIS.getName(); // "SJIS"
+    StringUtils.GB2312 = 'GB2312';
+    StringUtils.ISO88591 = CharacterSetECI_1.default.ISO8859_1.getName(); // "ISO8859_1"
+    StringUtils.EUC_JP = 'EUC_JP';
+    StringUtils.UTF8 = CharacterSetECI_1.default.UTF8.getName(); // "UTF8"
+    StringUtils.PLATFORM_DEFAULT_ENCODING = StringUtils.UTF8; // "UTF8"//Charset.defaultCharset().name()
+    StringUtils.ASSUME_SHIFT_JIS = false;
+    return StringUtils;
+}());
+exports.default = StringUtils;

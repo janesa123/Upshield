@@ -1,7 +1,54 @@
-import { MACRO_05_HEADER, MACRO_06_HEADER, MACRO_TRAILER, } from './constants';
-import HighLevelEncoder from './HighLevelEncoder';
-import { MinimalECIInput } from '../../common/MinimalECIInput';
-import Integer from '../../util/Integer';
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MinimalEncoder = void 0;
+var constants_1 = require("./constants");
+var HighLevelEncoder_1 = require("./HighLevelEncoder");
+var MinimalECIInput_1 = require("../../common/MinimalECIInput");
+var Integer_1 = require("../../util/Integer");
 var Mode;
 (function (Mode) {
     Mode[Mode["ASCII"] = 0] = "ASCII";
@@ -11,7 +58,7 @@ var Mode;
     Mode[Mode["EDF"] = 4] = "EDF";
     Mode[Mode["B256"] = 5] = "B256";
 })(Mode || (Mode = {}));
-const C40_SHIFT2_CHARS = [
+var C40_SHIFT2_CHARS = [
     '!',
     '"',
     '#',
@@ -40,27 +87,40 @@ const C40_SHIFT2_CHARS = [
     '^',
     '_',
 ];
-export class MinimalEncoder {
-    static isExtendedASCII(ch, fnc1) {
+var MinimalEncoder = /** @class */ (function () {
+    function MinimalEncoder() {
+    }
+    MinimalEncoder.isExtendedASCII = function (ch, fnc1) {
         return ch !== fnc1 && ch >= 128 && ch <= 255;
-    }
-    static isInC40Shift1Set(ch) {
+    };
+    MinimalEncoder.isInC40Shift1Set = function (ch) {
         return ch <= 31;
-    }
-    static isInC40Shift2Set(ch, fnc1) {
-        for (const c40Shift2Char of C40_SHIFT2_CHARS) {
-            if (c40Shift2Char.charCodeAt(0) === ch) {
-                return true;
+    };
+    MinimalEncoder.isInC40Shift2Set = function (ch, fnc1) {
+        var e_1, _a;
+        try {
+            for (var C40_SHIFT2_CHARS_1 = __values(C40_SHIFT2_CHARS), C40_SHIFT2_CHARS_1_1 = C40_SHIFT2_CHARS_1.next(); !C40_SHIFT2_CHARS_1_1.done; C40_SHIFT2_CHARS_1_1 = C40_SHIFT2_CHARS_1.next()) {
+                var c40Shift2Char = C40_SHIFT2_CHARS_1_1.value;
+                if (c40Shift2Char.charCodeAt(0) === ch) {
+                    return true;
+                }
             }
         }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (C40_SHIFT2_CHARS_1_1 && !C40_SHIFT2_CHARS_1_1.done && (_a = C40_SHIFT2_CHARS_1.return)) _a.call(C40_SHIFT2_CHARS_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
         return ch === fnc1;
-    }
-    static isInTextShift1Set(ch) {
+    };
+    MinimalEncoder.isInTextShift1Set = function (ch) {
         return this.isInC40Shift1Set(ch);
-    }
-    static isInTextShift2Set(ch, fnc1) {
+    };
+    MinimalEncoder.isInTextShift2Set = function (ch, fnc1) {
         return this.isInC40Shift2Set(ch, fnc1);
-    }
+    };
     /**
      * Performs message encoding of a DataMatrix message
      *
@@ -74,18 +134,21 @@ export class MinimalEncoder {
      * @param shape requested shape.
      * @return the encoded message (the char values range from 0 to 255)
      */
-    static encodeHighLevel(msg, priorityCharset = null, fnc1 = -1, shape = 0 /* FORCE_NONE */) {
-        let macroId = 0;
-        if (msg.startsWith(MACRO_05_HEADER) && msg.endsWith(MACRO_TRAILER)) {
+    MinimalEncoder.encodeHighLevel = function (msg, priorityCharset, fnc1, shape) {
+        if (priorityCharset === void 0) { priorityCharset = null; }
+        if (fnc1 === void 0) { fnc1 = -1; }
+        if (shape === void 0) { shape = 0 /* FORCE_NONE */; }
+        var macroId = 0;
+        if (msg.startsWith(constants_1.MACRO_05_HEADER) && msg.endsWith(constants_1.MACRO_TRAILER)) {
             macroId = 5;
-            msg = msg.substring(MACRO_05_HEADER.length, msg.length - 2);
+            msg = msg.substring(constants_1.MACRO_05_HEADER.length, msg.length - 2);
         }
-        else if (msg.startsWith(MACRO_06_HEADER) && msg.endsWith(MACRO_TRAILER)) {
+        else if (msg.startsWith(constants_1.MACRO_06_HEADER) && msg.endsWith(constants_1.MACRO_TRAILER)) {
             macroId = 6;
-            msg = msg.substring(MACRO_06_HEADER.length, msg.length - 2);
+            msg = msg.substring(constants_1.MACRO_06_HEADER.length, msg.length - 2);
         }
-        return decodeURIComponent(escape(String.fromCharCode(...this.encode(msg, priorityCharset, fnc1, shape, macroId))));
-    }
+        return decodeURIComponent(escape(String.fromCharCode.apply(String, __spread(this.encode(msg, priorityCharset, fnc1, shape, macroId)))));
+    };
     /**
      * Encodes input minimally and returns an array of the codewords
      *
@@ -100,17 +163,17 @@ export class MinimalEncoder {
      * @param macroId Prepends the specified macro function in case that a value of 5 or 6 is specified.
      * @return An array of bytes representing the codewords of a minimal encoding.
      */
-    static encode(input, priorityCharset, fnc1, shape, macroId) {
+    MinimalEncoder.encode = function (input, priorityCharset, fnc1, shape, macroId) {
         return this.encodeMinimally(new Input(input, priorityCharset, fnc1, shape, macroId)).getBytes();
-    }
-    static addEdge(edges, edge) {
-        const vertexIndex = edge.fromPosition + edge.characterLength;
+    };
+    MinimalEncoder.addEdge = function (edges, edge) {
+        var vertexIndex = edge.fromPosition + edge.characterLength;
         if (edges[vertexIndex][edge.getEndMode()] === null ||
             edges[vertexIndex][edge.getEndMode()].cachedTotalSize >
                 edge.cachedTotalSize) {
             edges[vertexIndex][edge.getEndMode()] = edge;
         }
-    }
+    };
     /** @return the number of words in which the string starting at from can be encoded in c40 or text mode.
      *  The number of characters encoded is returned in characterLength.
      *  The number of characters encoded is also minimal in the sense that the algorithm stops as soon
@@ -118,26 +181,26 @@ export class MinimalEncoder {
      *  end of the string where two C40 values are allowed (according to the spec the third c40 value
      *  is filled  with 0 (Shift 1) in this case).
      */
-    static getNumberOfC40Words(input, from, c40, characterLength) {
-        let thirdsCount = 0;
-        for (let i = from; i < input.length(); i++) {
+    MinimalEncoder.getNumberOfC40Words = function (input, from, c40, characterLength) {
+        var thirdsCount = 0;
+        for (var i = from; i < input.length(); i++) {
             if (input.isECI(i)) {
                 characterLength[0] = 0;
                 return 0;
             }
-            const ci = input.charAt(i);
-            if ((c40 && HighLevelEncoder.isNativeC40(ci)) ||
-                (!c40 && HighLevelEncoder.isNativeText(ci))) {
+            var ci = input.charAt(i);
+            if ((c40 && HighLevelEncoder_1.default.isNativeC40(ci)) ||
+                (!c40 && HighLevelEncoder_1.default.isNativeText(ci))) {
                 thirdsCount++; // native
             }
             else if (!MinimalEncoder.isExtendedASCII(ci, input.getFNC1Character())) {
                 thirdsCount += 2; // shift
             }
             else {
-                const asciiValue = ci & 0xff;
+                var asciiValue = ci & 0xff;
                 if (asciiValue >= 128 &&
-                    ((c40 && HighLevelEncoder.isNativeC40(asciiValue - 128)) ||
-                        (!c40 && HighLevelEncoder.isNativeText(asciiValue - 128)))) {
+                    ((c40 && HighLevelEncoder_1.default.isNativeC40(asciiValue - 128)) ||
+                        (!c40 && HighLevelEncoder_1.default.isNativeText(asciiValue - 128)))) {
                     thirdsCount += 3; // shift, Upper shift
                 }
                 else {
@@ -152,19 +215,20 @@ export class MinimalEncoder {
         }
         characterLength[0] = 0;
         return 0;
-    }
-    static addEdges(input, edges, from, previous) {
+    };
+    MinimalEncoder.addEdges = function (input, edges, from, previous) {
+        var e_2, _a;
         if (input.isECI(from)) {
             this.addEdge(edges, new Edge(input, Mode.ASCII, from, 1, previous));
             return;
         }
-        const ch = input.charAt(from);
+        var ch = input.charAt(from);
         if (previous === null || previous.getEndMode() !== Mode.EDF) {
             // not possible to unlatch a full EDF edge to something
             // else
-            if (HighLevelEncoder.isDigit(ch) &&
+            if (HighLevelEncoder_1.default.isDigit(ch) &&
                 input.haveNCharacters(from, 2) &&
-                HighLevelEncoder.isDigit(input.charAt(from + 1))) {
+                HighLevelEncoder_1.default.isDigit(input.charAt(from + 1))) {
                 // two digits ASCII encoded
                 this.addEdge(edges, new Edge(input, Mode.ASCII, from, 2, previous));
             }
@@ -172,28 +236,38 @@ export class MinimalEncoder {
                 // one ASCII encoded character or an extended character via Upper Shift
                 this.addEdge(edges, new Edge(input, Mode.ASCII, from, 1, previous));
             }
-            const modes = [Mode.C40, Mode.TEXT];
-            for (const mode of modes) {
-                const characterLength = [];
-                if (MinimalEncoder.getNumberOfC40Words(input, from, mode === Mode.C40, characterLength) > 0) {
-                    this.addEdge(edges, new Edge(input, mode, from, characterLength[0], previous));
+            var modes = [Mode.C40, Mode.TEXT];
+            try {
+                for (var modes_1 = __values(modes), modes_1_1 = modes_1.next(); !modes_1_1.done; modes_1_1 = modes_1.next()) {
+                    var mode = modes_1_1.value;
+                    var characterLength = [];
+                    if (MinimalEncoder.getNumberOfC40Words(input, from, mode === Mode.C40, characterLength) > 0) {
+                        this.addEdge(edges, new Edge(input, mode, from, characterLength[0], previous));
+                    }
                 }
             }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (modes_1_1 && !modes_1_1.done && (_a = modes_1.return)) _a.call(modes_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
             if (input.haveNCharacters(from, 3) &&
-                HighLevelEncoder.isNativeX12(input.charAt(from)) &&
-                HighLevelEncoder.isNativeX12(input.charAt(from + 1)) &&
-                HighLevelEncoder.isNativeX12(input.charAt(from + 2))) {
+                HighLevelEncoder_1.default.isNativeX12(input.charAt(from)) &&
+                HighLevelEncoder_1.default.isNativeX12(input.charAt(from + 1)) &&
+                HighLevelEncoder_1.default.isNativeX12(input.charAt(from + 2))) {
                 this.addEdge(edges, new Edge(input, Mode.X12, from, 3, previous));
             }
             this.addEdge(edges, new Edge(input, Mode.B256, from, 1, previous));
         }
         // We create 4 EDF edges,  with 1, 2 3 or 4 characters length. The fourth normally doesn't have a latch to ASCII
         // unless it is 2 characters away from the end of the input.
-        let i;
+        var i;
         for (i = 0; i < 3; i++) {
-            const pos = from + i;
+            var pos = from + i;
             if (input.haveNCharacters(pos, 1) &&
-                HighLevelEncoder.isNativeEDIFACT(input.charAt(pos))) {
+                HighLevelEncoder_1.default.isNativeEDIFACT(input.charAt(pos))) {
                 this.addEdge(edges, new Edge(input, Mode.EDF, from, i + 1, previous));
             }
             else {
@@ -202,11 +276,11 @@ export class MinimalEncoder {
         }
         if (i === 3 &&
             input.haveNCharacters(from, 4) &&
-            HighLevelEncoder.isNativeEDIFACT(input.charAt(from + 3))) {
+            HighLevelEncoder_1.default.isNativeEDIFACT(input.charAt(from + 3))) {
             this.addEdge(edges, new Edge(input, Mode.EDF, from, 4, previous));
         }
-    }
-    static encodeMinimally(input) {
+    };
+    MinimalEncoder.encodeMinimally = function (input) {
         /* The minimal encoding is computed by Dijkstra. The acyclic graph is modeled as follows:
          * A vertex represents a combination of a position in the input and an encoding mode where position 0
          * denotes the position left of the first character, 1 the position left of the second character and so on.
@@ -390,30 +464,30 @@ export class MinimalEncoder {
          *
          * Hence a minimal encoding of "ABCDEFG" is either ASCII(A),C40(BCDEFG) or ASCII(A), X12(BCDEFG) with a size of 5 bytes.
          */
-        const inputLength = input.length();
+        var inputLength = input.length();
         // Array that represents vertices. There is a vertex for every character and mode.
         // The last dimension in the array below encodes the 6 modes ASCII, C40, TEXT, X12, EDF and B256
-        const edges = Array(inputLength + 1)
+        var edges = Array(inputLength + 1)
             .fill(null)
-            .map(() => Array(6).fill(0));
+            .map(function () { return Array(6).fill(0); });
         this.addEdges(input, edges, 0, null);
-        for (let i = 1; i <= inputLength; i++) {
-            for (let j = 0; j < 6; j++) {
+        for (var i = 1; i <= inputLength; i++) {
+            for (var j = 0; j < 6; j++) {
                 if (edges[i][j] !== null && i < inputLength) {
                     this.addEdges(input, edges, i, edges[i][j]);
                 }
             }
             // optimize memory by removing edges that have been passed.
-            for (let j = 0; j < 6; j++) {
+            for (var j = 0; j < 6; j++) {
                 edges[i - 1][j] = null;
             }
         }
-        let minimalJ = -1;
-        let minimalSize = Integer.MAX_VALUE;
-        for (let j = 0; j < 6; j++) {
+        var minimalJ = -1;
+        var minimalSize = Integer_1.default.MAX_VALUE;
+        for (var j = 0; j < 6; j++) {
             if (edges[inputLength][j] !== null) {
-                const edge = edges[inputLength][j];
-                const size = j >= 1 && j <= 3 ? edge.cachedTotalSize + 1 : edge.cachedTotalSize; // C40, TEXT and X12 need an
+                var edge = edges[inputLength][j];
+                var size = j >= 1 && j <= 3 ? edge.cachedTotalSize + 1 : edge.cachedTotalSize; // C40, TEXT and X12 need an
                 // extra unlatch at the end
                 if (size < minimalSize) {
                     minimalSize = size;
@@ -425,22 +499,24 @@ export class MinimalEncoder {
             throw new Error('Failed to encode "' + input + '"');
         }
         return new Result(edges[inputLength][minimalJ]);
-    }
-}
-class Result {
-    constructor(solution) {
-        const input = solution.input;
-        let size = 0;
-        let bytesAL = [];
-        const randomizePostfixLength = [];
-        const randomizeLengths = [];
+    };
+    return MinimalEncoder;
+}());
+exports.MinimalEncoder = MinimalEncoder;
+var Result = /** @class */ (function () {
+    function Result(solution) {
+        var input = solution.input;
+        var size = 0;
+        var bytesAL = [];
+        var randomizePostfixLength = [];
+        var randomizeLengths = [];
         if ((solution.mode === Mode.C40 ||
             solution.mode === Mode.TEXT ||
             solution.mode === Mode.X12) &&
             solution.getEndMode() !== Mode.ASCII) {
             size += this.prepend(Edge.getBytes(254), bytesAL);
         }
-        let current = solution;
+        var current = solution;
         while (current !== null) {
             size += this.prepend(current.getDataBytes(), bytesAL);
             if (current.previous === null ||
@@ -472,11 +548,11 @@ class Result {
         if (input.getFNC1Character() > 0) {
             size += this.prepend(Edge.getBytes(232), bytesAL);
         }
-        for (let i = 0; i < randomizePostfixLength.length; i++) {
+        for (var i = 0; i < randomizePostfixLength.length; i++) {
             this.applyRandomPattern(bytesAL, bytesAL.length - randomizePostfixLength[i], randomizeLengths[i]);
         }
         // add padding
-        const capacity = solution.getMinSymbolSize(bytesAL.length);
+        var capacity = solution.getMinSymbolSize(bytesAL.length);
         if (bytesAL.length < capacity) {
             bytesAL.push(129);
         }
@@ -484,38 +560,39 @@ class Result {
             bytesAL.push(this.randomize253State(bytesAL.length + 1));
         }
         this.bytes = new Uint8Array(bytesAL.length);
-        for (let i = 0; i < this.bytes.length; i++) {
+        for (var i = 0; i < this.bytes.length; i++) {
             this.bytes[i] = bytesAL[i];
         }
     }
-    prepend(bytes, into) {
-        for (let i = bytes.length - 1; i >= 0; i--) {
+    Result.prototype.prepend = function (bytes, into) {
+        for (var i = bytes.length - 1; i >= 0; i--) {
             into.unshift(bytes[i]);
         }
         return bytes.length;
-    }
-    randomize253State(codewordPosition) {
-        const pseudoRandom = ((149 * codewordPosition) % 253) + 1;
-        const tempVariable = 129 + pseudoRandom;
+    };
+    Result.prototype.randomize253State = function (codewordPosition) {
+        var pseudoRandom = ((149 * codewordPosition) % 253) + 1;
+        var tempVariable = 129 + pseudoRandom;
         return tempVariable <= 254 ? tempVariable : tempVariable - 254;
-    }
-    applyRandomPattern(bytesAL, startPosition, length) {
-        for (let i = 0; i < length; i++) {
+    };
+    Result.prototype.applyRandomPattern = function (bytesAL, startPosition, length) {
+        for (var i = 0; i < length; i++) {
             // See "B.1 253-state algorithm
-            const Pad_codeword_position = startPosition + i;
-            const Pad_codeword_value = bytesAL[Pad_codeword_position] & 0xff;
-            const pseudo_random_number = ((149 * (Pad_codeword_position + 1)) % 255) + 1;
-            const temp_variable = Pad_codeword_value + pseudo_random_number;
+            var Pad_codeword_position = startPosition + i;
+            var Pad_codeword_value = bytesAL[Pad_codeword_position] & 0xff;
+            var pseudo_random_number = ((149 * (Pad_codeword_position + 1)) % 255) + 1;
+            var temp_variable = Pad_codeword_value + pseudo_random_number;
             bytesAL[Pad_codeword_position] =
                 temp_variable <= 255 ? temp_variable : temp_variable - 256;
         }
-    }
-    getBytes() {
+    };
+    Result.prototype.getBytes = function () {
         return this.bytes;
-    }
-}
-class Edge {
-    constructor(input, mode, fromPosition, characterLength, previous) {
+    };
+    return Result;
+}());
+var Edge = /** @class */ (function () {
+    function Edge(input, mode, fromPosition, characterLength, previous) {
         this.input = input;
         this.mode = mode;
         this.fromPosition = fromPosition;
@@ -533,8 +610,8 @@ class Edge {
         if (!(fromPosition + characterLength <= input.length())) {
             throw new Error('Invalid edge');
         }
-        let size = previous !== null ? previous.cachedTotalSize : 0;
-        const previousMode = this.getPreviousMode();
+        var size = previous !== null ? previous.cachedTotalSize : 0;
+        var previousMode = this.getPreviousMode();
         /*
          * Switching modes
          * ASCII -> C40: latch 230
@@ -586,7 +663,7 @@ class Edge {
                     size += 2;
                 }
                 else {
-                    let charLen = [];
+                    var charLen = [];
                     size +=
                         MinimalEncoder.getNumberOfC40Words(input, fromPosition, mode === Mode.C40, charLen) * 2;
                 }
@@ -615,33 +692,33 @@ class Edge {
         this.cachedTotalSize = size;
     }
     // does not count beyond 250
-    getB256Size() {
-        let cnt = 0;
-        let current = this;
+    Edge.prototype.getB256Size = function () {
+        var cnt = 0;
+        var current = this;
         while (current !== null && current.mode === Mode.B256 && cnt <= 250) {
             cnt++;
             current = current.previous;
         }
         return cnt;
-    }
-    getPreviousStartMode() {
+    };
+    Edge.prototype.getPreviousStartMode = function () {
         return this.previous === null ? Mode.ASCII : this.previous.mode;
-    }
-    getPreviousMode() {
+    };
+    Edge.prototype.getPreviousMode = function () {
         return this.previous === null ? Mode.ASCII : this.previous.getEndMode();
-    }
+    };
     /** Returns Mode.ASCII in case that:
      *  - Mode is EDIFACT and characterLength is less than 4 or the remaining characters can be encoded in at most 2
      *    ASCII bytes.
      *  - Mode is C40, TEXT or X12 and the remaining characters can be encoded in at most 1 ASCII byte.
      *  Returns mode in all other cases.
      * */
-    getEndMode() {
+    Edge.prototype.getEndMode = function () {
         if (this.mode === Mode.EDF) {
             if (this.characterLength < 4) {
                 return Mode.ASCII;
             }
-            const lastASCII = this.getLastASCII(); // see 5.2.8.2 EDIFACT encodation Rules
+            var lastASCII = this.getLastASCII(); // see 5.2.8.2 EDIFACT encodation Rules
             if (lastASCII > 0 &&
                 this.getCodewordsRemaining(this.cachedTotalSize + lastASCII) <=
                     2 - lastASCII) {
@@ -656,24 +733,24 @@ class Edge {
                 this.getCodewordsRemaining(this.cachedTotalSize) === 0) {
                 return Mode.ASCII;
             }
-            const lastASCII = this.getLastASCII();
+            var lastASCII = this.getLastASCII();
             if (lastASCII === 1 &&
                 this.getCodewordsRemaining(this.cachedTotalSize + 1) === 0) {
                 return Mode.ASCII;
             }
         }
         return this.mode;
-    }
-    getMode() {
+    };
+    Edge.prototype.getMode = function () {
         return this.mode;
-    }
+    };
     /** Peeks ahead and returns 1 if the postfix consists of exactly two digits, 2 if the postfix consists of exactly
      *  two consecutive digits and a non extended character or of 4 digits.
      *  Returns 0 in any other case
      **/
-    getLastASCII() {
-        const length = this.input.length();
-        const from = this.fromPosition + this.characterLength;
+    Edge.prototype.getLastASCII = function () {
+        var length = this.input.length();
+        var from = this.fromPosition + this.characterLength;
         if (length - from > 4 || from >= length) {
             return 0;
         }
@@ -688,80 +765,111 @@ class Edge {
                 MinimalEncoder.isExtendedASCII(this.input.charAt(from + 1), this.input.getFNC1Character())) {
                 return 0;
             }
-            if (HighLevelEncoder.isDigit(this.input.charAt(from)) &&
-                HighLevelEncoder.isDigit(this.input.charAt(from + 1))) {
+            if (HighLevelEncoder_1.default.isDigit(this.input.charAt(from)) &&
+                HighLevelEncoder_1.default.isDigit(this.input.charAt(from + 1))) {
                 return 1;
             }
             return 2;
         }
         if (length - from === 3) {
-            if (HighLevelEncoder.isDigit(this.input.charAt(from)) &&
-                HighLevelEncoder.isDigit(this.input.charAt(from + 1)) &&
+            if (HighLevelEncoder_1.default.isDigit(this.input.charAt(from)) &&
+                HighLevelEncoder_1.default.isDigit(this.input.charAt(from + 1)) &&
                 !MinimalEncoder.isExtendedASCII(this.input.charAt(from + 2), this.input.getFNC1Character())) {
                 return 2;
             }
-            if (HighLevelEncoder.isDigit(this.input.charAt(from + 1)) &&
-                HighLevelEncoder.isDigit(this.input.charAt(from + 2)) &&
+            if (HighLevelEncoder_1.default.isDigit(this.input.charAt(from + 1)) &&
+                HighLevelEncoder_1.default.isDigit(this.input.charAt(from + 2)) &&
                 !MinimalEncoder.isExtendedASCII(this.input.charAt(from), this.input.getFNC1Character())) {
                 return 2;
             }
             return 0;
         }
-        if (HighLevelEncoder.isDigit(this.input.charAt(from)) &&
-            HighLevelEncoder.isDigit(this.input.charAt(from + 1)) &&
-            HighLevelEncoder.isDigit(this.input.charAt(from + 2)) &&
-            HighLevelEncoder.isDigit(this.input.charAt(from + 3))) {
+        if (HighLevelEncoder_1.default.isDigit(this.input.charAt(from)) &&
+            HighLevelEncoder_1.default.isDigit(this.input.charAt(from + 1)) &&
+            HighLevelEncoder_1.default.isDigit(this.input.charAt(from + 2)) &&
+            HighLevelEncoder_1.default.isDigit(this.input.charAt(from + 3))) {
             return 2;
         }
         return 0;
-    }
+    };
     /** Returns the capacity in codewords of the smallest symbol that has enough capacity to fit the given minimal
      * number of codewords.
      **/
-    getMinSymbolSize(minimum) {
+    Edge.prototype.getMinSymbolSize = function (minimum) {
+        var e_3, _a, e_4, _b, e_5, _c;
         switch (this.input.getShapeHint()) {
             case 1 /* FORCE_SQUARE */:
-                for (const capacity of this.squareCodewordCapacities) {
-                    if (capacity >= minimum) {
-                        return capacity;
+                try {
+                    for (var _d = __values(this.squareCodewordCapacities), _e = _d.next(); !_e.done; _e = _d.next()) {
+                        var capacity = _e.value;
+                        if (capacity >= minimum) {
+                            return capacity;
+                        }
                     }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+                    }
+                    finally { if (e_3) throw e_3.error; }
                 }
                 break;
             case 2 /* FORCE_RECTANGLE */:
-                for (const capacity of this.rectangularCodewordCapacities) {
-                    if (capacity >= minimum) {
-                        return capacity;
+                try {
+                    for (var _f = __values(this.rectangularCodewordCapacities), _g = _f.next(); !_g.done; _g = _f.next()) {
+                        var capacity = _g.value;
+                        if (capacity >= minimum) {
+                            return capacity;
+                        }
                     }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                    }
+                    finally { if (e_4) throw e_4.error; }
                 }
                 break;
         }
-        for (const capacity of this.allCodewordCapacities) {
-            if (capacity >= minimum) {
-                return capacity;
+        try {
+            for (var _h = __values(this.allCodewordCapacities), _j = _h.next(); !_j.done; _j = _h.next()) {
+                var capacity = _j.value;
+                if (capacity >= minimum) {
+                    return capacity;
+                }
             }
         }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        finally {
+            try {
+                if (_j && !_j.done && (_c = _h.return)) _c.call(_h);
+            }
+            finally { if (e_5) throw e_5.error; }
+        }
         return this.allCodewordCapacities[this.allCodewordCapacities.length - 1];
-    }
+    };
     /** Returns the remaining capacity in codewords of the smallest symbol that has enough capacity to fit the given
      * minimal number of codewords.
      **/
-    getCodewordsRemaining(minimum) {
+    Edge.prototype.getCodewordsRemaining = function (minimum) {
         return this.getMinSymbolSize(minimum) - minimum;
-    }
-    static getBytes(c1, c2) {
-        const result = new Uint8Array(c2 ? 2 : 1);
+    };
+    Edge.getBytes = function (c1, c2) {
+        var result = new Uint8Array(c2 ? 2 : 1);
         result[0] = c1;
         if (c2) {
             result[1] = c2;
         }
         return result;
-    }
-    setC40Word(bytes, offset, c1, c2, c3) {
-        const val16 = 1600 * (c1 & 0xff) + 40 * (c2 & 0xff) + (c3 & 0xff) + 1;
+    };
+    Edge.prototype.setC40Word = function (bytes, offset, c1, c2, c3) {
+        var val16 = 1600 * (c1 & 0xff) + 40 * (c2 & 0xff) + (c3 & 0xff) + 1;
         bytes[offset] = val16 / 256;
         bytes[offset + 1] = val16 % 256;
-    }
-    getX12Value(c) {
+    };
+    Edge.prototype.getX12Value = function (c) {
         return c === 13
             ? 0
             : c === 42
@@ -775,18 +883,18 @@ class Edge {
                             : c >= 65 && c <= 90
                                 ? c - 51
                                 : c;
-    }
-    getX12Words() {
+    };
+    Edge.prototype.getX12Words = function () {
         if (!(this.characterLength % 3 === 0)) {
             throw new Error('X12 words must be a multiple of 3');
         }
-        const result = new Uint8Array((this.characterLength / 3) * 2);
-        for (let i = 0; i < result.length; i += 2) {
+        var result = new Uint8Array((this.characterLength / 3) * 2);
+        for (var i = 0; i < result.length; i += 2) {
             this.setC40Word(result, i, this.getX12Value(this.input.charAt(this.fromPosition + (i / 2) * 3)), this.getX12Value(this.input.charAt(this.fromPosition + (i / 2) * 3 + 1)), this.getX12Value(this.input.charAt(this.fromPosition + (i / 2) * 3 + 2)));
         }
         return result;
-    }
-    getShiftValue(c, c40, fnc1) {
+    };
+    Edge.prototype.getShiftValue = function (c, c40, fnc1) {
         return (c40 && MinimalEncoder.isInC40Shift1Set(c)) ||
             (!c40 && MinimalEncoder.isInTextShift1Set(c))
             ? 0
@@ -794,8 +902,8 @@ class Edge {
                 (!c40 && MinimalEncoder.isInTextShift2Set(c, fnc1))
                 ? 1
                 : 2;
-    }
-    getC40Value(c40, setIndex, c, fnc1) {
+    };
+    Edge.prototype.getC40Value = function (c40, setIndex, c, fnc1) {
         if (c === fnc1) {
             if (!(setIndex === 2)) {
                 throw new Error('FNC1 cannot be used in C40 shift 2');
@@ -848,24 +956,24 @@ class Edge {
                                                             ? c - 96
                                                             : c;
         }
-    }
-    getC40Words(c40, fnc1) {
-        const c40Values = [];
-        for (let i = 0; i < this.characterLength; i++) {
-            const ci = this.input.charAt(this.fromPosition + i);
-            if ((c40 && HighLevelEncoder.isNativeC40(ci)) ||
-                (!c40 && HighLevelEncoder.isNativeText(ci))) {
+    };
+    Edge.prototype.getC40Words = function (c40, fnc1) {
+        var c40Values = [];
+        for (var i = 0; i < this.characterLength; i++) {
+            var ci = this.input.charAt(this.fromPosition + i);
+            if ((c40 && HighLevelEncoder_1.default.isNativeC40(ci)) ||
+                (!c40 && HighLevelEncoder_1.default.isNativeText(ci))) {
                 c40Values.push(this.getC40Value(c40, 0, ci, fnc1));
             }
             else if (!MinimalEncoder.isExtendedASCII(ci, fnc1)) {
-                const shiftValue = this.getShiftValue(ci, c40, fnc1);
+                var shiftValue = this.getShiftValue(ci, c40, fnc1);
                 c40Values.push(shiftValue); // Shift[123]
                 c40Values.push(this.getC40Value(c40, shiftValue, ci, fnc1));
             }
             else {
-                const asciiValue = (ci & 0xff) - 128;
-                if ((c40 && HighLevelEncoder.isNativeC40(asciiValue)) ||
-                    (!c40 && HighLevelEncoder.isNativeText(asciiValue))) {
+                var asciiValue = (ci & 0xff) - 128;
+                if ((c40 && HighLevelEncoder_1.default.isNativeC40(asciiValue)) ||
+                    (!c40 && HighLevelEncoder_1.default.isNativeText(asciiValue))) {
                     c40Values.push(1); // Shift 2
                     c40Values.push(30); // Upper Shift
                     c40Values.push(this.getC40Value(c40, 0, asciiValue, fnc1));
@@ -873,7 +981,7 @@ class Edge {
                 else {
                     c40Values.push(1); // Shift 2
                     c40Values.push(30); // Upper Shift
-                    const shiftValue = this.getShiftValue(asciiValue, c40, fnc1);
+                    var shiftValue = this.getShiftValue(asciiValue, c40, fnc1);
                     c40Values.push(shiftValue); // Shift[123]
                     c40Values.push(this.getC40Value(c40, shiftValue, asciiValue, fnc1));
                 }
@@ -886,22 +994,22 @@ class Edge {
             }
             c40Values.push(0); // pad with 0 (Shift 1)
         }
-        const result = new Uint8Array((c40Values.length / 3) * 2);
-        let byteIndex = 0;
-        for (let i = 0; i < c40Values.length; i += 3) {
+        var result = new Uint8Array((c40Values.length / 3) * 2);
+        var byteIndex = 0;
+        for (var i = 0; i < c40Values.length; i += 3) {
             this.setC40Word(result, byteIndex, c40Values[i] & 0xff, c40Values[i + 1] & 0xff, c40Values[i + 2] & 0xff);
             byteIndex += 2;
         }
         return result;
-    }
-    getEDFBytes() {
-        const numberOfThirds = Math.ceil(this.characterLength / 4.0);
-        const result = new Uint8Array(numberOfThirds * 3);
-        let pos = this.fromPosition;
-        const endPos = Math.min(this.fromPosition + this.characterLength - 1, this.input.length() - 1);
-        for (let i = 0; i < numberOfThirds; i += 3) {
-            const edfValues = [];
-            for (let j = 0; j < 4; j++) {
+    };
+    Edge.prototype.getEDFBytes = function () {
+        var numberOfThirds = Math.ceil(this.characterLength / 4.0);
+        var result = new Uint8Array(numberOfThirds * 3);
+        var pos = this.fromPosition;
+        var endPos = Math.min(this.fromPosition + this.characterLength - 1, this.input.length() - 1);
+        for (var i = 0; i < numberOfThirds; i += 3) {
+            var edfValues = [];
+            for (var j = 0; j < 4; j++) {
                 if (pos <= endPos) {
                     edfValues[j] = this.input.charAt(pos++) & 0x3f;
                 }
@@ -909,7 +1017,7 @@ class Edge {
                     edfValues[j] = pos === endPos + 1 ? 0x1f : 0;
                 }
             }
-            let val24 = edfValues[0] << 18;
+            var val24 = edfValues[0] << 18;
             val24 |= edfValues[1] << 12;
             val24 |= edfValues[2] << 6;
             val24 |= edfValues[3];
@@ -918,8 +1026,8 @@ class Edge {
             result[i + 2] = val24 & 0xff;
         }
         return result;
-    }
-    getLatchBytes() {
+    };
+    Edge.prototype.getLatchBytes = function () {
         switch (this.getPreviousMode()) {
             case Mode.ASCII:
             case Mode.B256: // after B256 ends (via length) we are back to ASCII
@@ -964,9 +1072,9 @@ class Edge {
                 break;
         }
         return new Uint8Array(0);
-    }
+    };
     // Important: The function does not return the length bytes (one or two) in case of B256 encoding
-    getDataBytes() {
+    Edge.prototype.getDataBytes = function () {
         switch (this.mode) {
             case Mode.ASCII:
                 if (this.input.isECI(this.fromPosition)) {
@@ -997,18 +1105,22 @@ class Edge {
             case Mode.EDF:
                 return this.getEDFBytes();
         }
+    };
+    return Edge;
+}());
+var Input = /** @class */ (function (_super) {
+    __extends(Input, _super);
+    function Input(stringToEncode, priorityCharset, fnc1, shape, macroId) {
+        var _this = _super.call(this, stringToEncode, priorityCharset, fnc1) || this;
+        _this.shape = shape;
+        _this.macroId = macroId;
+        return _this;
     }
-}
-class Input extends MinimalECIInput {
-    constructor(stringToEncode, priorityCharset, fnc1, shape, macroId) {
-        super(stringToEncode, priorityCharset, fnc1);
-        this.shape = shape;
-        this.macroId = macroId;
-    }
-    getMacroId() {
+    Input.prototype.getMacroId = function () {
         return this.macroId;
-    }
-    getShapeHint() {
+    };
+    Input.prototype.getShapeHint = function () {
         return this.shape;
-    }
-}
+    };
+    return Input;
+}(MinimalECIInput_1.MinimalECIInput));

@@ -1,12 +1,14 @@
-import BarcodeFormat from '../BarcodeFormat';
-import BitMatrix from '../common/BitMatrix';
-import DecodeHintType from '../DecodeHintType';
-import NotFoundException from '../NotFoundException';
-import Result from '../Result';
-import ResultMetadataType from '../ResultMetadataType';
-import System from '../util/System';
-import Decoder from './decoder/Decoder';
-import Detector from './detector/Detector';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var BarcodeFormat_1 = require("../BarcodeFormat");
+var BitMatrix_1 = require("../common/BitMatrix");
+var DecodeHintType_1 = require("../DecodeHintType");
+var NotFoundException_1 = require("../NotFoundException");
+var Result_1 = require("../Result");
+var ResultMetadataType_1 = require("../ResultMetadataType");
+var System_1 = require("../util/System");
+var Decoder_1 = require("./decoder/Decoder");
+var Detector_1 = require("./detector/Detector");
 /*
  * Copyright 2007 ZXing authors
  *
@@ -27,9 +29,9 @@ import Detector from './detector/Detector';
  *
  * @author bbrown@google.com (Brian Brown)
  */
-export default class DataMatrixReader {
-    constructor() {
-        this.decoder = new Decoder();
+var DataMatrixReader = /** @class */ (function () {
+    function DataMatrixReader() {
+        this.decoder = new Decoder_1.default();
     }
     /**
      * Locates and decodes a Data Matrix code in an image.
@@ -44,35 +46,36 @@ export default class DataMatrixReader {
     //   return decode(image, null);
     // }
     // @Override
-    decode(image, hints = null) {
-        let decoderResult;
-        let points;
-        if (hints != null && hints.has(DecodeHintType.PURE_BARCODE)) {
-            const bits = DataMatrixReader.extractPureBits(image.getBlackMatrix());
+    DataMatrixReader.prototype.decode = function (image, hints) {
+        if (hints === void 0) { hints = null; }
+        var decoderResult;
+        var points;
+        if (hints != null && hints.has(DecodeHintType_1.default.PURE_BARCODE)) {
+            var bits = DataMatrixReader.extractPureBits(image.getBlackMatrix());
             decoderResult = this.decoder.decode(bits);
             points = DataMatrixReader.NO_POINTS;
         }
         else {
-            const detectorResult = new Detector(image.getBlackMatrix()).detect();
+            var detectorResult = new Detector_1.default(image.getBlackMatrix()).detect();
             decoderResult = this.decoder.decode(detectorResult.getBits());
             points = detectorResult.getPoints();
         }
-        const rawBytes = decoderResult.getRawBytes();
-        const result = new Result(decoderResult.getText(), rawBytes, 8 * rawBytes.length, points, BarcodeFormat.DATA_MATRIX, System.currentTimeMillis());
-        const byteSegments = decoderResult.getByteSegments();
+        var rawBytes = decoderResult.getRawBytes();
+        var result = new Result_1.default(decoderResult.getText(), rawBytes, 8 * rawBytes.length, points, BarcodeFormat_1.default.DATA_MATRIX, System_1.default.currentTimeMillis());
+        var byteSegments = decoderResult.getByteSegments();
         if (byteSegments != null) {
-            result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);
+            result.putMetadata(ResultMetadataType_1.default.BYTE_SEGMENTS, byteSegments);
         }
-        const ecLevel = decoderResult.getECLevel();
+        var ecLevel = decoderResult.getECLevel();
         if (ecLevel != null) {
-            result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, ecLevel);
+            result.putMetadata(ResultMetadataType_1.default.ERROR_CORRECTION_LEVEL, ecLevel);
         }
         return result;
-    }
+    };
     // @Override
-    reset() {
+    DataMatrixReader.prototype.reset = function () {
         // do nothing
-    }
+    };
     /**
      * This method detects a code in a "pure" image -- that is, pure monochrome image
      * which contains only an unrotated, unskewed, image of a code, with some white border
@@ -81,55 +84,57 @@ export default class DataMatrixReader {
      *
      * @see com.google.zxing.qrcode.QRCodeReader#extractPureBits(BitMatrix)
      */
-    static extractPureBits(image) {
-        const leftTopBlack = image.getTopLeftOnBit();
-        const rightBottomBlack = image.getBottomRightOnBit();
+    DataMatrixReader.extractPureBits = function (image) {
+        var leftTopBlack = image.getTopLeftOnBit();
+        var rightBottomBlack = image.getBottomRightOnBit();
         if (leftTopBlack == null || rightBottomBlack == null) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-        const moduleSize = this.moduleSize(leftTopBlack, image);
-        let top = leftTopBlack[1];
-        const bottom = rightBottomBlack[1];
-        let left = leftTopBlack[0];
-        const right = rightBottomBlack[0];
-        const matrixWidth = (right - left + 1) / moduleSize;
-        const matrixHeight = (bottom - top + 1) / moduleSize;
+        var moduleSize = this.moduleSize(leftTopBlack, image);
+        var top = leftTopBlack[1];
+        var bottom = rightBottomBlack[1];
+        var left = leftTopBlack[0];
+        var right = rightBottomBlack[0];
+        var matrixWidth = (right - left + 1) / moduleSize;
+        var matrixHeight = (bottom - top + 1) / moduleSize;
         if (matrixWidth <= 0 || matrixHeight <= 0) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
         // Push in the "border" by half the module width so that we start
         // sampling in the middle of the module. Just in case the image is a
         // little off, this will help recover.
-        const nudge = moduleSize / 2;
+        var nudge = moduleSize / 2;
         top += nudge;
         left += nudge;
         // Now just read off the bits
-        const bits = new BitMatrix(matrixWidth, matrixHeight);
-        for (let y = 0; y < matrixHeight; y++) {
-            const iOffset = top + y * moduleSize;
-            for (let x = 0; x < matrixWidth; x++) {
+        var bits = new BitMatrix_1.default(matrixWidth, matrixHeight);
+        for (var y = 0; y < matrixHeight; y++) {
+            var iOffset = top + y * moduleSize;
+            for (var x = 0; x < matrixWidth; x++) {
                 if (image.get(left + x * moduleSize, iOffset)) {
                     bits.set(x, y);
                 }
             }
         }
         return bits;
-    }
-    static moduleSize(leftTopBlack, image) {
-        const width = image.getWidth();
-        let x = leftTopBlack[0];
-        const y = leftTopBlack[1];
+    };
+    DataMatrixReader.moduleSize = function (leftTopBlack, image) {
+        var width = image.getWidth();
+        var x = leftTopBlack[0];
+        var y = leftTopBlack[1];
         while (x < width && image.get(x, y)) {
             x++;
         }
         if (x === width) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-        const moduleSize = x - leftTopBlack[0];
+        var moduleSize = x - leftTopBlack[0];
         if (moduleSize === 0) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
         return moduleSize;
-    }
-}
-DataMatrixReader.NO_POINTS = [];
+    };
+    DataMatrixReader.NO_POINTS = [];
+    return DataMatrixReader;
+}());
+exports.default = DataMatrixReader;

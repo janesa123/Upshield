@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common {*/
-import IllegalArgumentException from '../IllegalArgumentException';
+var IllegalArgumentException_1 = require("../IllegalArgumentException");
 /**
  * <p>This provides an easy abstraction to read bits at a time from a sequence of bytes, where the
  * number of bits read is not often a multiple of 8.</p>
@@ -24,12 +26,12 @@ import IllegalArgumentException from '../IllegalArgumentException';
  *
  * @author Sean Owen
  */
-export default class BitSource {
+var BitSource = /** @class */ (function () {
     /**
      * @param bytes bytes from which this will read bits. Bits will be read from the first byte first.
      * Bits are read within a byte from most-significant to least-significant bit.
      */
-    constructor(bytes) {
+    function BitSource(bytes) {
         this.bytes = bytes;
         this.byteOffset = 0;
         this.bitOffset = 0;
@@ -37,35 +39,35 @@ export default class BitSource {
     /**
      * @return index of next bit in current byte which would be read by the next call to {@link #readBits(int)}.
      */
-    getBitOffset() {
+    BitSource.prototype.getBitOffset = function () {
         return this.bitOffset;
-    }
+    };
     /**
      * @return index of next byte in input byte array which would be read by the next call to {@link #readBits(int)}.
      */
-    getByteOffset() {
+    BitSource.prototype.getByteOffset = function () {
         return this.byteOffset;
-    }
+    };
     /**
      * @param numBits number of bits to read
      * @return int representing the bits read. The bits will appear as the least-significant
      *         bits of the int
      * @throws IllegalArgumentException if numBits isn't in [1,32] or more than is available
      */
-    readBits(numBits /*int*/) {
+    BitSource.prototype.readBits = function (numBits /*int*/) {
         if (numBits < 1 || numBits > 32 || numBits > this.available()) {
-            throw new IllegalArgumentException('' + numBits);
+            throw new IllegalArgumentException_1.default('' + numBits);
         }
-        let result = 0;
-        let bitOffset = this.bitOffset;
-        let byteOffset = this.byteOffset;
-        const bytes = this.bytes;
+        var result = 0;
+        var bitOffset = this.bitOffset;
+        var byteOffset = this.byteOffset;
+        var bytes = this.bytes;
         // First, read remainder from current byte
         if (bitOffset > 0) {
-            const bitsLeft = 8 - bitOffset;
-            const toRead = numBits < bitsLeft ? numBits : bitsLeft;
-            const bitsToNotRead = bitsLeft - toRead;
-            const mask = (0xFF >> (8 - toRead)) << bitsToNotRead;
+            var bitsLeft = 8 - bitOffset;
+            var toRead = numBits < bitsLeft ? numBits : bitsLeft;
+            var bitsToNotRead = bitsLeft - toRead;
+            var mask = (0xFF >> (8 - toRead)) << bitsToNotRead;
             result = (bytes[byteOffset] & mask) >> bitsToNotRead;
             numBits -= toRead;
             bitOffset += toRead;
@@ -83,8 +85,8 @@ export default class BitSource {
             }
             // Finally read a partial byte
             if (numBits > 0) {
-                const bitsToNotRead = 8 - numBits;
-                const mask = (0xFF >> bitsToNotRead) << bitsToNotRead;
+                var bitsToNotRead = 8 - numBits;
+                var mask = (0xFF >> bitsToNotRead) << bitsToNotRead;
                 result = (result << numBits) | ((bytes[byteOffset] & mask) >> bitsToNotRead);
                 bitOffset += numBits;
             }
@@ -92,11 +94,13 @@ export default class BitSource {
         this.bitOffset = bitOffset;
         this.byteOffset = byteOffset;
         return result;
-    }
+    };
     /**
      * @return number of bits that can be read successfully
      */
-    available() {
+    BitSource.prototype.available = function () {
         return 8 * (this.bytes.length - this.byteOffset) - this.bitOffset;
-    }
-}
+    };
+    return BitSource;
+}());
+exports.default = BitSource;

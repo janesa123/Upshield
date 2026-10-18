@@ -1,17 +1,22 @@
-import StringBuilder from '../../util/StringBuilder';
-import HighLevelEncoder from './HighLevelEncoder';
-import { C40_ENCODATION, LATCH_TO_C40, ASCII_ENCODATION, C40_UNLATCH, } from './constants';
-export class C40Encoder {
-    getEncodingMode() {
-        return C40_ENCODATION;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C40Encoder = void 0;
+var StringBuilder_1 = require("../../util/StringBuilder");
+var HighLevelEncoder_1 = require("./HighLevelEncoder");
+var constants_1 = require("./constants");
+var C40Encoder = /** @class */ (function () {
+    function C40Encoder() {
     }
-    encodeMaximal(context) {
-        const buffer = new StringBuilder();
-        let lastCharSize = 0;
-        let backtrackStartPosition = context.pos;
-        let backtrackBufferLength = 0;
+    C40Encoder.prototype.getEncodingMode = function () {
+        return constants_1.C40_ENCODATION;
+    };
+    C40Encoder.prototype.encodeMaximal = function (context) {
+        var buffer = new StringBuilder_1.default();
+        var lastCharSize = 0;
+        var backtrackStartPosition = context.pos;
+        var backtrackBufferLength = 0;
         while (context.hasMoreCharacters()) {
-            const c = context.getCurrentChar();
+            var c = context.getCurrentChar();
             context.pos++;
             lastCharSize = this.encodeChar(c, buffer);
             if (buffer.length() % 3 === 0) {
@@ -20,11 +25,11 @@ export class C40Encoder {
             }
         }
         if (backtrackBufferLength !== buffer.length()) {
-            const unwritten = Math.floor((buffer.length() / 3) * 2);
-            const curCodewordCount = Math.floor(context.getCodewordCount() + unwritten + 1); // +1 for the latch to C40
+            var unwritten = Math.floor((buffer.length() / 3) * 2);
+            var curCodewordCount = Math.floor(context.getCodewordCount() + unwritten + 1); // +1 for the latch to C40
             context.updateSymbolInfo(curCodewordCount);
-            const available = context.getSymbolInfo().getDataCapacity() - curCodewordCount;
-            const rest = Math.floor(buffer.length() % 3);
+            var available = context.getSymbolInfo().getDataCapacity() - curCodewordCount;
+            var rest = Math.floor(buffer.length() % 3);
             if ((rest === 2 && available !== 2) ||
                 (rest === 1 && (lastCharSize > 3 || available !== 1))) {
                 // buffer.setLength(backtrackBufferLength);
@@ -32,24 +37,24 @@ export class C40Encoder {
             }
         }
         if (buffer.length() > 0) {
-            context.writeCodeword(LATCH_TO_C40);
+            context.writeCodeword(constants_1.LATCH_TO_C40);
         }
         this.handleEOD(context, buffer);
-    }
-    encode(context) {
+    };
+    C40Encoder.prototype.encode = function (context) {
         // step C
-        const buffer = new StringBuilder();
+        var buffer = new StringBuilder_1.default();
         while (context.hasMoreCharacters()) {
-            const c = context.getCurrentChar();
+            var c = context.getCurrentChar();
             context.pos++;
-            let lastCharSize = this.encodeChar(c, buffer);
-            const unwritten = Math.floor(buffer.length() / 3) * 2;
-            const curCodewordCount = context.getCodewordCount() + unwritten;
+            var lastCharSize = this.encodeChar(c, buffer);
+            var unwritten = Math.floor(buffer.length() / 3) * 2;
+            var curCodewordCount = context.getCodewordCount() + unwritten;
             context.updateSymbolInfo(curCodewordCount);
-            const available = context.getSymbolInfo().getDataCapacity() - curCodewordCount;
+            var available = context.getSymbolInfo().getDataCapacity() - curCodewordCount;
             if (!context.hasMoreCharacters()) {
                 // Avoid having a single C40 value in the last triplet
-                const removed = new StringBuilder();
+                var removed = new StringBuilder_1.default();
                 if (buffer.length() % 3 === 2 && available !== 2) {
                     lastCharSize = this.backtrackOneCharacter(context, buffer, removed, lastCharSize);
                 }
@@ -59,21 +64,21 @@ export class C40Encoder {
                 }
                 break;
             }
-            const count = buffer.length();
+            var count = buffer.length();
             if (count % 3 === 0) {
-                const newMode = HighLevelEncoder.lookAheadTest(context.getMessage(), context.pos, this.getEncodingMode());
+                var newMode = HighLevelEncoder_1.default.lookAheadTest(context.getMessage(), context.pos, this.getEncodingMode());
                 if (newMode !== this.getEncodingMode()) {
                     // Return to ASCII encodation, which will actually handle latch to new mode
-                    context.signalEncoderChange(ASCII_ENCODATION);
+                    context.signalEncoderChange(constants_1.ASCII_ENCODATION);
                     break;
                 }
             }
         }
         this.handleEOD(context, buffer);
-    }
-    backtrackOneCharacter(context, buffer, removed, lastCharSize) {
-        const count = buffer.length();
-        const test = buffer.toString().substring(0, count - lastCharSize);
+    };
+    C40Encoder.prototype.backtrackOneCharacter = function (context, buffer, removed, lastCharSize) {
+        var count = buffer.length();
+        var test = buffer.toString().substring(0, count - lastCharSize);
         buffer.setLengthToZero();
         buffer.append(test);
         // buffer.delete(count - lastCharSize, count);
@@ -81,40 +86,40 @@ export class C40Encoder {
           buffer.deleteCharAt(i);
         }*/
         context.pos--;
-        const c = context.getCurrentChar();
+        var c = context.getCurrentChar();
         lastCharSize = this.encodeChar(c, removed);
         context.resetSymbolInfo(); // Deal with possible reduction in symbol size
         return lastCharSize;
-    }
-    writeNextTriplet(context, buffer) {
+    };
+    C40Encoder.prototype.writeNextTriplet = function (context, buffer) {
         context.writeCodewords(this.encodeToCodewords(buffer.toString()));
-        const test = buffer.toString().substring(3);
+        var test = buffer.toString().substring(3);
         buffer.setLengthToZero();
         buffer.append(test);
         // buffer.delete(0, 3);
         /*for (let i = 0; i < 3; i++) {
           buffer.deleteCharAt(i);
         }*/
-    }
+    };
     /**
      * Handle "end of data" situations
      *
      * @param context the encoder context
      * @param buffer  the buffer with the remaining encoded characters
      */
-    handleEOD(context, buffer) {
-        const unwritten = Math.floor((buffer.length() / 3) * 2);
-        const rest = buffer.length() % 3;
-        const curCodewordCount = context.getCodewordCount() + unwritten;
+    C40Encoder.prototype.handleEOD = function (context, buffer) {
+        var unwritten = Math.floor((buffer.length() / 3) * 2);
+        var rest = buffer.length() % 3;
+        var curCodewordCount = context.getCodewordCount() + unwritten;
         context.updateSymbolInfo(curCodewordCount);
-        const available = context.getSymbolInfo().getDataCapacity() - curCodewordCount;
+        var available = context.getSymbolInfo().getDataCapacity() - curCodewordCount;
         if (rest === 2) {
             buffer.append('\0'); // Shift 1
             while (buffer.length() >= 3) {
                 this.writeNextTriplet(context, buffer);
             }
             if (context.hasMoreCharacters()) {
-                context.writeCodeword(C40_UNLATCH);
+                context.writeCodeword(constants_1.C40_UNLATCH);
             }
         }
         else if (available === 1 && rest === 1) {
@@ -122,7 +127,7 @@ export class C40Encoder {
                 this.writeNextTriplet(context, buffer);
             }
             if (context.hasMoreCharacters()) {
-                context.writeCodeword(C40_UNLATCH);
+                context.writeCodeword(constants_1.C40_UNLATCH);
             }
             // else no unlatch
             context.pos--;
@@ -132,17 +137,17 @@ export class C40Encoder {
                 this.writeNextTriplet(context, buffer);
             }
             if (available > 0 || context.hasMoreCharacters()) {
-                context.writeCodeword(C40_UNLATCH);
+                context.writeCodeword(constants_1.C40_UNLATCH);
             }
         }
         else {
             throw new Error('Unexpected case. Please report!');
         }
-        context.signalEncoderChange(ASCII_ENCODATION);
-    }
-    encodeChar(c, sb) {
+        context.signalEncoderChange(constants_1.ASCII_ENCODATION);
+    };
+    C40Encoder.prototype.encodeChar = function (c, sb) {
         if (c === ' '.charCodeAt(0)) {
-            sb.append(0o3);
+            sb.append(3);
             return 1;
         }
         if (c >= '0'.charCodeAt(0) && c <= '9'.charCodeAt(0)) {
@@ -154,42 +159,44 @@ export class C40Encoder {
             return 1;
         }
         if (c < ' '.charCodeAt(0)) {
-            sb.append(0o0); // Shift 1 Set
+            sb.append(0); // Shift 1 Set
             sb.append(c);
             return 2;
         }
         if (c <= '/'.charCodeAt(0)) {
-            sb.append(0o1); // Shift 2 Set
+            sb.append(1); // Shift 2 Set
             sb.append(c - 33);
             return 2;
         }
         if (c <= '@'.charCodeAt(0)) {
-            sb.append(0o1); // Shift 2 Set
+            sb.append(1); // Shift 2 Set
             sb.append(c - 58 + 15);
             return 2;
         }
         if (c <= '_'.charCodeAt(0)) {
-            sb.append(0o1); // Shift 2 Set
+            sb.append(1); // Shift 2 Set
             sb.append(c - 91 + 22);
             return 2;
         }
         if (c <= 127) {
-            sb.append(0o2); // Shift 3 Set
+            sb.append(2); // Shift 3 Set
             sb.append(c - 96);
             return 2;
         }
-        sb.append(`${0o1}\u001e`); // Shift 2, Upper Shift
-        let len = 2;
+        sb.append(1 + "\u001E"); // Shift 2, Upper Shift
+        var len = 2;
         len += this.encodeChar(c - 128, sb);
         return len;
-    }
-    encodeToCodewords(sb) {
-        const v = 1600 * sb.charCodeAt(0) + 40 * sb.charCodeAt(1) + sb.charCodeAt(2) + 1;
-        const cw1 = v / 256;
-        const cw2 = v % 256;
-        const result = new StringBuilder();
+    };
+    C40Encoder.prototype.encodeToCodewords = function (sb) {
+        var v = 1600 * sb.charCodeAt(0) + 40 * sb.charCodeAt(1) + sb.charCodeAt(2) + 1;
+        var cw1 = v / 256;
+        var cw2 = v % 256;
+        var result = new StringBuilder_1.default();
         result.append(cw1);
         result.append(cw2);
         return result.toString();
-    }
-}
+    };
+    return C40Encoder;
+}());
+exports.C40Encoder = C40Encoder;

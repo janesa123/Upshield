@@ -1,7 +1,9 @@
-import BitMatrix from '../../common/BitMatrix';
-import Version from './Version';
-import FormatException from '../../FormatException';
-import IllegalArgumentException from '../../IllegalArgumentException';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var BitMatrix_1 = require("../../common/BitMatrix");
+var Version_1 = require("./Version");
+var FormatException_1 = require("../../FormatException");
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
 /*
  * Copyright 2007 ZXing authors
  *
@@ -20,23 +22,23 @@ import IllegalArgumentException from '../../IllegalArgumentException';
 /**
  * @author bbrown@google.com (Brian Brown)
  */
-export default class BitMatrixParser {
+var BitMatrixParser = /** @class */ (function () {
     /**
      * @param bitMatrix {@link BitMatrix} to parse
      * @throws FormatException if dimension is < 8 or > 144 or not 0 mod 2
      */
-    constructor(bitMatrix) {
-        const dimension = bitMatrix.getHeight();
+    function BitMatrixParser(bitMatrix) {
+        var dimension = bitMatrix.getHeight();
         if (dimension < 8 || dimension > 144 || (dimension & 0x01) !== 0) {
-            throw new FormatException();
+            throw new FormatException_1.default();
         }
         this.version = BitMatrixParser.readVersion(bitMatrix);
         this.mappingBitMatrix = this.extractDataRegion(bitMatrix);
-        this.readMappingMatrix = new BitMatrix(this.mappingBitMatrix.getWidth(), this.mappingBitMatrix.getHeight());
+        this.readMappingMatrix = new BitMatrix_1.default(this.mappingBitMatrix.getWidth(), this.mappingBitMatrix.getHeight());
     }
-    getVersion() {
+    BitMatrixParser.prototype.getVersion = function () {
         return this.version;
-    }
+    };
     /**
      * <p>Creates the version object based on the dimension of the original bit matrix from
      * the datamatrix code.</p>
@@ -48,11 +50,11 @@ export default class BitMatrixParser {
      * @throws FormatException if the dimensions of the mapping matrix are not valid
      * Data Matrix dimensions.
      */
-    static readVersion(bitMatrix) {
-        const numRows = bitMatrix.getHeight();
-        const numColumns = bitMatrix.getWidth();
-        return Version.getVersionForDimensions(numRows, numColumns);
-    }
+    BitMatrixParser.readVersion = function (bitMatrix) {
+        var numRows = bitMatrix.getHeight();
+        var numColumns = bitMatrix.getWidth();
+        return Version_1.default.getVersionForDimensions(numRows, numColumns);
+    };
     /**
      * <p>Reads the bits in the {@link BitMatrix} representing the mapping matrix (No alignment patterns)
      * in the correct order in order to reconstitute the codewords bytes contained within the
@@ -61,17 +63,17 @@ export default class BitMatrixParser {
      * @return bytes encoded within the Data Matrix Code
      * @throws FormatException if the exact number of bytes expected is not read
      */
-    readCodewords() {
-        const result = new Int8Array(this.version.getTotalCodewords());
-        let resultOffset = 0;
-        let row = 4;
-        let column = 0;
-        const numRows = this.mappingBitMatrix.getHeight();
-        const numColumns = this.mappingBitMatrix.getWidth();
-        let corner1Read = false;
-        let corner2Read = false;
-        let corner3Read = false;
-        let corner4Read = false;
+    BitMatrixParser.prototype.readCodewords = function () {
+        var result = new Int8Array(this.version.getTotalCodewords());
+        var resultOffset = 0;
+        var row = 4;
+        var column = 0;
+        var numRows = this.mappingBitMatrix.getHeight();
+        var numColumns = this.mappingBitMatrix.getWidth();
+        var corner1Read = false;
+        var corner2Read = false;
+        var corner3Read = false;
+        var corner4Read = false;
         // Read all of the codewords
         do {
             // Check the four corner cases
@@ -123,10 +125,10 @@ export default class BitMatrixParser {
             }
         } while ((row < numRows) || (column < numColumns));
         if (resultOffset !== this.version.getTotalCodewords()) {
-            throw new FormatException();
+            throw new FormatException_1.default();
         }
         return result;
-    }
+    };
     /**
      * <p>Reads a bit of the mapping matrix accounting for boundary wrapping.</p>
      *
@@ -136,7 +138,7 @@ export default class BitMatrixParser {
      * @param numColumns Number of columns in the mapping matrix
      * @return value of the given bit in the mapping matrix
      */
-    readModule(row, column, numRows, numColumns) {
+    BitMatrixParser.prototype.readModule = function (row, column, numRows, numColumns) {
         // Adjust the row and column indices based on boundary wrapping
         if (row < 0) {
             row += numRows;
@@ -148,7 +150,7 @@ export default class BitMatrixParser {
         }
         this.readMappingMatrix.set(column, row);
         return this.mappingBitMatrix.get(column, row);
-    }
+    };
     /**
      * <p>Reads the 8 bits of the standard Utah-shaped pattern.</p>
      *
@@ -160,8 +162,8 @@ export default class BitMatrixParser {
      * @param numColumns Number of columns in the mapping matrix
      * @return byte from the utah shape
      */
-    readUtah(row, column, numRows, numColumns) {
-        let currentByte = 0;
+    BitMatrixParser.prototype.readUtah = function (row, column, numRows, numColumns) {
+        var currentByte = 0;
         if (this.readModule(row - 2, column - 2, numRows, numColumns)) {
             currentByte |= 1;
         }
@@ -194,7 +196,7 @@ export default class BitMatrixParser {
             currentByte |= 1;
         }
         return currentByte;
-    }
+    };
     /**
      * <p>Reads the 8 bits of the special corner condition 1.</p>
      *
@@ -204,8 +206,8 @@ export default class BitMatrixParser {
      * @param numColumns Number of columns in the mapping matrix
      * @return byte from the Corner condition 1
      */
-    readCorner1(numRows, numColumns) {
-        let currentByte = 0;
+    BitMatrixParser.prototype.readCorner1 = function (numRows, numColumns) {
+        var currentByte = 0;
         if (this.readModule(numRows - 1, 0, numRows, numColumns)) {
             currentByte |= 1;
         }
@@ -238,7 +240,7 @@ export default class BitMatrixParser {
             currentByte |= 1;
         }
         return currentByte;
-    }
+    };
     /**
      * <p>Reads the 8 bits of the special corner condition 2.</p>
      *
@@ -248,8 +250,8 @@ export default class BitMatrixParser {
      * @param numColumns Number of columns in the mapping matrix
      * @return byte from the Corner condition 2
      */
-    readCorner2(numRows, numColumns) {
-        let currentByte = 0;
+    BitMatrixParser.prototype.readCorner2 = function (numRows, numColumns) {
+        var currentByte = 0;
         if (this.readModule(numRows - 3, 0, numRows, numColumns)) {
             currentByte |= 1;
         }
@@ -282,7 +284,7 @@ export default class BitMatrixParser {
             currentByte |= 1;
         }
         return currentByte;
-    }
+    };
     /**
      * <p>Reads the 8 bits of the special corner condition 3.</p>
      *
@@ -292,8 +294,8 @@ export default class BitMatrixParser {
      * @param numColumns Number of columns in the mapping matrix
      * @return byte from the Corner condition 3
      */
-    readCorner3(numRows, numColumns) {
-        let currentByte = 0;
+    BitMatrixParser.prototype.readCorner3 = function (numRows, numColumns) {
+        var currentByte = 0;
         if (this.readModule(numRows - 1, 0, numRows, numColumns)) {
             currentByte |= 1;
         }
@@ -326,7 +328,7 @@ export default class BitMatrixParser {
             currentByte |= 1;
         }
         return currentByte;
-    }
+    };
     /**
      * <p>Reads the 8 bits of the special corner condition 4.</p>
      *
@@ -336,8 +338,8 @@ export default class BitMatrixParser {
      * @param numColumns Number of columns in the mapping matrix
      * @return byte from the Corner condition 4
      */
-    readCorner4(numRows, numColumns) {
-        let currentByte = 0;
+    BitMatrixParser.prototype.readCorner4 = function (numRows, numColumns) {
+        var currentByte = 0;
         if (this.readModule(numRows - 3, 0, numRows, numColumns)) {
             currentByte |= 1;
         }
@@ -370,7 +372,7 @@ export default class BitMatrixParser {
             currentByte |= 1;
         }
         return currentByte;
-    }
+    };
     /**
      * <p>Extracts the data region from a {@link BitMatrix} that contains
      * alignment patterns.</p>
@@ -378,30 +380,30 @@ export default class BitMatrixParser {
      * @param bitMatrix Original {@link BitMatrix} with alignment patterns
      * @return BitMatrix that has the alignment patterns removed
      */
-    extractDataRegion(bitMatrix) {
-        const symbolSizeRows = this.version.getSymbolSizeRows();
-        const symbolSizeColumns = this.version.getSymbolSizeColumns();
+    BitMatrixParser.prototype.extractDataRegion = function (bitMatrix) {
+        var symbolSizeRows = this.version.getSymbolSizeRows();
+        var symbolSizeColumns = this.version.getSymbolSizeColumns();
         if (bitMatrix.getHeight() !== symbolSizeRows) {
-            throw new IllegalArgumentException('Dimension of bitMatrix must match the version size');
+            throw new IllegalArgumentException_1.default('Dimension of bitMatrix must match the version size');
         }
-        const dataRegionSizeRows = this.version.getDataRegionSizeRows();
-        const dataRegionSizeColumns = this.version.getDataRegionSizeColumns();
-        const numDataRegionsRow = symbolSizeRows / dataRegionSizeRows | 0;
-        const numDataRegionsColumn = symbolSizeColumns / dataRegionSizeColumns | 0;
-        const sizeDataRegionRow = numDataRegionsRow * dataRegionSizeRows;
-        const sizeDataRegionColumn = numDataRegionsColumn * dataRegionSizeColumns;
-        const bitMatrixWithoutAlignment = new BitMatrix(sizeDataRegionColumn, sizeDataRegionRow);
-        for (let dataRegionRow = 0; dataRegionRow < numDataRegionsRow; ++dataRegionRow) {
-            const dataRegionRowOffset = dataRegionRow * dataRegionSizeRows;
-            for (let dataRegionColumn = 0; dataRegionColumn < numDataRegionsColumn; ++dataRegionColumn) {
-                const dataRegionColumnOffset = dataRegionColumn * dataRegionSizeColumns;
-                for (let i = 0; i < dataRegionSizeRows; ++i) {
-                    const readRowOffset = dataRegionRow * (dataRegionSizeRows + 2) + 1 + i;
-                    const writeRowOffset = dataRegionRowOffset + i;
-                    for (let j = 0; j < dataRegionSizeColumns; ++j) {
-                        const readColumnOffset = dataRegionColumn * (dataRegionSizeColumns + 2) + 1 + j;
+        var dataRegionSizeRows = this.version.getDataRegionSizeRows();
+        var dataRegionSizeColumns = this.version.getDataRegionSizeColumns();
+        var numDataRegionsRow = symbolSizeRows / dataRegionSizeRows | 0;
+        var numDataRegionsColumn = symbolSizeColumns / dataRegionSizeColumns | 0;
+        var sizeDataRegionRow = numDataRegionsRow * dataRegionSizeRows;
+        var sizeDataRegionColumn = numDataRegionsColumn * dataRegionSizeColumns;
+        var bitMatrixWithoutAlignment = new BitMatrix_1.default(sizeDataRegionColumn, sizeDataRegionRow);
+        for (var dataRegionRow = 0; dataRegionRow < numDataRegionsRow; ++dataRegionRow) {
+            var dataRegionRowOffset = dataRegionRow * dataRegionSizeRows;
+            for (var dataRegionColumn = 0; dataRegionColumn < numDataRegionsColumn; ++dataRegionColumn) {
+                var dataRegionColumnOffset = dataRegionColumn * dataRegionSizeColumns;
+                for (var i = 0; i < dataRegionSizeRows; ++i) {
+                    var readRowOffset = dataRegionRow * (dataRegionSizeRows + 2) + 1 + i;
+                    var writeRowOffset = dataRegionRowOffset + i;
+                    for (var j = 0; j < dataRegionSizeColumns; ++j) {
+                        var readColumnOffset = dataRegionColumn * (dataRegionSizeColumns + 2) + 1 + j;
                         if (bitMatrix.get(readColumnOffset, readRowOffset)) {
-                            const writeColumnOffset = dataRegionColumnOffset + j;
+                            var writeColumnOffset = dataRegionColumnOffset + j;
                             bitMatrixWithoutAlignment.set(writeColumnOffset, writeRowOffset);
                         }
                     }
@@ -409,5 +411,7 @@ export default class BitMatrixParser {
             }
         }
         return bitMatrixWithoutAlignment;
-    }
-}
+    };
+    return BitMatrixParser;
+}());
+exports.default = BitMatrixParser;

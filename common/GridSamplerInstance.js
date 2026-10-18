@@ -1,5 +1,9 @@
-import DefaultGridSampler from './DefaultGridSampler';
-export default class GridSamplerInstance {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var DefaultGridSampler_1 = require("./DefaultGridSampler");
+var GridSamplerInstance = /** @class */ (function () {
+    function GridSamplerInstance() {
+    }
     /**
      * Sets the implementation of GridSampler used by the library. One global
      * instance is stored, which may sound problematic. But, the implementation provided
@@ -9,14 +13,16 @@ export default class GridSamplerInstance {
      *
      * @param newGridSampler The platform-specific object to install.
      */
-    static setGridSampler(newGridSampler) {
+    GridSamplerInstance.setGridSampler = function (newGridSampler) {
         GridSamplerInstance.gridSampler = newGridSampler;
-    }
+    };
     /**
      * @return the current implementation of GridSampler
      */
-    static getInstance() {
+    GridSamplerInstance.getInstance = function () {
         return GridSamplerInstance.gridSampler;
-    }
-}
-GridSamplerInstance.gridSampler = new DefaultGridSampler();
+    };
+    GridSamplerInstance.gridSampler = new DefaultGridSampler_1.default();
+    return GridSamplerInstance;
+}());
+exports.default = GridSamplerInstance;

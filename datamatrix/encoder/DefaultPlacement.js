@@ -1,8 +1,10 @@
-import Arrays from '../../util/Arrays';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Arrays_1 = require("../../util/Arrays");
 /**
  * Symbol Character Placement Program. Adapted from Annex M.1 in ISO/IEC 16022:2000(E).
  */
-class DefaultPlacement {
+var DefaultPlacement = /** @class */ (function () {
     /**
      * Main constructor
      *
@@ -10,35 +12,35 @@ class DefaultPlacement {
      * @param numcols   the number of columns
      * @param numrows   the number of rows
      */
-    constructor(codewords, numcols, numrows) {
+    function DefaultPlacement(codewords, numcols, numrows) {
         this.codewords = codewords;
         this.numcols = numcols;
         this.numrows = numrows;
         this.bits = new Uint8Array(numcols * numrows);
-        Arrays.fill(this.bits, 2); // Initialize with "not set" value
+        Arrays_1.default.fill(this.bits, 2); // Initialize with "not set" value
     }
-    getNumrows() {
+    DefaultPlacement.prototype.getNumrows = function () {
         return this.numrows;
-    }
-    getNumcols() {
+    };
+    DefaultPlacement.prototype.getNumcols = function () {
         return this.numcols;
-    }
-    getBits() {
+    };
+    DefaultPlacement.prototype.getBits = function () {
         return this.bits;
-    }
-    getBit(col, row) {
+    };
+    DefaultPlacement.prototype.getBit = function (col, row) {
         return this.bits[row * this.numcols + col] === 1;
-    }
-    setBit(col, row, bit) {
+    };
+    DefaultPlacement.prototype.setBit = function (col, row, bit) {
         this.bits[row * this.numcols + col] = bit ? 1 : 0;
-    }
-    noBit(col, row) {
+    };
+    DefaultPlacement.prototype.noBit = function (col, row) {
         return this.bits[row * this.numcols + col] === 2;
-    }
-    place() {
-        let pos = 0;
-        let row = 4;
-        let col = 0;
+    };
+    DefaultPlacement.prototype.place = function () {
+        var pos = 0;
+        var row = 4;
+        var col = 0;
         do {
             // repeatedly first check for one of the special corner cases, then...
             if (row === this.numrows && col === 0) {
@@ -80,8 +82,8 @@ class DefaultPlacement {
             this.setBit(this.numcols - 1, this.numrows - 1, true);
             this.setBit(this.numcols - 2, this.numrows - 2, true);
         }
-    }
-    module(row, col, pos, bit) {
+    };
+    DefaultPlacement.prototype.module = function (row, col, pos, bit) {
         if (row < 0) {
             row += this.numrows;
             col += 4 - ((this.numrows + 4) % 8);
@@ -91,10 +93,10 @@ class DefaultPlacement {
             row += 4 - ((this.numcols + 4) % 8);
         }
         // Note the conversion:
-        let v = this.codewords.charCodeAt(pos);
+        var v = this.codewords.charCodeAt(pos);
         v &= 1 << (8 - bit);
         this.setBit(col, row, v !== 0);
-    }
+    };
     /**
      * Places the 8 bits of a utah-shaped symbol character in ECC200.
      *
@@ -102,7 +104,7 @@ class DefaultPlacement {
      * @param col the column
      * @param pos character position
      */
-    utah(row, col, pos) {
+    DefaultPlacement.prototype.utah = function (row, col, pos) {
         this.module(row - 2, col - 2, pos, 1);
         this.module(row - 2, col - 1, pos, 2);
         this.module(row - 1, col - 2, pos, 3);
@@ -111,8 +113,8 @@ class DefaultPlacement {
         this.module(row, col - 2, pos, 6);
         this.module(row, col - 1, pos, 7);
         this.module(row, col, pos, 8);
-    }
-    corner1(pos) {
+    };
+    DefaultPlacement.prototype.corner1 = function (pos) {
         this.module(this.numrows - 1, 0, pos, 1);
         this.module(this.numrows - 1, 1, pos, 2);
         this.module(this.numrows - 1, 2, pos, 3);
@@ -121,8 +123,8 @@ class DefaultPlacement {
         this.module(1, this.numcols - 1, pos, 6);
         this.module(2, this.numcols - 1, pos, 7);
         this.module(3, this.numcols - 1, pos, 8);
-    }
-    corner2(pos) {
+    };
+    DefaultPlacement.prototype.corner2 = function (pos) {
         this.module(this.numrows - 3, 0, pos, 1);
         this.module(this.numrows - 2, 0, pos, 2);
         this.module(this.numrows - 1, 0, pos, 3);
@@ -131,8 +133,8 @@ class DefaultPlacement {
         this.module(0, this.numcols - 2, pos, 6);
         this.module(0, this.numcols - 1, pos, 7);
         this.module(1, this.numcols - 1, pos, 8);
-    }
-    corner3(pos) {
+    };
+    DefaultPlacement.prototype.corner3 = function (pos) {
         this.module(this.numrows - 3, 0, pos, 1);
         this.module(this.numrows - 2, 0, pos, 2);
         this.module(this.numrows - 1, 0, pos, 3);
@@ -141,8 +143,8 @@ class DefaultPlacement {
         this.module(1, this.numcols - 1, pos, 6);
         this.module(2, this.numcols - 1, pos, 7);
         this.module(3, this.numcols - 1, pos, 8);
-    }
-    corner4(pos) {
+    };
+    DefaultPlacement.prototype.corner4 = function (pos) {
         this.module(this.numrows - 1, 0, pos, 1);
         this.module(this.numrows - 1, this.numcols - 1, pos, 2);
         this.module(0, this.numcols - 3, pos, 3);
@@ -151,6 +153,7 @@ class DefaultPlacement {
         this.module(1, this.numcols - 3, pos, 6);
         this.module(1, this.numcols - 2, pos, 7);
         this.module(1, this.numcols - 1, pos, 8);
-    }
-}
-export default DefaultPlacement;
+    };
+    return DefaultPlacement;
+}());
+exports.default = DefaultPlacement;

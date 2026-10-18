@@ -1,57 +1,62 @@
-import StringUtils from '../../common/StringUtils';
-import StringBuilder from '../../util/StringBuilder';
-import { EDIFACT_ENCODATION, ASCII_ENCODATION } from './constants';
-import HighLevelEncoder from './HighLevelEncoder';
-export class EdifactEncoder {
-    getEncodingMode() {
-        return EDIFACT_ENCODATION;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EdifactEncoder = void 0;
+var StringUtils_1 = require("../../common/StringUtils");
+var StringBuilder_1 = require("../../util/StringBuilder");
+var constants_1 = require("./constants");
+var HighLevelEncoder_1 = require("./HighLevelEncoder");
+var EdifactEncoder = /** @class */ (function () {
+    function EdifactEncoder() {
     }
-    encode(context) {
+    EdifactEncoder.prototype.getEncodingMode = function () {
+        return constants_1.EDIFACT_ENCODATION;
+    };
+    EdifactEncoder.prototype.encode = function (context) {
         // step F
-        const buffer = new StringBuilder();
+        var buffer = new StringBuilder_1.default();
         while (context.hasMoreCharacters()) {
-            const c = context.getCurrentChar();
+            var c = context.getCurrentChar();
             this.encodeChar(c, buffer);
             context.pos++;
-            const count = buffer.length();
+            var count = buffer.length();
             if (count >= 4) {
                 context.writeCodewords(this.encodeToCodewords(buffer.toString()));
-                const test = buffer.toString().substring(4);
+                var test_1 = buffer.toString().substring(4);
                 buffer.setLengthToZero();
-                buffer.append(test);
+                buffer.append(test_1);
                 // buffer.delete(0, 4);
                 // for (let i = 0; i < 4; i++) {
                 //  buffer.deleteCharAt(i);
                 // }
-                const newMode = HighLevelEncoder.lookAheadTest(context.getMessage(), context.pos, this.getEncodingMode());
+                var newMode = HighLevelEncoder_1.default.lookAheadTest(context.getMessage(), context.pos, this.getEncodingMode());
                 if (newMode !== this.getEncodingMode()) {
                     // Return to ASCII encodation, which will actually handle latch to new mode
-                    context.signalEncoderChange(ASCII_ENCODATION);
+                    context.signalEncoderChange(constants_1.ASCII_ENCODATION);
                     break;
                 }
             }
         }
-        buffer.append(StringUtils.getCharAt(31)); // Unlatch
+        buffer.append(StringUtils_1.default.getCharAt(31)); // Unlatch
         this.handleEOD(context, buffer);
-    }
+    };
     /**
      * Handle "end of data" situations
      *
      * @param context the encoder context
      * @param buffer  the buffer with the remaining encoded characters
      */
-    handleEOD(context, buffer) {
+    EdifactEncoder.prototype.handleEOD = function (context, buffer) {
         try {
-            const count = buffer.length();
+            var count = buffer.length();
             if (count === 0) {
                 return; // Already finished
             }
             if (count === 1) {
                 // Only an unlatch at the end
                 context.updateSymbolInfo();
-                let available = context.getSymbolInfo().getDataCapacity() -
+                var available = context.getSymbolInfo().getDataCapacity() -
                     context.getCodewordCount();
-                const remaining = context.getRemainingCharacters();
+                var remaining = context.getRemainingCharacters();
                 // The following two lines are a hack inspired by the 'fix' from https://sourceforge.net/p/barcode4j/svn/221/
                 if (remaining > available) {
                     context.updateSymbolInfo(context.getCodewordCount() + 1);
@@ -66,13 +71,13 @@ export class EdifactEncoder {
             if (count > 4) {
                 throw new Error('Count must not exceed 4');
             }
-            const restChars = count - 1;
-            const encoded = this.encodeToCodewords(buffer.toString());
-            const endOfSymbolReached = !context.hasMoreCharacters();
-            let restInAscii = endOfSymbolReached && restChars <= 2;
+            var restChars = count - 1;
+            var encoded = this.encodeToCodewords(buffer.toString());
+            var endOfSymbolReached = !context.hasMoreCharacters();
+            var restInAscii = endOfSymbolReached && restChars <= 2;
             if (restChars <= 2) {
                 context.updateSymbolInfo(context.getCodewordCount() + restChars);
-                const available = context.getSymbolInfo().getDataCapacity() -
+                var available = context.getSymbolInfo().getDataCapacity() -
                     context.getCodewordCount();
                 if (available >= 3) {
                     restInAscii = false;
@@ -89,34 +94,34 @@ export class EdifactEncoder {
             }
         }
         finally {
-            context.signalEncoderChange(ASCII_ENCODATION);
+            context.signalEncoderChange(constants_1.ASCII_ENCODATION);
         }
-    }
-    encodeChar(c, sb) {
+    };
+    EdifactEncoder.prototype.encodeChar = function (c, sb) {
         if (c >= ' '.charCodeAt(0) && c <= '?'.charCodeAt(0)) {
             sb.append(c);
         }
         else if (c >= '@'.charCodeAt(0) && c <= '^'.charCodeAt(0)) {
-            sb.append(StringUtils.getCharAt(c - 64));
+            sb.append(StringUtils_1.default.getCharAt(c - 64));
         }
         else {
-            HighLevelEncoder.illegalCharacter(StringUtils.getCharAt(c));
+            HighLevelEncoder_1.default.illegalCharacter(StringUtils_1.default.getCharAt(c));
         }
-    }
-    encodeToCodewords(sb) {
-        const len = sb.length;
+    };
+    EdifactEncoder.prototype.encodeToCodewords = function (sb) {
+        var len = sb.length;
         if (len === 0) {
             throw new Error('StringBuilder must not be empty');
         }
-        const c1 = sb.charAt(0).charCodeAt(0);
-        const c2 = len >= 2 ? sb.charAt(1).charCodeAt(0) : 0;
-        const c3 = len >= 3 ? sb.charAt(2).charCodeAt(0) : 0;
-        const c4 = len >= 4 ? sb.charAt(3).charCodeAt(0) : 0;
-        const v = (c1 << 18) + (c2 << 12) + (c3 << 6) + c4;
-        const cw1 = (v >> 16) & 255;
-        const cw2 = (v >> 8) & 255;
-        const cw3 = v & 255;
-        const res = new StringBuilder();
+        var c1 = sb.charAt(0).charCodeAt(0);
+        var c2 = len >= 2 ? sb.charAt(1).charCodeAt(0) : 0;
+        var c3 = len >= 3 ? sb.charAt(2).charCodeAt(0) : 0;
+        var c4 = len >= 4 ? sb.charAt(3).charCodeAt(0) : 0;
+        var v = (c1 << 18) + (c2 << 12) + (c3 << 6) + c4;
+        var cw1 = (v >> 16) & 255;
+        var cw2 = (v >> 8) & 255;
+        var cw3 = v & 255;
+        var res = new StringBuilder_1.default();
         res.append(cw1);
         if (len >= 2) {
             res.append(cw2);
@@ -125,5 +130,7 @@ export class EdifactEncoder {
             res.append(cw3);
         }
         return res.toString();
-    }
-}
+    };
+    return EdifactEncoder;
+}());
+exports.EdifactEncoder = EdifactEncoder;

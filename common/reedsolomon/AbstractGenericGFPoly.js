@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common.reedsolomon {*/
 // import GenericGF from './GenericGF';
-import AbstractGenericGF from './AbstractGenericGF';
+var AbstractGenericGF_1 = require("./AbstractGenericGF");
 /**
  * <p>Represents a polynomial whose coefficients are elements of a GF.
  * Instances of this class are immutable.</p>
@@ -25,60 +27,62 @@ import AbstractGenericGF from './AbstractGenericGF';
  *
  * @author Sean Owen
  */
-export default class AbstractGenericGFPoly {
-    getCoefficients() {
-        return this.coefficients;
+var AbstractGenericGFPoly = /** @class */ (function () {
+    function AbstractGenericGFPoly() {
     }
+    AbstractGenericGFPoly.prototype.getCoefficients = function () {
+        return this.coefficients;
+    };
     /**
      * @return degree of this polynomial
      */
-    getDegree() {
+    AbstractGenericGFPoly.prototype.getDegree = function () {
         return this.coefficients.length - 1;
-    }
+    };
     /**
      * @return true iff this polynomial is the monomial "0"
      */
-    isZero() {
+    AbstractGenericGFPoly.prototype.isZero = function () {
         return this.coefficients[0] === 0;
-    }
+    };
     /**
      * @return coefficient of x^degree term in this polynomial
      */
-    getCoefficient(degree /*int*/) {
+    AbstractGenericGFPoly.prototype.getCoefficient = function (degree /*int*/) {
         return this.coefficients[this.coefficients.length - 1 - degree];
-    }
+    };
     /**
      * @return evaluation of this polynomial at a given point
      */
-    evaluateAt(a /*int*/) {
+    AbstractGenericGFPoly.prototype.evaluateAt = function (a /*int*/) {
         if (a === 0) {
             // Just return the x^0 coefficient
             return this.getCoefficient(0);
         }
-        const coefficients = this.coefficients;
-        let result;
+        var coefficients = this.coefficients;
+        var result;
         if (a === 1) {
             // Just the sum of the coefficients
             result = 0;
-            for (let i = 0, length = coefficients.length; i !== length; i++) {
-                const coefficient = coefficients[i];
-                result = AbstractGenericGF.addOrSubtract(result, coefficient);
+            for (var i = 0, length_1 = coefficients.length; i !== length_1; i++) {
+                var coefficient = coefficients[i];
+                result = AbstractGenericGF_1.default.addOrSubtract(result, coefficient);
             }
             return result;
         }
         result = coefficients[0];
-        const size = coefficients.length;
-        const field = this.field;
-        for (let i = 1; i < size; i++) {
-            result = AbstractGenericGF.addOrSubtract(field.multiply(a, result), coefficients[i]);
+        var size = coefficients.length;
+        var field = this.field;
+        for (var i = 1; i < size; i++) {
+            result = AbstractGenericGF_1.default.addOrSubtract(field.multiply(a, result), coefficients[i]);
         }
         return result;
-    }
+    };
     /*@Override*/
-    toString() {
-        let result = '';
-        for (let degree = this.getDegree(); degree >= 0; degree--) {
-            let coefficient = this.getCoefficient(degree);
+    AbstractGenericGFPoly.prototype.toString = function () {
+        var result = '';
+        for (var degree = this.getDegree(); degree >= 0; degree--) {
+            var coefficient = this.getCoefficient(degree);
             if (coefficient !== 0) {
                 if (coefficient < 0) {
                     result += ' - ';
@@ -90,7 +94,7 @@ export default class AbstractGenericGFPoly {
                     }
                 }
                 if (degree === 0 || coefficient !== 1) {
-                    const alphaPower = this.field.log(coefficient);
+                    var alphaPower = this.field.log(coefficient);
                     if (alphaPower === 0) {
                         result += '1';
                     }
@@ -114,5 +118,7 @@ export default class AbstractGenericGFPoly {
             }
         }
         return result;
-    }
-}
+    };
+    return AbstractGenericGFPoly;
+}());
+exports.default = AbstractGenericGFPoly;

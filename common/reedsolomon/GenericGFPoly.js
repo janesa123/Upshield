@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common.reedsolomon {*/
-import AbstractGenericGF from './AbstractGenericGF';
-import System from '../../util/System';
-import IllegalArgumentException from '../../IllegalArgumentException';
+var AbstractGenericGF_1 = require("./AbstractGenericGF");
+var System_1 = require("../../util/System");
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
 /**
  * <p>Represents a polynomial whose coefficients are elements of a GF.
  * Instances of this class are immutable.</p>
@@ -26,7 +28,7 @@ import IllegalArgumentException from '../../IllegalArgumentException';
  *
  * @author Sean Owen
  */
-export default class GenericGFPoly {
+var GenericGFPoly = /** @class */ (function () {
     /**
      * @param field the {@link GenericGF} instance representing the field to use
      * to perform computations
@@ -36,15 +38,15 @@ export default class GenericGFPoly {
      * or if leading coefficient is 0 and this is not a
      * constant polynomial (that is, it is not the monomial "0")
      */
-    constructor(field, coefficients) {
+    function GenericGFPoly(field, coefficients) {
         if (coefficients.length === 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         this.field = field;
-        const coefficientsLength = coefficients.length;
+        var coefficientsLength = coefficients.length;
         if (coefficientsLength > 1 && coefficients[0] === 0) {
             // Leading term must be non-zero for anything except the constant polynomial "0"
-            let firstNonZero = 1;
+            var firstNonZero = 1;
             while (firstNonZero < coefficientsLength && coefficients[firstNonZero] === 0) {
                 firstNonZero++;
             }
@@ -53,64 +55,64 @@ export default class GenericGFPoly {
             }
             else {
                 this.coefficients = new Int32Array(coefficientsLength - firstNonZero);
-                System.arraycopy(coefficients, firstNonZero, this.coefficients, 0, this.coefficients.length);
+                System_1.default.arraycopy(coefficients, firstNonZero, this.coefficients, 0, this.coefficients.length);
             }
         }
         else {
             this.coefficients = coefficients;
         }
     }
-    getCoefficients() {
+    GenericGFPoly.prototype.getCoefficients = function () {
         return this.coefficients;
-    }
+    };
     /**
      * @return degree of this polynomial
      */
-    getDegree() {
+    GenericGFPoly.prototype.getDegree = function () {
         return this.coefficients.length - 1;
-    }
+    };
     /**
      * @return true iff this polynomial is the monomial "0"
      */
-    isZero() {
+    GenericGFPoly.prototype.isZero = function () {
         return this.coefficients[0] === 0;
-    }
+    };
     /**
      * @return coefficient of x^degree term in this polynomial
      */
-    getCoefficient(degree /*int*/) {
+    GenericGFPoly.prototype.getCoefficient = function (degree /*int*/) {
         return this.coefficients[this.coefficients.length - 1 - degree];
-    }
+    };
     /**
      * @return evaluation of this polynomial at a given point
      */
-    evaluateAt(a /*int*/) {
+    GenericGFPoly.prototype.evaluateAt = function (a /*int*/) {
         if (a === 0) {
             // Just return the x^0 coefficient
             return this.getCoefficient(0);
         }
-        const coefficients = this.coefficients;
-        let result;
+        var coefficients = this.coefficients;
+        var result;
         if (a === 1) {
             // Just the sum of the coefficients
             result = 0;
-            for (let i = 0, length = coefficients.length; i !== length; i++) {
-                const coefficient = coefficients[i];
-                result = AbstractGenericGF.addOrSubtract(result, coefficient);
+            for (var i = 0, length_1 = coefficients.length; i !== length_1; i++) {
+                var coefficient = coefficients[i];
+                result = AbstractGenericGF_1.default.addOrSubtract(result, coefficient);
             }
             return result;
         }
         result = coefficients[0];
-        const size = coefficients.length;
-        const field = this.field;
-        for (let i = 1; i < size; i++) {
-            result = AbstractGenericGF.addOrSubtract(field.multiply(a, result), coefficients[i]);
+        var size = coefficients.length;
+        var field = this.field;
+        for (var i = 1; i < size; i++) {
+            result = AbstractGenericGF_1.default.addOrSubtract(field.multiply(a, result), coefficients[i]);
         }
         return result;
-    }
-    addOrSubtract(other) {
+    };
+    GenericGFPoly.prototype.addOrSubtract = function (other) {
         if (!this.field.equals(other.field)) {
-            throw new IllegalArgumentException('GenericGFPolys do not have same GenericGF field');
+            throw new IllegalArgumentException_1.default('GenericGFPolys do not have same GenericGF field');
         }
         if (this.isZero()) {
             return other;
@@ -118,102 +120,102 @@ export default class GenericGFPoly {
         if (other.isZero()) {
             return this;
         }
-        let smallerCoefficients = this.coefficients;
-        let largerCoefficients = other.coefficients;
+        var smallerCoefficients = this.coefficients;
+        var largerCoefficients = other.coefficients;
         if (smallerCoefficients.length > largerCoefficients.length) {
-            const temp = smallerCoefficients;
+            var temp = smallerCoefficients;
             smallerCoefficients = largerCoefficients;
             largerCoefficients = temp;
         }
-        let sumDiff = new Int32Array(largerCoefficients.length);
-        const lengthDiff = largerCoefficients.length - smallerCoefficients.length;
+        var sumDiff = new Int32Array(largerCoefficients.length);
+        var lengthDiff = largerCoefficients.length - smallerCoefficients.length;
         // Copy high-order terms only found in higher-degree polynomial's coefficients
-        System.arraycopy(largerCoefficients, 0, sumDiff, 0, lengthDiff);
-        for (let i = lengthDiff; i < largerCoefficients.length; i++) {
-            sumDiff[i] = AbstractGenericGF.addOrSubtract(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
+        System_1.default.arraycopy(largerCoefficients, 0, sumDiff, 0, lengthDiff);
+        for (var i = lengthDiff; i < largerCoefficients.length; i++) {
+            sumDiff[i] = AbstractGenericGF_1.default.addOrSubtract(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
         }
         return new GenericGFPoly(this.field, sumDiff);
-    }
-    multiply(other) {
+    };
+    GenericGFPoly.prototype.multiply = function (other) {
         if (!this.field.equals(other.field)) {
-            throw new IllegalArgumentException('GenericGFPolys do not have same GenericGF field');
+            throw new IllegalArgumentException_1.default('GenericGFPolys do not have same GenericGF field');
         }
         if (this.isZero() || other.isZero()) {
             return this.field.getZero();
         }
-        const aCoefficients = this.coefficients;
-        const aLength = aCoefficients.length;
-        const bCoefficients = other.coefficients;
-        const bLength = bCoefficients.length;
-        const product = new Int32Array(aLength + bLength - 1);
-        const field = this.field;
-        for (let i = 0; i < aLength; i++) {
-            const aCoeff = aCoefficients[i];
-            for (let j = 0; j < bLength; j++) {
-                product[i + j] = AbstractGenericGF.addOrSubtract(product[i + j], field.multiply(aCoeff, bCoefficients[j]));
+        var aCoefficients = this.coefficients;
+        var aLength = aCoefficients.length;
+        var bCoefficients = other.coefficients;
+        var bLength = bCoefficients.length;
+        var product = new Int32Array(aLength + bLength - 1);
+        var field = this.field;
+        for (var i = 0; i < aLength; i++) {
+            var aCoeff = aCoefficients[i];
+            for (var j = 0; j < bLength; j++) {
+                product[i + j] = AbstractGenericGF_1.default.addOrSubtract(product[i + j], field.multiply(aCoeff, bCoefficients[j]));
             }
         }
         return new GenericGFPoly(field, product);
-    }
-    multiplyScalar(scalar /*int*/) {
+    };
+    GenericGFPoly.prototype.multiplyScalar = function (scalar /*int*/) {
         if (scalar === 0) {
             return this.field.getZero();
         }
         if (scalar === 1) {
             return this;
         }
-        const size = this.coefficients.length;
-        const field = this.field;
-        const product = new Int32Array(size);
-        const coefficients = this.coefficients;
-        for (let i = 0; i < size; i++) {
+        var size = this.coefficients.length;
+        var field = this.field;
+        var product = new Int32Array(size);
+        var coefficients = this.coefficients;
+        for (var i = 0; i < size; i++) {
             product[i] = field.multiply(coefficients[i], scalar);
         }
         return new GenericGFPoly(field, product);
-    }
-    multiplyByMonomial(degree /*int*/, coefficient /*int*/) {
+    };
+    GenericGFPoly.prototype.multiplyByMonomial = function (degree /*int*/, coefficient /*int*/) {
         if (degree < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         if (coefficient === 0) {
             return this.field.getZero();
         }
-        const coefficients = this.coefficients;
-        const size = coefficients.length;
-        const product = new Int32Array(size + degree);
-        const field = this.field;
-        for (let i = 0; i < size; i++) {
+        var coefficients = this.coefficients;
+        var size = coefficients.length;
+        var product = new Int32Array(size + degree);
+        var field = this.field;
+        for (var i = 0; i < size; i++) {
             product[i] = field.multiply(coefficients[i], coefficient);
         }
         return new GenericGFPoly(field, product);
-    }
-    divide(other) {
+    };
+    GenericGFPoly.prototype.divide = function (other) {
         if (!this.field.equals(other.field)) {
-            throw new IllegalArgumentException('GenericGFPolys do not have same GenericGF field');
+            throw new IllegalArgumentException_1.default('GenericGFPolys do not have same GenericGF field');
         }
         if (other.isZero()) {
-            throw new IllegalArgumentException('Divide by 0');
+            throw new IllegalArgumentException_1.default('Divide by 0');
         }
-        const field = this.field;
-        let quotient = field.getZero();
-        let remainder = this;
-        const denominatorLeadingTerm = other.getCoefficient(other.getDegree());
-        const inverseDenominatorLeadingTerm = field.inverse(denominatorLeadingTerm);
+        var field = this.field;
+        var quotient = field.getZero();
+        var remainder = this;
+        var denominatorLeadingTerm = other.getCoefficient(other.getDegree());
+        var inverseDenominatorLeadingTerm = field.inverse(denominatorLeadingTerm);
         while (remainder.getDegree() >= other.getDegree() && !remainder.isZero()) {
-            const degreeDifference = remainder.getDegree() - other.getDegree();
-            const scale = field.multiply(remainder.getCoefficient(remainder.getDegree()), inverseDenominatorLeadingTerm);
-            const term = other.multiplyByMonomial(degreeDifference, scale);
-            const iterationQuotient = field.buildMonomial(degreeDifference, scale);
+            var degreeDifference = remainder.getDegree() - other.getDegree();
+            var scale = field.multiply(remainder.getCoefficient(remainder.getDegree()), inverseDenominatorLeadingTerm);
+            var term = other.multiplyByMonomial(degreeDifference, scale);
+            var iterationQuotient = field.buildMonomial(degreeDifference, scale);
             quotient = quotient.addOrSubtract(iterationQuotient);
             remainder = remainder.addOrSubtract(term);
         }
         return [quotient, remainder];
-    }
+    };
     /*@Override*/
-    toString() {
-        let result = '';
-        for (let degree = this.getDegree(); degree >= 0; degree--) {
-            let coefficient = this.getCoefficient(degree);
+    GenericGFPoly.prototype.toString = function () {
+        var result = '';
+        for (var degree = this.getDegree(); degree >= 0; degree--) {
+            var coefficient = this.getCoefficient(degree);
             if (coefficient !== 0) {
                 if (coefficient < 0) {
                     result += ' - ';
@@ -225,7 +227,7 @@ export default class GenericGFPoly {
                     }
                 }
                 if (degree === 0 || coefficient !== 1) {
-                    const alphaPower = this.field.log(coefficient);
+                    var alphaPower = this.field.log(coefficient);
                     if (alphaPower === 0) {
                         result += '1';
                     }
@@ -249,5 +251,7 @@ export default class GenericGFPoly {
             }
         }
         return result;
-    }
-}
+    };
+    return GenericGFPoly;
+}());
+exports.default = GenericGFPoly;

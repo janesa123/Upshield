@@ -1,15 +1,18 @@
-import StringBuilder from '../../util/StringBuilder';
-import SymbolInfo from './SymbolInfo';
-export class EncoderContext {
-    constructor(msg) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EncoderContext = void 0;
+var StringBuilder_1 = require("../../util/StringBuilder");
+var SymbolInfo_1 = require("./SymbolInfo");
+var EncoderContext = /** @class */ (function () {
+    function EncoderContext(msg) {
         this.msg = msg;
         this.pos = 0;
         this.skipAtEnd = 0;
         // From this point on Strings are not Unicode anymore!
-        const msgBinary = msg.split('').map(c => c.charCodeAt(0));
-        const sb = new StringBuilder();
-        for (let i = 0, c = msgBinary.length; i < c; i++) {
-            const ch = String.fromCharCode(msgBinary[i] & 0xff);
+        var msgBinary = msg.split('').map(function (c) { return c.charCodeAt(0); });
+        var sb = new StringBuilder_1.default();
+        for (var i = 0, c = msgBinary.length; i < c; i++) {
+            var ch = String.fromCharCode(msgBinary[i] & 0xff);
             if (ch === '?' && msg.charAt(i) !== '?') {
                 throw new Error('Message contains characters outside ISO-8859-1 encoding.');
             }
@@ -17,67 +20,70 @@ export class EncoderContext {
         }
         this.msg = sb.toString(); // Not Unicode here!
         this.shape = 0 /* FORCE_NONE */;
-        this.codewords = new StringBuilder();
+        this.codewords = new StringBuilder_1.default();
         this.newEncoding = -1;
     }
-    setSymbolShape(shape) {
+    EncoderContext.prototype.setSymbolShape = function (shape) {
         this.shape = shape;
-    }
-    setSizeConstraints(minSize, maxSize) {
+    };
+    EncoderContext.prototype.setSizeConstraints = function (minSize, maxSize) {
         this.minSize = minSize;
         this.maxSize = maxSize;
-    }
-    getMessage() {
+    };
+    EncoderContext.prototype.getMessage = function () {
         return this.msg;
-    }
-    setSkipAtEnd(count) {
+    };
+    EncoderContext.prototype.setSkipAtEnd = function (count) {
         this.skipAtEnd = count;
-    }
-    getCurrentChar() {
+    };
+    EncoderContext.prototype.getCurrentChar = function () {
         return this.msg.charCodeAt(this.pos);
-    }
-    getCurrent() {
+    };
+    EncoderContext.prototype.getCurrent = function () {
         return this.msg.charCodeAt(this.pos);
-    }
-    getCodewords() {
+    };
+    EncoderContext.prototype.getCodewords = function () {
         return this.codewords;
-    }
-    writeCodewords(codewords) {
+    };
+    EncoderContext.prototype.writeCodewords = function (codewords) {
         this.codewords.append(codewords);
-    }
-    writeCodeword(codeword) {
+    };
+    EncoderContext.prototype.writeCodeword = function (codeword) {
         this.codewords.append(codeword);
-    }
-    getCodewordCount() {
+    };
+    EncoderContext.prototype.getCodewordCount = function () {
         return this.codewords.length();
-    }
-    getNewEncoding() {
+    };
+    EncoderContext.prototype.getNewEncoding = function () {
         return this.newEncoding;
-    }
-    signalEncoderChange(encoding) {
+    };
+    EncoderContext.prototype.signalEncoderChange = function (encoding) {
         this.newEncoding = encoding;
-    }
-    resetEncoderSignal() {
+    };
+    EncoderContext.prototype.resetEncoderSignal = function () {
         this.newEncoding = -1;
-    }
-    hasMoreCharacters() {
+    };
+    EncoderContext.prototype.hasMoreCharacters = function () {
         return this.pos < this.getTotalMessageCharCount();
-    }
-    getTotalMessageCharCount() {
+    };
+    EncoderContext.prototype.getTotalMessageCharCount = function () {
         return this.msg.length - this.skipAtEnd;
-    }
-    getRemainingCharacters() {
+    };
+    EncoderContext.prototype.getRemainingCharacters = function () {
         return this.getTotalMessageCharCount() - this.pos;
-    }
-    getSymbolInfo() {
+    };
+    EncoderContext.prototype.getSymbolInfo = function () {
         return this.symbolInfo;
-    }
-    updateSymbolInfo(len = this.getCodewordCount()) {
+    };
+    EncoderContext.prototype.updateSymbolInfo = function (len) {
+        if (len === void 0) { len = this.getCodewordCount(); }
         if (this.symbolInfo == null || len > this.symbolInfo.getDataCapacity()) {
-            this.symbolInfo = SymbolInfo.lookup(len, this.shape, this.minSize, this.maxSize, true);
+            this.symbolInfo = SymbolInfo_1.default.lookup(len, this.shape, this.minSize, this.maxSize, true);
         }
-    }
-    resetSymbolInfo() {
+    };
+    EncoderContext.prototype.resetSymbolInfo = function () {
         this.symbolInfo = null;
-    }
-}
+    };
+    return EncoderContext;
+}());
+exports.EncoderContext = EncoderContext;

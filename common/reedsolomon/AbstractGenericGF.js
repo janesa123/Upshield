@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import IllegalArgumentException from '../../IllegalArgumentException';
+Object.defineProperty(exports, "__esModule", { value: true });
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
 /**
  * <p>This class contains utility methods for performing mathematical operations over
  * the Galois Fields. Operations use a given primitive polynomial in calculations.</p>
@@ -25,28 +27,32 @@ import IllegalArgumentException from '../../IllegalArgumentException';
  * @author Sean Owen
  * @author David Olivier
  */
-export default class AbstractGenericGF {
+var AbstractGenericGF = /** @class */ (function () {
+    function AbstractGenericGF() {
+    }
     /**
      * @return 2 to the power of a in GF(size)
      */
-    exp(a) {
+    AbstractGenericGF.prototype.exp = function (a) {
         return this.expTable[a];
-    }
+    };
     /**
      * @return base 2 log of a in GF(size)
      */
-    log(a /*int*/) {
+    AbstractGenericGF.prototype.log = function (a /*int*/) {
         if (a === 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         return this.logTable[a];
-    }
+    };
     /**
      * Implements both addition and subtraction -- they are the same in GF(size).
      *
      * @return sum/difference of a and b
      */
-    static addOrSubtract(a /*int*/, b /*int*/) {
+    AbstractGenericGF.addOrSubtract = function (a /*int*/, b /*int*/) {
         return a ^ b;
-    }
-}
+    };
+    return AbstractGenericGF;
+}());
+exports.default = AbstractGenericGF;

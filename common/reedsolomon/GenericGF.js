@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,12 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common.reedsolomon {*/
-import GenericGFPoly from './GenericGFPoly';
-import AbstractGenericGF from './AbstractGenericGF';
-import Integer from '../../util/Integer';
-import IllegalArgumentException from '../../IllegalArgumentException';
-import ArithmeticException from '../../ArithmeticException';
+var GenericGFPoly_1 = require("./GenericGFPoly");
+var AbstractGenericGF_1 = require("./AbstractGenericGF");
+var Integer_1 = require("../../util/Integer");
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
+var ArithmeticException_1 = require("../../ArithmeticException");
 /**
  * <p>This class contains utility methods for performing mathematical operations over
  * the Galois Fields. Operations use a given primitive polynomial in calculations.</p>
@@ -30,7 +45,8 @@ import ArithmeticException from '../../ArithmeticException';
  * @author Sean Owen
  * @author David Olivier
  */
-export default class GenericGF extends AbstractGenericGF {
+var GenericGF = /** @class */ (function (_super) {
+    __extends(GenericGF, _super);
     /**
      * Create a representation of GF(size) using the given primitive polynomial.
      *
@@ -42,14 +58,14 @@ export default class GenericGF extends AbstractGenericGF {
      *  (g(x) = (x+a^b)(x+a^(b+1))...(x+a^(b+2t-1))).
      *  In most cases it should be 1, but for QR code it is 0.
      */
-    constructor(primitive /*int*/, size /*int*/, generatorBase /*int*/) {
-        super();
-        this.primitive = primitive;
-        this.size = size;
-        this.generatorBase = generatorBase;
-        const expTable = new Int32Array(size);
-        let x = 1;
-        for (let i = 0; i < size; i++) {
+    function GenericGF(primitive /*int*/, size /*int*/, generatorBase /*int*/) {
+        var _this = _super.call(this) || this;
+        _this.primitive = primitive;
+        _this.size = size;
+        _this.generatorBase = generatorBase;
+        var expTable = new Int32Array(size);
+        var x = 1;
+        for (var i = 0; i < size; i++) {
             expTable[i] = x;
             x *= 2; // we're assuming the generator alpha is 2
             if (x >= size) {
@@ -57,73 +73,76 @@ export default class GenericGF extends AbstractGenericGF {
                 x &= size - 1;
             }
         }
-        this.expTable = expTable;
-        const logTable = new Int32Array(size);
-        for (let i = 0; i < size - 1; i++) {
+        _this.expTable = expTable;
+        var logTable = new Int32Array(size);
+        for (var i = 0; i < size - 1; i++) {
             logTable[expTable[i]] = i;
         }
-        this.logTable = logTable;
+        _this.logTable = logTable;
         // logTable[0] == 0 but this should never be used
-        this.zero = new GenericGFPoly(this, Int32Array.from([0]));
-        this.one = new GenericGFPoly(this, Int32Array.from([1]));
+        _this.zero = new GenericGFPoly_1.default(_this, Int32Array.from([0]));
+        _this.one = new GenericGFPoly_1.default(_this, Int32Array.from([1]));
+        return _this;
     }
-    getZero() {
+    GenericGF.prototype.getZero = function () {
         return this.zero;
-    }
-    getOne() {
+    };
+    GenericGF.prototype.getOne = function () {
         return this.one;
-    }
+    };
     /**
      * @return the monomial representing coefficient * x^degree
      */
-    buildMonomial(degree /*int*/, coefficient /*int*/) {
+    GenericGF.prototype.buildMonomial = function (degree /*int*/, coefficient /*int*/) {
         if (degree < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         if (coefficient === 0) {
             return this.zero;
         }
-        const coefficients = new Int32Array(degree + 1);
+        var coefficients = new Int32Array(degree + 1);
         coefficients[0] = coefficient;
-        return new GenericGFPoly(this, coefficients);
-    }
+        return new GenericGFPoly_1.default(this, coefficients);
+    };
     /**
      * @return multiplicative inverse of a
      */
-    inverse(a /*int*/) {
+    GenericGF.prototype.inverse = function (a /*int*/) {
         if (a === 0) {
-            throw new ArithmeticException();
+            throw new ArithmeticException_1.default();
         }
         return this.expTable[this.size - this.logTable[a] - 1];
-    }
+    };
     /**
      * @return product of a and b in GF(size)
      */
-    multiply(a /*int*/, b /*int*/) {
+    GenericGF.prototype.multiply = function (a /*int*/, b /*int*/) {
         if (a === 0 || b === 0) {
             return 0;
         }
         return this.expTable[(this.logTable[a] + this.logTable[b]) % (this.size - 1)];
-    }
-    getSize() {
+    };
+    GenericGF.prototype.getSize = function () {
         return this.size;
-    }
-    getGeneratorBase() {
+    };
+    GenericGF.prototype.getGeneratorBase = function () {
         return this.generatorBase;
-    }
+    };
     /*@Override*/
-    toString() {
-        return ('GF(0x' + Integer.toHexString(this.primitive) + ',' + this.size + ')');
-    }
-    equals(o) {
+    GenericGF.prototype.toString = function () {
+        return ('GF(0x' + Integer_1.default.toHexString(this.primitive) + ',' + this.size + ')');
+    };
+    GenericGF.prototype.equals = function (o) {
         return o === this;
-    }
-}
-GenericGF.AZTEC_DATA_12 = new GenericGF(0x1069, 4096, 1); // x^12 + x^6 + x^5 + x^3 + 1
-GenericGF.AZTEC_DATA_10 = new GenericGF(0x409, 1024, 1); // x^10 + x^3 + 1
-GenericGF.AZTEC_DATA_6 = new GenericGF(0x43, 64, 1); // x^6 + x + 1
-GenericGF.AZTEC_PARAM = new GenericGF(0x13, 16, 1); // x^4 + x + 1
-GenericGF.QR_CODE_FIELD_256 = new GenericGF(0x011d, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
-GenericGF.DATA_MATRIX_FIELD_256 = new GenericGF(0x012d, 256, 1); // x^8 + x^5 + x^3 + x^2 + 1
-GenericGF.AZTEC_DATA_8 = GenericGF.DATA_MATRIX_FIELD_256;
-GenericGF.MAXICODE_FIELD_64 = GenericGF.AZTEC_DATA_6;
+    };
+    GenericGF.AZTEC_DATA_12 = new GenericGF(0x1069, 4096, 1); // x^12 + x^6 + x^5 + x^3 + 1
+    GenericGF.AZTEC_DATA_10 = new GenericGF(0x409, 1024, 1); // x^10 + x^3 + 1
+    GenericGF.AZTEC_DATA_6 = new GenericGF(0x43, 64, 1); // x^6 + x + 1
+    GenericGF.AZTEC_PARAM = new GenericGF(0x13, 16, 1); // x^4 + x + 1
+    GenericGF.QR_CODE_FIELD_256 = new GenericGF(0x011d, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
+    GenericGF.DATA_MATRIX_FIELD_256 = new GenericGF(0x012d, 256, 1); // x^8 + x^5 + x^3 + x^2 + 1
+    GenericGF.AZTEC_DATA_8 = GenericGF.DATA_MATRIX_FIELD_256;
+    GenericGF.MAXICODE_FIELD_64 = GenericGF.AZTEC_DATA_6;
+    return GenericGF;
+}(AbstractGenericGF_1.default));
+exports.default = GenericGF;

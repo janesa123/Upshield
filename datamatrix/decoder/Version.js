@@ -1,4 +1,18 @@
-import FormatException from '../../FormatException';
+"use strict";
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ECB = exports.ECBlocks = void 0;
+var FormatException_1 = require("../../FormatException");
 /*
  * Copyright 2007 ZXing authors
  *
@@ -20,44 +34,49 @@ import FormatException from '../../FormatException';
  * each set of blocks. It also holds the number of error-correction codewords per block since it
  * will be the same across all blocks within one version.</p>
  */
-export class ECBlocks {
-    constructor(ecCodewords, ecBlocks1, ecBlocks2) {
+var ECBlocks = /** @class */ (function () {
+    function ECBlocks(ecCodewords, ecBlocks1, ecBlocks2) {
         this.ecCodewords = ecCodewords;
         this.ecBlocks = [ecBlocks1];
         ecBlocks2 && this.ecBlocks.push(ecBlocks2);
     }
-    getECCodewords() {
+    ECBlocks.prototype.getECCodewords = function () {
         return this.ecCodewords;
-    }
-    getECBlocks() {
+    };
+    ECBlocks.prototype.getECBlocks = function () {
         return this.ecBlocks;
-    }
-}
+    };
+    return ECBlocks;
+}());
+exports.ECBlocks = ECBlocks;
 /**
  * <p>Encapsulates the parameters for one error-correction block in one symbol version.
  * This includes the number of data codewords, and the number of times a block with these
  * parameters is used consecutively in the Data Matrix code version's format.</p>
  */
-export class ECB {
-    constructor(count, dataCodewords) {
+var ECB = /** @class */ (function () {
+    function ECB(count, dataCodewords) {
         this.count = count;
         this.dataCodewords = dataCodewords;
     }
-    getCount() {
+    ECB.prototype.getCount = function () {
         return this.count;
-    }
-    getDataCodewords() {
+    };
+    ECB.prototype.getDataCodewords = function () {
         return this.dataCodewords;
-    }
-}
+    };
+    return ECB;
+}());
+exports.ECB = ECB;
 /**
  * The Version object encapsulates attributes about a particular
  * size Data Matrix Code.
  *
  * @author bbrown@google.com (Brian Brown)
  */
-export default class Version {
-    constructor(versionNumber, symbolSizeRows, symbolSizeColumns, dataRegionSizeRows, dataRegionSizeColumns, ecBlocks) {
+var Version = /** @class */ (function () {
+    function Version(versionNumber, symbolSizeRows, symbolSizeColumns, dataRegionSizeRows, dataRegionSizeColumns, ecBlocks) {
+        var e_1, _a;
         this.versionNumber = versionNumber;
         this.symbolSizeRows = symbolSizeRows;
         this.symbolSizeColumns = symbolSizeColumns;
@@ -65,35 +84,45 @@ export default class Version {
         this.dataRegionSizeColumns = dataRegionSizeColumns;
         this.ecBlocks = ecBlocks;
         // Calculate the total number of codewords
-        let total = 0;
-        const ecCodewords = ecBlocks.getECCodewords();
-        const ecbArray = ecBlocks.getECBlocks();
-        for (let ecBlock of ecbArray) {
-            total += ecBlock.getCount() * (ecBlock.getDataCodewords() + ecCodewords);
+        var total = 0;
+        var ecCodewords = ecBlocks.getECCodewords();
+        var ecbArray = ecBlocks.getECBlocks();
+        try {
+            for (var ecbArray_1 = __values(ecbArray), ecbArray_1_1 = ecbArray_1.next(); !ecbArray_1_1.done; ecbArray_1_1 = ecbArray_1.next()) {
+                var ecBlock = ecbArray_1_1.value;
+                total += ecBlock.getCount() * (ecBlock.getDataCodewords() + ecCodewords);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (ecbArray_1_1 && !ecbArray_1_1.done && (_a = ecbArray_1.return)) _a.call(ecbArray_1);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         this.totalCodewords = total;
     }
-    getVersionNumber() {
+    Version.prototype.getVersionNumber = function () {
         return this.versionNumber;
-    }
-    getSymbolSizeRows() {
+    };
+    Version.prototype.getSymbolSizeRows = function () {
         return this.symbolSizeRows;
-    }
-    getSymbolSizeColumns() {
+    };
+    Version.prototype.getSymbolSizeColumns = function () {
         return this.symbolSizeColumns;
-    }
-    getDataRegionSizeRows() {
+    };
+    Version.prototype.getDataRegionSizeRows = function () {
         return this.dataRegionSizeRows;
-    }
-    getDataRegionSizeColumns() {
+    };
+    Version.prototype.getDataRegionSizeColumns = function () {
         return this.dataRegionSizeColumns;
-    }
-    getTotalCodewords() {
+    };
+    Version.prototype.getTotalCodewords = function () {
         return this.totalCodewords;
-    }
-    getECBlocks() {
+    };
+    Version.prototype.getECBlocks = function () {
         return this.ecBlocks;
-    }
+    };
     /**
      * <p>Deduces version information from Data Matrix dimensions.</p>
      *
@@ -102,25 +131,36 @@ export default class Version {
      * @return Version for a Data Matrix Code of those dimensions
      * @throws FormatException if dimensions do correspond to a valid Data Matrix size
      */
-    static getVersionForDimensions(numRows, numColumns) {
+    Version.getVersionForDimensions = function (numRows, numColumns) {
+        var e_2, _a;
         if ((numRows & 0x01) !== 0 || (numColumns & 0x01) !== 0) {
-            throw new FormatException();
+            throw new FormatException_1.default();
         }
-        for (let version of Version.VERSIONS) {
-            if (version.symbolSizeRows === numRows && version.symbolSizeColumns === numColumns) {
-                return version;
+        try {
+            for (var _b = __values(Version.VERSIONS), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var version = _c.value;
+                if (version.symbolSizeRows === numRows && version.symbolSizeColumns === numColumns) {
+                    return version;
+                }
             }
         }
-        throw new FormatException();
-    }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        throw new FormatException_1.default();
+    };
     //  @Override
-    toString() {
+    Version.prototype.toString = function () {
         return '' + this.versionNumber;
-    }
+    };
     /**
      * See ISO 16022:2006 5.5.1 Table 7
      */
-    static buildVersions() {
+    Version.buildVersions = function () {
         return [
             new Version(1, 10, 10, 8, 8, new ECBlocks(5, new ECB(1, 3))),
             new Version(2, 12, 12, 10, 10, new ECBlocks(7, new ECB(1, 5))),
@@ -153,6 +193,8 @@ export default class Version {
             new Version(29, 16, 36, 14, 16, new ECBlocks(24, new ECB(1, 32))),
             new Version(30, 16, 48, 14, 22, new ECBlocks(28, new ECB(1, 49)))
         ];
-    }
-}
-Version.VERSIONS = Version.buildVersions();
+    };
+    Version.VERSIONS = Version.buildVersions();
+    return Version;
+}());
+exports.default = Version;

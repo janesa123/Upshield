@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common.reedsolomon {*/
-import GenericGF from './GenericGF';
-import GenericGFPoly from './GenericGFPoly';
-import ReedSolomonException from '../../ReedSolomonException';
-import IllegalStateException from '../../IllegalStateException';
+var GenericGF_1 = require("./GenericGF");
+var GenericGFPoly_1 = require("./GenericGFPoly");
+var ReedSolomonException_1 = require("../../ReedSolomonException");
+var IllegalStateException_1 = require("../../IllegalStateException");
 /**
  * <p>Implements Reed-Solomon decoding, as the name implies.</p>
  *
@@ -40,8 +42,8 @@ import IllegalStateException from '../../IllegalStateException';
  * @author William Rucklidge
  * @author sanfordsquires
  */
-export default class ReedSolomonDecoder {
-    constructor(field) {
+var ReedSolomonDecoder = /** @class */ (function () {
+    function ReedSolomonDecoder(field) {
         this.field = field;
     }
     /**
@@ -53,13 +55,13 @@ export default class ReedSolomonDecoder {
      * @param twoS number of error-correction codewords available
      * @throws ReedSolomonException if decoding fails for any reason
      */
-    decode(received, twoS /*int*/) {
-        const field = this.field;
-        const poly = new GenericGFPoly(field, received);
-        const syndromeCoefficients = new Int32Array(twoS);
-        let noError = true;
-        for (let i = 0; i < twoS; i++) {
-            const evalResult = poly.evaluateAt(field.exp(i + field.getGeneratorBase()));
+    ReedSolomonDecoder.prototype.decode = function (received, twoS /*int*/) {
+        var field = this.field;
+        var poly = new GenericGFPoly_1.default(field, received);
+        var syndromeCoefficients = new Int32Array(twoS);
+        var noError = true;
+        for (var i = 0; i < twoS; i++) {
+            var evalResult = poly.evaluateAt(field.exp(i + field.getGeneratorBase()));
             syndromeCoefficients[syndromeCoefficients.length - 1 - i] = evalResult;
             if (evalResult !== 0) {
                 noError = false;
@@ -68,103 +70,103 @@ export default class ReedSolomonDecoder {
         if (noError) {
             return;
         }
-        const syndrome = new GenericGFPoly(field, syndromeCoefficients);
-        const sigmaOmega = this.runEuclideanAlgorithm(field.buildMonomial(twoS, 1), syndrome, twoS);
-        const sigma = sigmaOmega[0];
-        const omega = sigmaOmega[1];
-        const errorLocations = this.findErrorLocations(sigma);
-        const errorMagnitudes = this.findErrorMagnitudes(omega, errorLocations);
-        for (let i = 0; i < errorLocations.length; i++) {
-            const position = received.length - 1 - field.log(errorLocations[i]);
+        var syndrome = new GenericGFPoly_1.default(field, syndromeCoefficients);
+        var sigmaOmega = this.runEuclideanAlgorithm(field.buildMonomial(twoS, 1), syndrome, twoS);
+        var sigma = sigmaOmega[0];
+        var omega = sigmaOmega[1];
+        var errorLocations = this.findErrorLocations(sigma);
+        var errorMagnitudes = this.findErrorMagnitudes(omega, errorLocations);
+        for (var i = 0; i < errorLocations.length; i++) {
+            var position = received.length - 1 - field.log(errorLocations[i]);
             if (position < 0) {
-                throw new ReedSolomonException('Bad error location');
+                throw new ReedSolomonException_1.default('Bad error location');
             }
-            received[position] = GenericGF.addOrSubtract(received[position], errorMagnitudes[i]);
+            received[position] = GenericGF_1.default.addOrSubtract(received[position], errorMagnitudes[i]);
         }
-    }
-    runEuclideanAlgorithm(a, b, R /*int*/) {
+    };
+    ReedSolomonDecoder.prototype.runEuclideanAlgorithm = function (a, b, R /*int*/) {
         // Assume a's degree is >= b's
         if (a.getDegree() < b.getDegree()) {
-            const temp = a;
+            var temp = a;
             a = b;
             b = temp;
         }
-        const field = this.field;
-        let rLast = a;
-        let r = b;
-        let tLast = field.getZero();
-        let t = field.getOne();
+        var field = this.field;
+        var rLast = a;
+        var r = b;
+        var tLast = field.getZero();
+        var t = field.getOne();
         // Run Euclidean algorithm until r's degree is less than R/2
         while (r.getDegree() >= (R / 2 | 0)) {
-            let rLastLast = rLast;
-            let tLastLast = tLast;
+            var rLastLast = rLast;
+            var tLastLast = tLast;
             rLast = r;
             tLast = t;
             // Divide rLastLast by rLast, with quotient in q and remainder in r
             if (rLast.isZero()) {
                 // Oops, Euclidean algorithm already terminated?
-                throw new ReedSolomonException('r_{i-1} was zero');
+                throw new ReedSolomonException_1.default('r_{i-1} was zero');
             }
             r = rLastLast;
-            let q = field.getZero();
-            const denominatorLeadingTerm = rLast.getCoefficient(rLast.getDegree());
-            const dltInverse = field.inverse(denominatorLeadingTerm);
+            var q = field.getZero();
+            var denominatorLeadingTerm = rLast.getCoefficient(rLast.getDegree());
+            var dltInverse = field.inverse(denominatorLeadingTerm);
             while (r.getDegree() >= rLast.getDegree() && !r.isZero()) {
-                const degreeDiff = r.getDegree() - rLast.getDegree();
-                const scale = field.multiply(r.getCoefficient(r.getDegree()), dltInverse);
+                var degreeDiff = r.getDegree() - rLast.getDegree();
+                var scale = field.multiply(r.getCoefficient(r.getDegree()), dltInverse);
                 q = q.addOrSubtract(field.buildMonomial(degreeDiff, scale));
                 r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
             }
             t = q.multiply(tLast).addOrSubtract(tLastLast);
             if (r.getDegree() >= rLast.getDegree()) {
-                throw new IllegalStateException('Division algorithm failed to reduce polynomial?');
+                throw new IllegalStateException_1.default('Division algorithm failed to reduce polynomial?');
             }
         }
-        const sigmaTildeAtZero = t.getCoefficient(0);
+        var sigmaTildeAtZero = t.getCoefficient(0);
         if (sigmaTildeAtZero === 0) {
-            throw new ReedSolomonException('sigmaTilde(0) was zero');
+            throw new ReedSolomonException_1.default('sigmaTilde(0) was zero');
         }
-        const inverse = field.inverse(sigmaTildeAtZero);
-        const sigma = t.multiplyScalar(inverse);
-        const omega = r.multiplyScalar(inverse);
+        var inverse = field.inverse(sigmaTildeAtZero);
+        var sigma = t.multiplyScalar(inverse);
+        var omega = r.multiplyScalar(inverse);
         return [sigma, omega];
-    }
-    findErrorLocations(errorLocator) {
+    };
+    ReedSolomonDecoder.prototype.findErrorLocations = function (errorLocator) {
         // This is a direct application of Chien's search
-        const numErrors = errorLocator.getDegree();
+        var numErrors = errorLocator.getDegree();
         if (numErrors === 1) { // shortcut
             return Int32Array.from([errorLocator.getCoefficient(1)]);
         }
-        const result = new Int32Array(numErrors);
-        let e = 0;
-        const field = this.field;
-        for (let i = 1; i < field.getSize() && e < numErrors; i++) {
+        var result = new Int32Array(numErrors);
+        var e = 0;
+        var field = this.field;
+        for (var i = 1; i < field.getSize() && e < numErrors; i++) {
             if (errorLocator.evaluateAt(i) === 0) {
                 result[e] = field.inverse(i);
                 e++;
             }
         }
         if (e !== numErrors) {
-            throw new ReedSolomonException('Error locator degree does not match number of roots');
+            throw new ReedSolomonException_1.default('Error locator degree does not match number of roots');
         }
         return result;
-    }
-    findErrorMagnitudes(errorEvaluator, errorLocations) {
+    };
+    ReedSolomonDecoder.prototype.findErrorMagnitudes = function (errorEvaluator, errorLocations) {
         // This is directly applying Forney's Formula
-        const s = errorLocations.length;
-        const result = new Int32Array(s);
-        const field = this.field;
-        for (let i = 0; i < s; i++) {
-            const xiInverse = field.inverse(errorLocations[i]);
-            let denominator = 1;
-            for (let j = 0; j < s; j++) {
+        var s = errorLocations.length;
+        var result = new Int32Array(s);
+        var field = this.field;
+        for (var i = 0; i < s; i++) {
+            var xiInverse = field.inverse(errorLocations[i]);
+            var denominator = 1;
+            for (var j = 0; j < s; j++) {
                 if (i !== j) {
                     // denominator = field.multiply(denominator,
                     //    GenericGF.addOrSubtract(1, field.multiply(errorLocations[j], xiInverse)))
                     // Above should work but fails on some Apple and Linux JDKs due to a Hotspot bug.
                     // Below is a funny-looking workaround from Steven Parkes
-                    const term = field.multiply(errorLocations[j], xiInverse);
-                    const termPlus1 = (term & 0x1) === 0 ? term | 1 : term & ~1;
+                    var term = field.multiply(errorLocations[j], xiInverse);
+                    var termPlus1 = (term & 0x1) === 0 ? term | 1 : term & ~1;
                     denominator = field.multiply(denominator, termPlus1);
                 }
             }
@@ -174,5 +176,7 @@ export default class ReedSolomonDecoder {
             }
         }
         return result;
-    }
-}
+    };
+    return ReedSolomonDecoder;
+}());
+exports.default = ReedSolomonDecoder;

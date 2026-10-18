@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,8 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import GlobalHistogramBinarizer from './GlobalHistogramBinarizer';
-import BitMatrix from './BitMatrix';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var GlobalHistogramBinarizer_1 = require("./GlobalHistogramBinarizer");
+var BitMatrix_1 = require("./BitMatrix");
 /**
  * This class implements a local thresholding algorithm, which while slower than the
  * GlobalHistogramBinarizer, is fairly efficient for what it does. It is designed for
@@ -32,10 +47,12 @@ import BitMatrix from './BitMatrix';
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-export default class HybridBinarizer extends GlobalHistogramBinarizer {
-    constructor(source) {
-        super(source);
-        this.matrix = null;
+var HybridBinarizer = /** @class */ (function (_super) {
+    __extends(HybridBinarizer, _super);
+    function HybridBinarizer(source) {
+        var _this = _super.call(this, source) || this;
+        _this.matrix = null;
+        return _this;
     }
     /**
      * Calculates the final BitMatrix once for all requests. This could be called once from the
@@ -43,111 +60,111 @@ export default class HybridBinarizer extends GlobalHistogramBinarizer {
      * profiling easier, and not doing heavy lifting when callers don't expect it.
      */
     /*@Override*/
-    getBlackMatrix() {
+    HybridBinarizer.prototype.getBlackMatrix = function () {
         if (this.matrix !== null) {
             return this.matrix;
         }
-        const source = this.getLuminanceSource();
-        const width = source.getWidth();
-        const height = source.getHeight();
+        var source = this.getLuminanceSource();
+        var width = source.getWidth();
+        var height = source.getHeight();
         if (width >= HybridBinarizer.MINIMUM_DIMENSION && height >= HybridBinarizer.MINIMUM_DIMENSION) {
-            const luminances = source.getMatrix();
-            let subWidth = width >> HybridBinarizer.BLOCK_SIZE_POWER;
+            var luminances = source.getMatrix();
+            var subWidth = width >> HybridBinarizer.BLOCK_SIZE_POWER;
             if ((width & HybridBinarizer.BLOCK_SIZE_MASK) !== 0) {
                 subWidth++;
             }
-            let subHeight = height >> HybridBinarizer.BLOCK_SIZE_POWER;
+            var subHeight = height >> HybridBinarizer.BLOCK_SIZE_POWER;
             if ((height & HybridBinarizer.BLOCK_SIZE_MASK) !== 0) {
                 subHeight++;
             }
-            const blackPoints = HybridBinarizer.calculateBlackPoints(luminances, subWidth, subHeight, width, height);
-            const newMatrix = new BitMatrix(width, height);
+            var blackPoints = HybridBinarizer.calculateBlackPoints(luminances, subWidth, subHeight, width, height);
+            var newMatrix = new BitMatrix_1.default(width, height);
             HybridBinarizer.calculateThresholdForBlock(luminances, subWidth, subHeight, width, height, blackPoints, newMatrix);
             this.matrix = newMatrix;
         }
         else {
             // If the image is too small, fall back to the global histogram approach.
-            this.matrix = super.getBlackMatrix();
+            this.matrix = _super.prototype.getBlackMatrix.call(this);
         }
         return this.matrix;
-    }
+    };
     /*@Override*/
-    createBinarizer(source) {
+    HybridBinarizer.prototype.createBinarizer = function (source) {
         return new HybridBinarizer(source);
-    }
+    };
     /**
      * For each block in the image, calculate the average black point using a 5x5 grid
      * of the blocks around it. Also handles the corner cases (fractional blocks are computed based
      * on the last pixels in the row/column which are also used in the previous block).
      */
-    static calculateThresholdForBlock(luminances, subWidth /*int*/, subHeight /*int*/, width /*int*/, height /*int*/, blackPoints, matrix) {
-        const maxYOffset = height - HybridBinarizer.BLOCK_SIZE;
-        const maxXOffset = width - HybridBinarizer.BLOCK_SIZE;
-        for (let y = 0; y < subHeight; y++) {
-            let yoffset = y << HybridBinarizer.BLOCK_SIZE_POWER;
+    HybridBinarizer.calculateThresholdForBlock = function (luminances, subWidth /*int*/, subHeight /*int*/, width /*int*/, height /*int*/, blackPoints, matrix) {
+        var maxYOffset = height - HybridBinarizer.BLOCK_SIZE;
+        var maxXOffset = width - HybridBinarizer.BLOCK_SIZE;
+        for (var y = 0; y < subHeight; y++) {
+            var yoffset = y << HybridBinarizer.BLOCK_SIZE_POWER;
             if (yoffset > maxYOffset) {
                 yoffset = maxYOffset;
             }
-            const top = HybridBinarizer.cap(y, 2, subHeight - 3);
-            for (let x = 0; x < subWidth; x++) {
-                let xoffset = x << HybridBinarizer.BLOCK_SIZE_POWER;
+            var top_1 = HybridBinarizer.cap(y, 2, subHeight - 3);
+            for (var x = 0; x < subWidth; x++) {
+                var xoffset = x << HybridBinarizer.BLOCK_SIZE_POWER;
                 if (xoffset > maxXOffset) {
                     xoffset = maxXOffset;
                 }
-                const left = HybridBinarizer.cap(x, 2, subWidth - 3);
-                let sum = 0;
-                for (let z = -2; z <= 2; z++) {
-                    const blackRow = blackPoints[top + z];
+                var left = HybridBinarizer.cap(x, 2, subWidth - 3);
+                var sum = 0;
+                for (var z = -2; z <= 2; z++) {
+                    var blackRow = blackPoints[top_1 + z];
                     sum += blackRow[left - 2] + blackRow[left - 1] + blackRow[left] + blackRow[left + 1] + blackRow[left + 2];
                 }
-                const average = sum / 25;
+                var average = sum / 25;
                 HybridBinarizer.thresholdBlock(luminances, xoffset, yoffset, average, width, matrix);
             }
         }
-    }
-    static cap(value /*int*/, min /*int*/, max /*int*/) {
+    };
+    HybridBinarizer.cap = function (value /*int*/, min /*int*/, max /*int*/) {
         return value < min ? min : value > max ? max : value;
-    }
+    };
     /**
      * Applies a single threshold to a block of pixels.
      */
-    static thresholdBlock(luminances, xoffset /*int*/, yoffset /*int*/, threshold /*int*/, stride /*int*/, matrix) {
-        for (let y = 0, offset = yoffset * stride + xoffset; y < HybridBinarizer.BLOCK_SIZE; y++, offset += stride) {
-            for (let x = 0; x < HybridBinarizer.BLOCK_SIZE; x++) {
+    HybridBinarizer.thresholdBlock = function (luminances, xoffset /*int*/, yoffset /*int*/, threshold /*int*/, stride /*int*/, matrix) {
+        for (var y = 0, offset = yoffset * stride + xoffset; y < HybridBinarizer.BLOCK_SIZE; y++, offset += stride) {
+            for (var x = 0; x < HybridBinarizer.BLOCK_SIZE; x++) {
                 // Comparison needs to be <= so that black == 0 pixels are black even if the threshold is 0.
                 if ((luminances[offset + x] & 0xFF) <= threshold) {
                     matrix.set(xoffset + x, yoffset + y);
                 }
             }
         }
-    }
+    };
     /**
      * Calculates a single black point for each block of pixels and saves it away.
      * See the following thread for a discussion of this algorithm:
      *  http://groups.google.com/group/zxing/browse_thread/thread/d06efa2c35a7ddc0
      */
-    static calculateBlackPoints(luminances, subWidth /*int*/, subHeight /*int*/, width /*int*/, height /*int*/) {
-        const maxYOffset = height - HybridBinarizer.BLOCK_SIZE;
-        const maxXOffset = width - HybridBinarizer.BLOCK_SIZE;
+    HybridBinarizer.calculateBlackPoints = function (luminances, subWidth /*int*/, subHeight /*int*/, width /*int*/, height /*int*/) {
+        var maxYOffset = height - HybridBinarizer.BLOCK_SIZE;
+        var maxXOffset = width - HybridBinarizer.BLOCK_SIZE;
         // tslint:disable-next-line:whitespace
-        const blackPoints = new Array(subHeight); // subWidth
-        for (let y = 0; y < subHeight; y++) {
+        var blackPoints = new Array(subHeight); // subWidth
+        for (var y = 0; y < subHeight; y++) {
             blackPoints[y] = new Int32Array(subWidth);
-            let yoffset = y << HybridBinarizer.BLOCK_SIZE_POWER;
+            var yoffset = y << HybridBinarizer.BLOCK_SIZE_POWER;
             if (yoffset > maxYOffset) {
                 yoffset = maxYOffset;
             }
-            for (let x = 0; x < subWidth; x++) {
-                let xoffset = x << HybridBinarizer.BLOCK_SIZE_POWER;
+            for (var x = 0; x < subWidth; x++) {
+                var xoffset = x << HybridBinarizer.BLOCK_SIZE_POWER;
                 if (xoffset > maxXOffset) {
                     xoffset = maxXOffset;
                 }
-                let sum = 0;
-                let min = 0xFF;
-                let max = 0;
-                for (let yy = 0, offset = yoffset * width + xoffset; yy < HybridBinarizer.BLOCK_SIZE; yy++, offset += width) {
-                    for (let xx = 0; xx < HybridBinarizer.BLOCK_SIZE; xx++) {
-                        const pixel = luminances[offset + xx] & 0xFF;
+                var sum = 0;
+                var min = 0xFF;
+                var max = 0;
+                for (var yy = 0, offset = yoffset * width + xoffset; yy < HybridBinarizer.BLOCK_SIZE; yy++, offset += width) {
+                    for (var xx = 0; xx < HybridBinarizer.BLOCK_SIZE; xx++) {
+                        var pixel = luminances[offset + xx] & 0xFF;
                         sum += pixel;
                         // still looking for good contrast
                         if (pixel < min) {
@@ -161,14 +178,14 @@ export default class HybridBinarizer extends GlobalHistogramBinarizer {
                     if (max - min > HybridBinarizer.MIN_DYNAMIC_RANGE) {
                         // finish the rest of the rows quickly
                         for (yy++, offset += width; yy < HybridBinarizer.BLOCK_SIZE; yy++, offset += width) {
-                            for (let xx = 0; xx < HybridBinarizer.BLOCK_SIZE; xx++) {
+                            for (var xx = 0; xx < HybridBinarizer.BLOCK_SIZE; xx++) {
                                 sum += luminances[offset + xx] & 0xFF;
                             }
                         }
                     }
                 }
                 // The default estimate is the average of the values in the block.
-                let average = sum >> (HybridBinarizer.BLOCK_SIZE_POWER * 2);
+                var average = sum >> (HybridBinarizer.BLOCK_SIZE_POWER * 2);
                 if (max - min <= HybridBinarizer.MIN_DYNAMIC_RANGE) {
                     // If variation within the block is low, assume this is a block with only light or only
                     // dark pixels. In that case we do not want to use the average, as it would divide this
@@ -184,7 +201,7 @@ export default class HybridBinarizer extends GlobalHistogramBinarizer {
                         // background for which reasonable black point estimates were made. The bp estimated at
                         // the boundaries is used for the interior.
                         // The (min < bp) is arbitrary but works better than other heuristics that were tried.
-                        const averageNeighborBlackPoint = (blackPoints[y - 1][x] + (2 * blackPoints[y][x - 1]) + blackPoints[y - 1][x - 1]) / 4;
+                        var averageNeighborBlackPoint = (blackPoints[y - 1][x] + (2 * blackPoints[y][x - 1]) + blackPoints[y - 1][x - 1]) / 4;
                         if (min < averageNeighborBlackPoint) {
                             average = averageNeighborBlackPoint;
                         }
@@ -194,12 +211,14 @@ export default class HybridBinarizer extends GlobalHistogramBinarizer {
             }
         }
         return blackPoints;
-    }
-}
-// This class uses 5x5 blocks to compute local luminance, where each block is 8x8 pixels.
-// So this is the smallest dimension in each axis we can accept.
-HybridBinarizer.BLOCK_SIZE_POWER = 3;
-HybridBinarizer.BLOCK_SIZE = 1 << HybridBinarizer.BLOCK_SIZE_POWER; // ...0100...00
-HybridBinarizer.BLOCK_SIZE_MASK = HybridBinarizer.BLOCK_SIZE - 1; // ...0011...11
-HybridBinarizer.MINIMUM_DIMENSION = HybridBinarizer.BLOCK_SIZE * 5;
-HybridBinarizer.MIN_DYNAMIC_RANGE = 24;
+    };
+    // This class uses 5x5 blocks to compute local luminance, where each block is 8x8 pixels.
+    // So this is the smallest dimension in each axis we can accept.
+    HybridBinarizer.BLOCK_SIZE_POWER = 3;
+    HybridBinarizer.BLOCK_SIZE = 1 << HybridBinarizer.BLOCK_SIZE_POWER; // ...0100...00
+    HybridBinarizer.BLOCK_SIZE_MASK = HybridBinarizer.BLOCK_SIZE - 1; // ...0011...11
+    HybridBinarizer.MINIMUM_DIMENSION = HybridBinarizer.BLOCK_SIZE * 5;
+    HybridBinarizer.MIN_DYNAMIC_RANGE = 24;
+    return HybridBinarizer;
+}(GlobalHistogramBinarizer_1.default));
+exports.default = HybridBinarizer;

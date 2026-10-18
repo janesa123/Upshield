@@ -1,8 +1,11 @@
-import { ECIEncoderSet } from './ECIEncoderSet';
-import Integer from '../util/Integer';
-import StringBuilder from '../util/StringBuilder';
-const COST_PER_ECI = 3; // approximated (latch + 2 codewords)
-export class MinimalECIInput {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MinimalECIInput = void 0;
+var ECIEncoderSet_1 = require("./ECIEncoderSet");
+var Integer_1 = require("../util/Integer");
+var StringBuilder_1 = require("../util/StringBuilder");
+var COST_PER_ECI = 3; // approximated (latch + 2 codewords)
+var MinimalECIInput = /** @class */ (function () {
     /**
      * Constructs a minimal input
      *
@@ -14,13 +17,13 @@ export class MinimalECIInput {
      * @param fnc1 denotes the character in the input that represents the FNC1 character or -1 if this is not GS1
      *   input.
      */
-    constructor(stringToEncode, priorityCharset, fnc1) {
+    function MinimalECIInput(stringToEncode, priorityCharset, fnc1) {
         this.fnc1 = fnc1;
-        const encoderSet = new ECIEncoderSet(stringToEncode, priorityCharset, fnc1);
+        var encoderSet = new ECIEncoderSet_1.ECIEncoderSet(stringToEncode, priorityCharset, fnc1);
         if (encoderSet.length() === 1) {
             // optimization for the case when all can be encoded without ECI in ISO-8859-1
-            for (let i = 0; i < this.bytes.length; i++) {
-                const c = stringToEncode.charAt(i).charCodeAt(0);
+            for (var i = 0; i < this.bytes.length; i++) {
+                var c = stringToEncode.charAt(i).charCodeAt(0);
                 this.bytes[i] = c === fnc1 ? 1000 : c;
             }
         }
@@ -28,29 +31,29 @@ export class MinimalECIInput {
             this.bytes = this.encodeMinimally(stringToEncode, encoderSet, fnc1);
         }
     }
-    getFNC1Character() {
+    MinimalECIInput.prototype.getFNC1Character = function () {
         return this.fnc1;
-    }
+    };
     /**
      * Returns the length of this input.  The length is the number
      * of {@code byte}s, FNC1 characters or ECIs in the sequence.
      *
      * @return  the number of {@code char}s in this sequence
      */
-    length() {
+    MinimalECIInput.prototype.length = function () {
         return this.bytes.length;
-    }
-    haveNCharacters(index, n) {
+    };
+    MinimalECIInput.prototype.haveNCharacters = function (index, n) {
         if (index + n - 1 >= this.bytes.length) {
             return false;
         }
-        for (let i = 0; i < n; i++) {
+        for (var i = 0; i < n; i++) {
             if (this.isECI(index + i)) {
                 return false;
             }
         }
         return true;
-    }
+    };
     /**
      * Returns the {@code byte} value at the specified index.  An index ranges from zero
      * to {@code length() - 1}.  The first {@code byte} value of the sequence is at
@@ -67,7 +70,7 @@ export class MinimalECIInput {
      * @throws  IllegalArgumentException
      *          if the value at the {@code index} argument is an ECI (@see #isECI)
      */
-    charAt(index) {
+    MinimalECIInput.prototype.charAt = function (index) {
         if (index < 0 || index >= this.length()) {
             throw new Error('' + index);
         }
@@ -75,7 +78,7 @@ export class MinimalECIInput {
             throw new Error('value at ' + index + ' is not a character but an ECI');
         }
         return this.isFNC1(index) ? this.fnc1 : this.bytes[index];
-    }
+    };
     /**
      * Returns a {@code CharSequence} that is a subsequence of this sequence.
      * The subsequence starts with the {@code char} value at the specified index and
@@ -96,19 +99,19 @@ export class MinimalECIInput {
      * @throws  IllegalArgumentException
      *          if a value in the range {@code start}-{@code end} is an ECI (@see #isECI)
      */
-    subSequence(start, end) {
+    MinimalECIInput.prototype.subSequence = function (start, end) {
         if (start < 0 || start > end || end > this.length()) {
             throw new Error('' + start);
         }
-        const result = new StringBuilder();
-        for (let i = start; i < end; i++) {
+        var result = new StringBuilder_1.default();
+        for (var i = start; i < end; i++) {
             if (this.isECI(i)) {
                 throw new Error('value at ' + i + ' is not a character but an ECI');
             }
             result.append(this.charAt(i));
         }
         return result.toString();
-    }
+    };
     /**
      * Determines if a value is an ECI
      *
@@ -120,12 +123,12 @@ export class MinimalECIInput {
      *          if the {@code index} argument is negative or not less than
      *          {@code length()}
      */
-    isECI(index) {
+    MinimalECIInput.prototype.isECI = function (index) {
         if (index < 0 || index >= this.length()) {
             throw new Error('' + index);
         }
         return this.bytes[index] > 255 && this.bytes[index] <= 999;
-    }
+    };
     /**
      * Determines if a value is the FNC1 character
      *
@@ -137,12 +140,12 @@ export class MinimalECIInput {
      *          if the {@code index} argument is negative or not less than
      *          {@code length()}
      */
-    isFNC1(index) {
+    MinimalECIInput.prototype.isFNC1 = function (index) {
         if (index < 0 || index >= this.length()) {
             throw new Error('' + index);
         }
         return this.bytes[index] === 1000;
-    }
+    };
     /**
      * Returns the {@code int} ECI value at the specified index.  An index ranges from zero
      * to {@code length() - 1}.  The first {@code byte} value of the sequence is at
@@ -161,7 +164,7 @@ export class MinimalECIInput {
      * @throws  IllegalArgumentException
      *          if the value at the {@code index} argument is not an ECI (@see #isECI)
      */
-    getECIValue(index) {
+    MinimalECIInput.prototype.getECIValue = function (index) {
         if (index < 0 || index >= this.length()) {
             throw new Error('' + index);
         }
@@ -169,50 +172,50 @@ export class MinimalECIInput {
             throw new Error('value at ' + index + ' is not an ECI but a character');
         }
         return this.bytes[index] - 256;
-    }
-    addEdge(edges, to, edge) {
+    };
+    MinimalECIInput.prototype.addEdge = function (edges, to, edge) {
         if (edges[to][edge.encoderIndex] == null ||
             edges[to][edge.encoderIndex].cachedTotalSize > edge.cachedTotalSize) {
             edges[to][edge.encoderIndex] = edge;
         }
-    }
-    addEdges(stringToEncode, encoderSet, edges, from, previous, fnc1) {
-        const ch = stringToEncode.charAt(from).charCodeAt(0);
-        let start = 0;
-        let end = encoderSet.length();
+    };
+    MinimalECIInput.prototype.addEdges = function (stringToEncode, encoderSet, edges, from, previous, fnc1) {
+        var ch = stringToEncode.charAt(from).charCodeAt(0);
+        var start = 0;
+        var end = encoderSet.length();
         if (encoderSet.getPriorityEncoderIndex() >= 0 &&
             (ch === fnc1 ||
                 encoderSet.canEncode(ch, encoderSet.getPriorityEncoderIndex()))) {
             start = encoderSet.getPriorityEncoderIndex();
             end = start + 1;
         }
-        for (let i = start; i < end; i++) {
+        for (var i = start; i < end; i++) {
             if (ch === fnc1 || encoderSet.canEncode(ch, i)) {
                 this.addEdge(edges, from + 1, new InputEdge(ch, encoderSet, i, previous, fnc1));
             }
         }
-    }
-    encodeMinimally(stringToEncode, encoderSet, fnc1) {
-        const inputLength = stringToEncode.length;
+    };
+    MinimalECIInput.prototype.encodeMinimally = function (stringToEncode, encoderSet, fnc1) {
+        var inputLength = stringToEncode.length;
         // Array that represents vertices. There is a vertex for every character and encoding.
-        const edges = new InputEdge[inputLength + 1][encoderSet.length()]();
+        var edges = new InputEdge[inputLength + 1][encoderSet.length()]();
         this.addEdges(stringToEncode, encoderSet, edges, 0, null, fnc1);
-        for (let i = 1; i <= inputLength; i++) {
-            for (let j = 0; j < encoderSet.length(); j++) {
+        for (var i = 1; i <= inputLength; i++) {
+            for (var j = 0; j < encoderSet.length(); j++) {
                 if (edges[i][j] != null && i < inputLength) {
                     this.addEdges(stringToEncode, encoderSet, edges, i, edges[i][j], fnc1);
                 }
             }
             // optimize memory by removing edges that have been passed.
-            for (let j = 0; j < encoderSet.length(); j++) {
+            for (var j = 0; j < encoderSet.length(); j++) {
                 edges[i - 1][j] = null;
             }
         }
-        let minimalJ = -1;
-        let minimalSize = Integer.MAX_VALUE;
-        for (let j = 0; j < encoderSet.length(); j++) {
+        var minimalJ = -1;
+        var minimalSize = Integer_1.default.MAX_VALUE;
+        for (var j = 0; j < encoderSet.length(); j++) {
             if (edges[inputLength][j] != null) {
-                const edge = edges[inputLength][j];
+                var edge = edges[inputLength][j];
                 if (edge.cachedTotalSize < minimalSize) {
                     minimalSize = edge.cachedTotalSize;
                     minimalJ = j;
@@ -222,41 +225,43 @@ export class MinimalECIInput {
         if (minimalJ < 0) {
             throw new Error('Failed to encode "' + stringToEncode + '"');
         }
-        const intsAL = [];
-        let current = edges[inputLength][minimalJ];
+        var intsAL = [];
+        var current = edges[inputLength][minimalJ];
         while (current != null) {
             if (current.isFNC1()) {
                 intsAL.unshift(1000);
             }
             else {
-                const bytes = encoderSet.encode(current.c, current.encoderIndex);
-                for (let i = bytes.length - 1; i >= 0; i--) {
+                var bytes = encoderSet.encode(current.c, current.encoderIndex);
+                for (var i = bytes.length - 1; i >= 0; i--) {
                     intsAL.unshift(bytes[i] & 0xff);
                 }
             }
-            const previousEncoderIndex = current.previous === null ? 0 : current.previous.encoderIndex;
+            var previousEncoderIndex = current.previous === null ? 0 : current.previous.encoderIndex;
             if (previousEncoderIndex !== current.encoderIndex) {
                 intsAL.unshift(256 + encoderSet.getECIValue(current.encoderIndex));
             }
             current = current.previous;
         }
-        const ints = [];
-        for (let i = 0; i < ints.length; i++) {
+        var ints = [];
+        for (var i = 0; i < ints.length; i++) {
             ints[i] = intsAL[i];
         }
         return ints;
-    }
-}
-class InputEdge {
-    constructor(c, encoderSet, encoderIndex, previous, fnc1) {
+    };
+    return MinimalECIInput;
+}());
+exports.MinimalECIInput = MinimalECIInput;
+var InputEdge = /** @class */ (function () {
+    function InputEdge(c, encoderSet, encoderIndex, previous, fnc1) {
         this.c = c;
         this.encoderSet = encoderSet;
         this.encoderIndex = encoderIndex;
         this.previous = previous;
         this.fnc1 = fnc1;
         this.c = c === fnc1 ? 1000 : c;
-        let size = this.isFNC1() ? 1 : encoderSet.encode(c, encoderIndex).length;
-        const previousEncoderIndex = previous === null ? 0 : previous.encoderIndex;
+        var size = this.isFNC1() ? 1 : encoderSet.encode(c, encoderIndex).length;
+        var previousEncoderIndex = previous === null ? 0 : previous.encoderIndex;
         if (previousEncoderIndex !== encoderIndex) {
             size += COST_PER_ECI;
         }
@@ -265,7 +270,8 @@ class InputEdge {
         }
         this.cachedTotalSize = size;
     }
-    isFNC1() {
+    InputEdge.prototype.isFNC1 = function () {
         return this.c === 1000;
-    }
-}
+    };
+    return InputEdge;
+}());

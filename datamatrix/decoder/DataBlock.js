@@ -1,4 +1,17 @@
-import IllegalArgumentException from '../../IllegalArgumentException';
+"use strict";
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
 /*
  * Copyright 2008 ZXing authors
  *
@@ -21,8 +34,8 @@ import IllegalArgumentException from '../../IllegalArgumentException';
  *
  * @author bbrown@google.com (Brian Brown)
  */
-export default class DataBlock {
-    constructor(numDataCodewords, codewords) {
+var DataBlock = /** @class */ (function () {
+    function DataBlock(numDataCodewords, codewords) {
         this.numDataCodewords = numDataCodewords;
         this.codewords = codewords;
     }
@@ -36,64 +49,87 @@ export default class DataBlock {
      * @return DataBlocks containing original bytes, "de-interleaved" from representation in the
      *         Data Matrix Code
      */
-    static getDataBlocks(rawCodewords, version) {
+    DataBlock.getDataBlocks = function (rawCodewords, version) {
+        var e_1, _a, e_2, _b;
         // Figure out the number and size of data blocks used by this version
-        const ecBlocks = version.getECBlocks();
+        var ecBlocks = version.getECBlocks();
         // First count the total number of data blocks
-        let totalBlocks = 0;
-        const ecBlockArray = ecBlocks.getECBlocks();
-        for (let ecBlock of ecBlockArray) {
-            totalBlocks += ecBlock.getCount();
+        var totalBlocks = 0;
+        var ecBlockArray = ecBlocks.getECBlocks();
+        try {
+            for (var ecBlockArray_1 = __values(ecBlockArray), ecBlockArray_1_1 = ecBlockArray_1.next(); !ecBlockArray_1_1.done; ecBlockArray_1_1 = ecBlockArray_1.next()) {
+                var ecBlock = ecBlockArray_1_1.value;
+                totalBlocks += ecBlock.getCount();
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (ecBlockArray_1_1 && !ecBlockArray_1_1.done && (_a = ecBlockArray_1.return)) _a.call(ecBlockArray_1);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         // Now establish DataBlocks of the appropriate size and number of data codewords
-        const result = new Array(totalBlocks);
-        let numResultBlocks = 0;
-        for (let ecBlock of ecBlockArray) {
-            for (let i = 0; i < ecBlock.getCount(); i++) {
-                const numDataCodewords = ecBlock.getDataCodewords();
-                const numBlockCodewords = ecBlocks.getECCodewords() + numDataCodewords;
-                result[numResultBlocks++] = new DataBlock(numDataCodewords, new Uint8Array(numBlockCodewords));
+        var result = new Array(totalBlocks);
+        var numResultBlocks = 0;
+        try {
+            for (var ecBlockArray_2 = __values(ecBlockArray), ecBlockArray_2_1 = ecBlockArray_2.next(); !ecBlockArray_2_1.done; ecBlockArray_2_1 = ecBlockArray_2.next()) {
+                var ecBlock = ecBlockArray_2_1.value;
+                for (var i = 0; i < ecBlock.getCount(); i++) {
+                    var numDataCodewords = ecBlock.getDataCodewords();
+                    var numBlockCodewords = ecBlocks.getECCodewords() + numDataCodewords;
+                    result[numResultBlocks++] = new DataBlock(numDataCodewords, new Uint8Array(numBlockCodewords));
+                }
             }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (ecBlockArray_2_1 && !ecBlockArray_2_1.done && (_b = ecBlockArray_2.return)) _b.call(ecBlockArray_2);
+            }
+            finally { if (e_2) throw e_2.error; }
         }
         // All blocks have the same amount of data, except that the last n
         // (where n may be 0) have 1 less byte. Figure out where these start.
         // TODO(bbrown): There is only one case where there is a difference for Data Matrix for size 144
-        const longerBlocksTotalCodewords = result[0].codewords.length;
+        var longerBlocksTotalCodewords = result[0].codewords.length;
         // int shorterBlocksTotalCodewords = longerBlocksTotalCodewords - 1;
-        const longerBlocksNumDataCodewords = longerBlocksTotalCodewords - ecBlocks.getECCodewords();
-        const shorterBlocksNumDataCodewords = longerBlocksNumDataCodewords - 1;
+        var longerBlocksNumDataCodewords = longerBlocksTotalCodewords - ecBlocks.getECCodewords();
+        var shorterBlocksNumDataCodewords = longerBlocksNumDataCodewords - 1;
         // The last elements of result may be 1 element shorter for 144 matrix
         // first fill out as many elements as all of them have minus 1
-        let rawCodewordsOffset = 0;
-        for (let i = 0; i < shorterBlocksNumDataCodewords; i++) {
-            for (let j = 0; j < numResultBlocks; j++) {
+        var rawCodewordsOffset = 0;
+        for (var i = 0; i < shorterBlocksNumDataCodewords; i++) {
+            for (var j = 0; j < numResultBlocks; j++) {
                 result[j].codewords[i] = rawCodewords[rawCodewordsOffset++];
             }
         }
         // Fill out the last data block in the longer ones
-        const specialVersion = version.getVersionNumber() === 24;
-        const numLongerBlocks = specialVersion ? 8 : numResultBlocks;
-        for (let j = 0; j < numLongerBlocks; j++) {
+        var specialVersion = version.getVersionNumber() === 24;
+        var numLongerBlocks = specialVersion ? 8 : numResultBlocks;
+        for (var j = 0; j < numLongerBlocks; j++) {
             result[j].codewords[longerBlocksNumDataCodewords - 1] = rawCodewords[rawCodewordsOffset++];
         }
         // Now add in error correction blocks
-        const max = result[0].codewords.length;
-        for (let i = longerBlocksNumDataCodewords; i < max; i++) {
-            for (let j = 0; j < numResultBlocks; j++) {
-                const jOffset = specialVersion ? (j + 8) % numResultBlocks : j;
-                const iOffset = specialVersion && jOffset > 7 ? i - 1 : i;
+        var max = result[0].codewords.length;
+        for (var i = longerBlocksNumDataCodewords; i < max; i++) {
+            for (var j = 0; j < numResultBlocks; j++) {
+                var jOffset = specialVersion ? (j + 8) % numResultBlocks : j;
+                var iOffset = specialVersion && jOffset > 7 ? i - 1 : i;
                 result[jOffset].codewords[iOffset] = rawCodewords[rawCodewordsOffset++];
             }
         }
         if (rawCodewordsOffset !== rawCodewords.length) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         return result;
-    }
-    getNumDataCodewords() {
+    };
+    DataBlock.prototype.getNumDataCodewords = function () {
         return this.numDataCodewords;
-    }
-    getCodewords() {
+    };
+    DataBlock.prototype.getCodewords = function () {
         return this.codewords;
-    }
-}
+    };
+    return DataBlock;
+}());
+exports.default = DataBlock;

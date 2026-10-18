@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common {*/
 /*import java.util.Arrays;*/
-import IllegalArgumentException from '../IllegalArgumentException';
-import Arrays from '../util/Arrays';
-import Integer from '../util/Integer';
-import System from '../util/System';
+var IllegalArgumentException_1 = require("../IllegalArgumentException");
+var Arrays_1 = require("../util/Arrays");
+var Integer_1 = require("../util/Integer");
+var System_1 = require("../util/System");
 /**
  * <p>A simple, fast array of bits, represented compactly by an array of ints internally.</p>
  *
  * @author Sean Owen
  */
-export default class BitArray /*implements Cloneable*/ {
+var BitArray /*implements Cloneable*/ = /** @class */ (function () {
     // public constructor() {
     //   this.size = 0
     //   this.bits = new Int32Array(1)
@@ -38,7 +40,7 @@ export default class BitArray /*implements Cloneable*/ {
     //   this.bits = this.makeArray(size)
     // }
     // For testing only
-    constructor(size /*int*/, bits) {
+    function BitArray(size /*int*/, bits) {
         if (undefined === size) {
             this.size = 0;
             this.bits = new Int32Array(1);
@@ -53,93 +55,93 @@ export default class BitArray /*implements Cloneable*/ {
             }
         }
     }
-    getSize() {
+    BitArray.prototype.getSize = function () {
         return this.size;
-    }
-    getSizeInBytes() {
+    };
+    BitArray.prototype.getSizeInBytes = function () {
         return Math.floor((this.size + 7) / 8);
-    }
-    ensureCapacity(size /*int*/) {
+    };
+    BitArray.prototype.ensureCapacity = function (size /*int*/) {
         if (size > this.bits.length * 32) {
-            const newBits = BitArray.makeArray(size);
-            System.arraycopy(this.bits, 0, newBits, 0, this.bits.length);
+            var newBits = BitArray.makeArray(size);
+            System_1.default.arraycopy(this.bits, 0, newBits, 0, this.bits.length);
             this.bits = newBits;
         }
-    }
+    };
     /**
      * @param i bit to get
      * @return true iff bit i is set
      */
-    get(i /*int*/) {
+    BitArray.prototype.get = function (i /*int*/) {
         return (this.bits[Math.floor(i / 32)] & (1 << (i & 0x1F))) !== 0;
-    }
+    };
     /**
      * Sets bit i.
      *
      * @param i bit to set
      */
-    set(i /*int*/) {
+    BitArray.prototype.set = function (i /*int*/) {
         this.bits[Math.floor(i / 32)] |= 1 << (i & 0x1F);
-    }
+    };
     /**
      * Flips bit i.
      *
      * @param i bit to set
      */
-    flip(i /*int*/) {
+    BitArray.prototype.flip = function (i /*int*/) {
         this.bits[Math.floor(i / 32)] ^= 1 << (i & 0x1F);
-    }
+    };
     /**
      * @param from first bit to check
      * @return index of first bit that is set, starting from the given index, or size if none are set
      *  at or beyond this given index
      * @see #getNextUnset(int)
      */
-    getNextSet(from /*int*/) {
-        const size = this.size;
+    BitArray.prototype.getNextSet = function (from /*int*/) {
+        var size = this.size;
         if (from >= size) {
             return size;
         }
-        const bits = this.bits;
-        let bitsOffset = Math.floor(from / 32);
-        let currentBits = bits[bitsOffset];
+        var bits = this.bits;
+        var bitsOffset = Math.floor(from / 32);
+        var currentBits = bits[bitsOffset];
         // mask off lesser bits first
         currentBits &= ~((1 << (from & 0x1F)) - 1);
-        const length = bits.length;
+        var length = bits.length;
         while (currentBits === 0) {
             if (++bitsOffset === length) {
                 return size;
             }
             currentBits = bits[bitsOffset];
         }
-        const result = (bitsOffset * 32) + Integer.numberOfTrailingZeros(currentBits);
+        var result = (bitsOffset * 32) + Integer_1.default.numberOfTrailingZeros(currentBits);
         return result > size ? size : result;
-    }
+    };
     /**
      * @param from index to start looking for unset bit
      * @return index of next unset bit, or {@code size} if none are unset until the end
      * @see #getNextSet(int)
      */
-    getNextUnset(from /*int*/) {
-        const size = this.size;
+    BitArray.prototype.getNextUnset = function (from /*int*/) {
+        var size = this.size;
         if (from >= size) {
             return size;
         }
-        const bits = this.bits;
-        let bitsOffset = Math.floor(from / 32);
-        let currentBits = ~bits[bitsOffset];
+        var bits = this.bits;
+        var bitsOffset = Math.floor(from / 32);
+        var currentBits = ~bits[bitsOffset];
         // mask off lesser bits first
         currentBits &= ~((1 << (from & 0x1F)) - 1);
-        const length = bits.length;
+        var length = bits.length;
         while (currentBits === 0) {
             if (++bitsOffset === length) {
                 return size;
             }
             currentBits = ~bits[bitsOffset];
         }
-        const result = (bitsOffset * 32) + Integer.numberOfTrailingZeros(currentBits);
+        var result = (bitsOffset * 32) + Integer_1.default.numberOfTrailingZeros(currentBits);
         return result > size ? size : result;
-    }
+    };
     /**
      * Sets a block of 32 bits, starting at bit i.
      *
@@ -147,44 +149,44 @@ export default class BitArray /*implements Cloneable*/ {
      * @param newBits the new value of the next 32 bits. Note again that the least-significant bit
      * corresponds to bit i, the next-least-significant to i+1, and so on.
      */
-    setBulk(i /*int*/, newBits /*int*/) {
+    BitArray.prototype.setBulk = function (i /*int*/, newBits /*int*/) {
         this.bits[Math.floor(i / 32)] = newBits;
-    }
+    };
     /**
      * Sets a range of bits.
      *
      * @param start start of range, inclusive.
      * @param end end of range, exclusive
      */
-    setRange(start /*int*/, end /*int*/) {
+    BitArray.prototype.setRange = function (start /*int*/, end /*int*/) {
         if (end < start || start < 0 || end > this.size) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         if (end === start) {
             return;
         }
         end--; // will be easier to treat this as the last actually set bit -- inclusive
-        const firstInt = Math.floor(start / 32);
-        const lastInt = Math.floor(end / 32);
-        const bits = this.bits;
-        for (let i = firstInt; i <= lastInt; i++) {
-            const firstBit = i > firstInt ? 0 : start & 0x1F;
-            const lastBit = i < lastInt ? 31 : end & 0x1F;
+        var firstInt = Math.floor(start / 32);
+        var lastInt = Math.floor(end / 32);
+        var bits = this.bits;
+        for (var i = firstInt; i <= lastInt; i++) {
+            var firstBit = i > firstInt ? 0 : start & 0x1F;
+            var lastBit = i < lastInt ? 31 : end & 0x1F;
             // Ones from firstBit to lastBit, inclusive
-            const mask = (2 << lastBit) - (1 << firstBit);
+            var mask = (2 << lastBit) - (1 << firstBit);
             bits[i] |= mask;
         }
-    }
+    };
     /**
      * Clears all bits (sets to false).
      */
-    clear() {
-        const max = this.bits.length;
-        const bits = this.bits;
-        for (let i = 0; i < max; i++) {
+    BitArray.prototype.clear = function () {
+        var max = this.bits.length;
+        var bits = this.bits;
+        for (var i = 0; i < max; i++) {
             bits[i] = 0;
         }
-    }
+    };
     /**
      * Efficient method to check if a range of bits is set, or not set.
      *
@@ -194,22 +196,22 @@ export default class BitArray /*implements Cloneable*/ {
      * @return true iff all bits are set or not set in range, according to value argument
      * @throws IllegalArgumentException if end is less than start or the range is not contained in the array
      */
-    isRange(start /*int*/, end /*int*/, value) {
+    BitArray.prototype.isRange = function (start /*int*/, end /*int*/, value) {
         if (end < start || start < 0 || end > this.size) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
         if (end === start) {
             return true; // empty range matches
         }
         end--; // will be easier to treat this as the last actually set bit -- inclusive
-        const firstInt = Math.floor(start / 32);
-        const lastInt = Math.floor(end / 32);
-        const bits = this.bits;
-        for (let i = firstInt; i <= lastInt; i++) {
-            const firstBit = i > firstInt ? 0 : start & 0x1F;
-            const lastBit = i < lastInt ? 31 : end & 0x1F;
+        var firstInt = Math.floor(start / 32);
+        var lastInt = Math.floor(end / 32);
+        var bits = this.bits;
+        for (var i = firstInt; i <= lastInt; i++) {
+            var firstBit = i > firstInt ? 0 : start & 0x1F;
+            var lastBit = i < lastInt ? 31 : end & 0x1F;
             // Ones from firstBit to lastBit, inclusive
-            const mask = (2 << lastBit) - (1 << firstBit) & 0xFFFFFFFF;
+            var mask = (2 << lastBit) - (1 << firstBit) & 0xFFFFFFFF;
             // TYPESCRIPTPORT: & 0xFFFFFFFF added to discard anything after 32 bits, as ES has 53 bits
             // Return false if we're looking for 1s and the masked bits[i] isn't all 1s (is: that,
             // equals the mask, or we're looking for 0s and the masked portion is not all 0s
@@ -218,14 +220,14 @@ export default class BitArray /*implements Cloneable*/ {
             }
         }
         return true;
-    }
-    appendBit(bit) {
+    };
+    BitArray.prototype.appendBit = function (bit) {
         this.ensureCapacity(this.size + 1);
         if (bit) {
             this.bits[Math.floor(this.size / 32)] |= 1 << (this.size & 0x1F);
         }
         this.size++;
-    }
+    };
     /**
      * Appends the least-significant bits, from value, in order from most-significant to
      * least-significant. For example, appending 6 bits from 0x000001E will append the bits
@@ -234,35 +236,35 @@ export default class BitArray /*implements Cloneable*/ {
      * @param value {@code int} containing bits to append
      * @param numBits bits from value to append
      */
-    appendBits(value /*int*/, numBits /*int*/) {
+    BitArray.prototype.appendBits = function (value /*int*/, numBits /*int*/) {
         if (numBits < 0 || numBits > 32) {
-            throw new IllegalArgumentException('Num bits must be between 0 and 32');
+            throw new IllegalArgumentException_1.default('Num bits must be between 0 and 32');
         }
         this.ensureCapacity(this.size + numBits);
         // const appendBit = this.appendBit;
-        for (let numBitsLeft = numBits; numBitsLeft > 0; numBitsLeft--) {
+        for (var numBitsLeft = numBits; numBitsLeft > 0; numBitsLeft--) {
             this.appendBit(((value >> (numBitsLeft - 1)) & 0x01) === 1);
         }
-    }
-    appendBitArray(other) {
-        const otherSize = other.size;
+    };
+    BitArray.prototype.appendBitArray = function (other) {
+        var otherSize = other.size;
         this.ensureCapacity(this.size + otherSize);
         // const appendBit = this.appendBit;
-        for (let i = 0; i < otherSize; i++) {
+        for (var i = 0; i < otherSize; i++) {
             this.appendBit(other.get(i));
         }
-    }
-    xor(other) {
+    };
+    BitArray.prototype.xor = function (other) {
         if (this.size !== other.size) {
-            throw new IllegalArgumentException('Sizes don\'t match');
+            throw new IllegalArgumentException_1.default('Sizes don\'t match');
         }
-        const bits = this.bits;
-        for (let i = 0, length = bits.length; i < length; i++) {
+        var bits = this.bits;
+        for (var i = 0, length_1 = bits.length; i < length_1; i++) {
             // The last int could be incomplete (i.e. not have 32 bits in
             // it) but there is no problem since 0 XOR 0 == 0.
             bits[i] ^= other.bits[i];
         }
-    }
+    };
     /**
      *
      * @param bitOffset first bit to start writing
@@ -271,10 +273,10 @@ export default class BitArray /*implements Cloneable*/ {
      * @param offset position in array to start writing
      * @param numBytes how many bytes to write
      */
-    toBytes(bitOffset /*int*/, array, offset /*int*/, numBytes /*int*/) {
-        for (let i = 0; i < numBytes; i++) {
-            let theByte = 0;
-            for (let j = 0; j < 8; j++) {
+    BitArray.prototype.toBytes = function (bitOffset /*int*/, array, offset /*int*/, numBytes /*int*/) {
+        for (var i = 0; i < numBytes; i++) {
+            var theByte = 0;
+            for (var j = 0; j < 8; j++) {
                 if (this.get(bitOffset)) {
                     theByte |= 1 << (7 - j);
                 }
@@ -282,25 +284,25 @@ export default class BitArray /*implements Cloneable*/ {
             }
             array[offset + i] = /*(byte)*/ theByte;
         }
-    }
+    };
     /**
      * @return underlying array of ints. The first element holds the first 32 bits, and the least
      *         significant bit is bit 0.
      */
-    getBitArray() {
+    BitArray.prototype.getBitArray = function () {
         return this.bits;
-    }
+    };
     /**
      * Reverses all bits in the array.
      */
-    reverse() {
-        const newBits = new Int32Array(this.bits.length);
+    BitArray.prototype.reverse = function () {
+        var newBits = new Int32Array(this.bits.length);
         // reverse all int's first
-        const len = Math.floor((this.size - 1) / 32);
-        const oldBitsLen = len + 1;
-        const bits = this.bits;
-        for (let i = 0; i < oldBitsLen; i++) {
-            let x = bits[i];
+        var len = Math.floor((this.size - 1) / 32);
+        var oldBitsLen = len + 1;
+        var bits = this.bits;
+        for (var i = 0; i < oldBitsLen; i++) {
+            var x = bits[i];
             x = ((x >> 1) & 0x55555555) | ((x & 0x55555555) << 1);
             x = ((x >> 2) & 0x33333333) | ((x & 0x33333333) << 2);
             x = ((x >> 4) & 0x0f0f0f0f) | ((x & 0x0f0f0f0f) << 4);
@@ -310,10 +312,10 @@ export default class BitArray /*implements Cloneable*/ {
         }
         // now correct the int's if the bit size isn't a multiple of 32
         if (this.size !== oldBitsLen * 32) {
-            const leftOffset = oldBitsLen * 32 - this.size;
-            let currentInt = newBits[0] >>> leftOffset;
-            for (let i = 1; i < oldBitsLen; i++) {
-                const nextInt = newBits[i];
+            var leftOffset = oldBitsLen * 32 - this.size;
+            var currentInt = newBits[0] >>> leftOffset;
+            for (var i = 1; i < oldBitsLen; i++) {
+                var nextInt = newBits[i];
                 currentInt |= nextInt << (32 - leftOffset);
                 newBits[i - 1] = currentInt;
                 currentInt = nextInt >>> leftOffset;
@@ -321,45 +323,47 @@ export default class BitArray /*implements Cloneable*/ {
             newBits[oldBitsLen - 1] = currentInt;
         }
         this.bits = newBits;
-    }
-    static makeArray(size /*int*/) {
+    };
+    BitArray.makeArray = function (size /*int*/) {
         return new Int32Array(Math.floor((size + 31) / 32));
-    }
+    };
     /*@Override*/
-    equals(o) {
+    BitArray.prototype.equals = function (o) {
         if (!(o instanceof BitArray)) {
             return false;
         }
-        const other = o;
-        return this.size === other.size && Arrays.equals(this.bits, other.bits);
-    }
+        var other = o;
+        return this.size === other.size && Arrays_1.default.equals(this.bits, other.bits);
+    };
     /*@Override*/
-    hashCode() {
-        return 31 * this.size + Arrays.hashCode(this.bits);
-    }
+    BitArray.prototype.hashCode = function () {
+        return 31 * this.size + Arrays_1.default.hashCode(this.bits);
+    };
     /*@Override*/
-    toString() {
-        let result = '';
-        for (let i = 0, size = this.size; i < size; i++) {
+    BitArray.prototype.toString = function () {
+        var result = '';
+        for (var i = 0, size = this.size; i < size; i++) {
             if ((i & 0x07) === 0) {
                 result += ' ';
             }
             result += this.get(i) ? 'X' : '.';
         }
         return result;
-    }
+    };
     /*@Override*/
-    clone() {
+    BitArray.prototype.clone = function () {
         return new BitArray(this.size, this.bits.slice());
-    }
+    };
     /**
      * converts to boolean array.
      */
-    toArray() {
-        let result = [];
-        for (let i = 0, size = this.size; i < size; i++) {
+    BitArray.prototype.toArray = function () {
+        var result = [];
+        for (var i = 0, size = this.size; i < size; i++) {
             result.push(this.get(i));
         }
         return result;
-    }
-}
+    };
+    return BitArray;
+}());
+exports.default = BitArray;

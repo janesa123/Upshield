@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import GenericGFPoly from './GenericGFPoly';
-import System from '../../util/System';
-import IllegalArgumentException from '../../IllegalArgumentException';
+Object.defineProperty(exports, "__esModule", { value: true });
+var GenericGFPoly_1 = require("./GenericGFPoly");
+var System_1 = require("../../util/System");
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
 /**
  * <p>Implements Reed-Solomon encoding, as the name implies.</p>
  *
  * @author Sean Owen
  * @author William Rucklidge
  */
-export default class ReedSolomonEncoder {
+var ReedSolomonEncoder = /** @class */ (function () {
     /**
      * A reed solomon error-correcting encoding constructor is created by
      * passing as Galois Field with of size equal to the number of code
@@ -31,24 +33,24 @@ export default class ReedSolomonEncoder {
      * @param field A galois field with a number of elements equal to the size
      * of the alphabet of symbols to encode.
      */
-    constructor(field) {
+    function ReedSolomonEncoder(field) {
         this.field = field;
         this.cachedGenerators = [];
-        this.cachedGenerators.push(new GenericGFPoly(field, Int32Array.from([1])));
+        this.cachedGenerators.push(new GenericGFPoly_1.default(field, Int32Array.from([1])));
     }
-    buildGenerator(degree /*int*/) {
-        const cachedGenerators = this.cachedGenerators;
+    ReedSolomonEncoder.prototype.buildGenerator = function (degree /*int*/) {
+        var cachedGenerators = this.cachedGenerators;
         if (degree >= cachedGenerators.length) {
-            let lastGenerator = cachedGenerators[cachedGenerators.length - 1];
-            const field = this.field;
-            for (let d = cachedGenerators.length; d <= degree; d++) {
-                const nextGenerator = lastGenerator.multiply(new GenericGFPoly(field, Int32Array.from([1, field.exp(d - 1 + field.getGeneratorBase())])));
+            var lastGenerator = cachedGenerators[cachedGenerators.length - 1];
+            var field = this.field;
+            for (var d = cachedGenerators.length; d <= degree; d++) {
+                var nextGenerator = lastGenerator.multiply(new GenericGFPoly_1.default(field, Int32Array.from([1, field.exp(d - 1 + field.getGeneratorBase())])));
                 cachedGenerators.push(nextGenerator);
                 lastGenerator = nextGenerator;
             }
         }
         return cachedGenerators[degree];
-    }
+    };
     /**
      * <p>Encode a sequence of code words (symbols) using Reed-Solomon to allow decoders
      * to detect and correct errors that may have been introduced when the resulting
@@ -68,25 +70,27 @@ export default class ReedSolomonEncoder {
      * elements in the Galois Field passed as a constructor to this object.
      * @throws IllegalArgumentException thrown in response to validation errros.
      */
-    encode(toEncode, ecBytes /*int*/) {
+    ReedSolomonEncoder.prototype.encode = function (toEncode, ecBytes /*int*/) {
         if (ecBytes === 0) {
-            throw new IllegalArgumentException('No error correction bytes');
+            throw new IllegalArgumentException_1.default('No error correction bytes');
         }
-        const dataBytes = toEncode.length - ecBytes;
+        var dataBytes = toEncode.length - ecBytes;
         if (dataBytes <= 0) {
-            throw new IllegalArgumentException('No data bytes provided');
+            throw new IllegalArgumentException_1.default('No data bytes provided');
         }
-        const generator = this.buildGenerator(ecBytes);
-        const infoCoefficients = new Int32Array(dataBytes);
-        System.arraycopy(toEncode, 0, infoCoefficients, 0, dataBytes);
-        let info = new GenericGFPoly(this.field, infoCoefficients);
+        var generator = this.buildGenerator(ecBytes);
+        var infoCoefficients = new Int32Array(dataBytes);
+        System_1.default.arraycopy(toEncode, 0, infoCoefficients, 0, dataBytes);
+        var info = new GenericGFPoly_1.default(this.field, infoCoefficients);
         info = info.multiplyByMonomial(ecBytes, 1);
-        const remainder = info.divide(generator)[1];
-        const coefficients = remainder.getCoefficients();
-        const numZeroCoefficients = ecBytes - coefficients.length;
-        for (let i = 0; i < numZeroCoefficients; i++) {
+        var remainder = info.divide(generator)[1];
+        var coefficients = remainder.getCoefficients();
+        var numZeroCoefficients = ecBytes - coefficients.length;
+        for (var i = 0; i < numZeroCoefficients; i++) {
             toEncode[dataBytes + i] = 0;
         }
-        System.arraycopy(coefficients, 0, toEncode, dataBytes + numZeroCoefficients, coefficients.length);
-    }
-}
+        System_1.default.arraycopy(coefficients, 0, toEncode, dataBytes + numZeroCoefficients, coefficients.length);
+    };
+    return ReedSolomonEncoder;
+}());
+exports.default = ReedSolomonEncoder;

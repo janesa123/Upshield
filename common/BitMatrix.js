@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common {*/
 /*import java.util.Arrays;*/
-import BitArray from './BitArray';
-import System from '../util/System';
-import Arrays from '../util/Arrays';
-import StringBuilder from '../util/StringBuilder';
-import IllegalArgumentException from '../IllegalArgumentException';
+var BitArray_1 = require("./BitArray");
+var System_1 = require("../util/System");
+var Arrays_1 = require("../util/Arrays");
+var StringBuilder_1 = require("../util/StringBuilder");
+var IllegalArgumentException_1 = require("../IllegalArgumentException");
 /**
  * <p>Represents a 2D matrix of bits. In function arguments below, and throughout the common
  * module, x is the column position, and y is the row position. The ordering is always x, y.
@@ -35,7 +37,7 @@ import IllegalArgumentException from '../IllegalArgumentException';
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
-export default class BitMatrix /*implements Cloneable*/ {
+var BitMatrix /*implements Cloneable*/ = /** @class */ (function () {
     /**
      * Creates an empty square {@link BitMatrix}.
      *
@@ -59,7 +61,7 @@ export default class BitMatrix /*implements Cloneable*/ {
     //   this.rowSize = (width + 31) / 32
     //   bits = new int[rowSize * height];
     // }
-    constructor(width /*int*/, height /*int*/, rowSize /*int*/, bits) {
+    function BitMatrix(width /*int*/, height /*int*/, rowSize /*int*/, bits) {
         this.width = width;
         this.height = height;
         this.rowSize = rowSize;
@@ -69,7 +71,7 @@ export default class BitMatrix /*implements Cloneable*/ {
         }
         this.height = height;
         if (width < 1 || height < 1) {
-            throw new IllegalArgumentException('Both dimensions must be greater than 0');
+            throw new IllegalArgumentException_1.default('Both dimensions must be greater than 0');
         }
         if (undefined === rowSize || null === rowSize) {
             rowSize = Math.floor((width + 31) / 32);
@@ -86,20 +88,20 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param image bits of the image, as a row-major 2D array. Elements are arrays representing rows
      * @return {@link BitMatrix} representation of image
      */
-    static parseFromBooleanArray(image) {
-        const height = image.length;
-        const width = image[0].length;
-        const bits = new BitMatrix(width, height);
-        for (let i = 0; i < height; i++) {
-            const imageI = image[i];
-            for (let j = 0; j < width; j++) {
+    BitMatrix.parseFromBooleanArray = function (image) {
+        var height = image.length;
+        var width = image[0].length;
+        var bits = new BitMatrix(width, height);
+        for (var i = 0; i < height; i++) {
+            var imageI = image[i];
+            for (var j = 0; j < width; j++) {
                 if (imageI[j]) {
                     bits.set(j, i);
                 }
             }
         }
         return bits;
-    }
+    };
     /**
      *
      * @function parse
@@ -107,16 +109,16 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param setString
      * @param unsetString
      */
-    static parseFromString(stringRepresentation, setString, unsetString) {
+    BitMatrix.parseFromString = function (stringRepresentation, setString, unsetString) {
         if (stringRepresentation === null) {
-            throw new IllegalArgumentException('stringRepresentation cannot be null');
+            throw new IllegalArgumentException_1.default('stringRepresentation cannot be null');
         }
-        const bits = new Array(stringRepresentation.length);
-        let bitsPos = 0;
-        let rowStartPos = 0;
-        let rowLength = -1;
-        let nRows = 0;
-        let pos = 0;
+        var bits = new Array(stringRepresentation.length);
+        var bitsPos = 0;
+        var rowStartPos = 0;
+        var rowLength = -1;
+        var nRows = 0;
+        var pos = 0;
         while (pos < stringRepresentation.length) {
             if (stringRepresentation.charAt(pos) === '\n' ||
                 stringRepresentation.charAt(pos) === '\r') {
@@ -125,7 +127,7 @@ export default class BitMatrix /*implements Cloneable*/ {
                         rowLength = bitsPos - rowStartPos;
                     }
                     else if (bitsPos - rowStartPos !== rowLength) {
-                        throw new IllegalArgumentException('row lengths do not match');
+                        throw new IllegalArgumentException_1.default('row lengths do not match');
                     }
                     rowStartPos = bitsPos;
                     nRows++;
@@ -143,7 +145,7 @@ export default class BitMatrix /*implements Cloneable*/ {
                 bitsPos++;
             }
             else {
-                throw new IllegalArgumentException('illegal character encountered: ' + stringRepresentation.substring(pos));
+                throw new IllegalArgumentException_1.default('illegal character encountered: ' + stringRepresentation.substring(pos));
             }
         }
         // no EOL at end?
@@ -152,18 +154,18 @@ export default class BitMatrix /*implements Cloneable*/ {
                 rowLength = bitsPos - rowStartPos;
             }
             else if (bitsPos - rowStartPos !== rowLength) {
-                throw new IllegalArgumentException('row lengths do not match');
+                throw new IllegalArgumentException_1.default('row lengths do not match');
             }
             nRows++;
         }
-        const matrix = new BitMatrix(rowLength, nRows);
-        for (let i = 0; i < bitsPos; i++) {
+        var matrix = new BitMatrix(rowLength, nRows);
+        for (var i = 0; i < bitsPos; i++) {
             if (bits[i]) {
                 matrix.set(Math.floor(i % rowLength), Math.floor(i / rowLength));
             }
         }
         return matrix;
-    }
+    };
     /**
      * <p>Gets the requested bit, where true means black.</p>
      *
@@ -171,66 +173,66 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param y The vertical component (i.e. which row)
      * @return value of given bit in matrix
      */
-    get(x /*int*/, y /*int*/) {
-        const offset = y * this.rowSize + Math.floor(x / 32);
+    BitMatrix.prototype.get = function (x /*int*/, y /*int*/) {
+        var offset = y * this.rowSize + Math.floor(x / 32);
         return ((this.bits[offset] >>> (x & 0x1f)) & 1) !== 0;
-    }
+    };
     /**
      * <p>Sets the given bit to true.</p>
      *
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
      */
-    set(x /*int*/, y /*int*/) {
-        const offset = y * this.rowSize + Math.floor(x / 32);
+    BitMatrix.prototype.set = function (x /*int*/, y /*int*/) {
+        var offset = y * this.rowSize + Math.floor(x / 32);
         this.bits[offset] |= (1 << (x & 0x1f)) & 0xFFFFFFFF;
-    }
-    unset(x /*int*/, y /*int*/) {
-        const offset = y * this.rowSize + Math.floor(x / 32);
+    };
+    BitMatrix.prototype.unset = function (x /*int*/, y /*int*/) {
+        var offset = y * this.rowSize + Math.floor(x / 32);
         this.bits[offset] &= ~((1 << (x & 0x1f)) & 0xFFFFFFFF);
-    }
+    };
     /**
      * <p>Flips the given bit.</p>
      *
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
      */
-    flip(x /*int*/, y /*int*/) {
-        const offset = y * this.rowSize + Math.floor(x / 32);
+    BitMatrix.prototype.flip = function (x /*int*/, y /*int*/) {
+        var offset = y * this.rowSize + Math.floor(x / 32);
         this.bits[offset] ^= ((1 << (x & 0x1f)) & 0xFFFFFFFF);
-    }
+    };
     /**
      * Exclusive-or (XOR): Flip the bit in this {@code BitMatrix} if the corresponding
      * mask bit is set.
      *
      * @param mask XOR mask
      */
-    xor(mask) {
+    BitMatrix.prototype.xor = function (mask) {
         if (this.width !== mask.getWidth() || this.height !== mask.getHeight()
             || this.rowSize !== mask.getRowSize()) {
-            throw new IllegalArgumentException('input matrix dimensions do not match');
+            throw new IllegalArgumentException_1.default('input matrix dimensions do not match');
         }
-        const rowArray = new BitArray(Math.floor(this.width / 32) + 1);
-        const rowSize = this.rowSize;
-        const bits = this.bits;
-        for (let y = 0, height = this.height; y < height; y++) {
-            const offset = y * rowSize;
-            const row = mask.getRow(y, rowArray).getBitArray();
-            for (let x = 0; x < rowSize; x++) {
+        var rowArray = new BitArray_1.default(Math.floor(this.width / 32) + 1);
+        var rowSize = this.rowSize;
+        var bits = this.bits;
+        for (var y = 0, height = this.height; y < height; y++) {
+            var offset = y * rowSize;
+            var row = mask.getRow(y, rowArray).getBitArray();
+            for (var x = 0; x < rowSize; x++) {
                 bits[offset + x] ^= row[x];
             }
         }
-    }
+    };
     /**
      * Clears all bits (sets to false).
      */
-    clear() {
-        const bits = this.bits;
-        const max = bits.length;
-        for (let i = 0; i < max; i++) {
+    BitMatrix.prototype.clear = function () {
+        var bits = this.bits;
+        var max = bits.length;
+        for (var i = 0; i < max; i++) {
             bits[i] = 0;
         }
-    }
+    };
     /**
      * <p>Sets a square region of the bit matrix to true.</p>
      *
@@ -239,27 +241,27 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param width The width of the region
      * @param height The height of the region
      */
-    setRegion(left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
+    BitMatrix.prototype.setRegion = function (left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
         if (top < 0 || left < 0) {
-            throw new IllegalArgumentException('Left and top must be nonnegative');
+            throw new IllegalArgumentException_1.default('Left and top must be nonnegative');
         }
         if (height < 1 || width < 1) {
-            throw new IllegalArgumentException('Height and width must be at least 1');
+            throw new IllegalArgumentException_1.default('Height and width must be at least 1');
         }
-        const right = left + width;
-        const bottom = top + height;
+        var right = left + width;
+        var bottom = top + height;
         if (bottom > this.height || right > this.width) {
-            throw new IllegalArgumentException('The region must fit inside the matrix');
+            throw new IllegalArgumentException_1.default('The region must fit inside the matrix');
         }
-        const rowSize = this.rowSize;
-        const bits = this.bits;
-        for (let y = top; y < bottom; y++) {
-            const offset = y * rowSize;
-            for (let x = left; x < right; x++) {
+        var rowSize = this.rowSize;
+        var bits = this.bits;
+        for (var y = top; y < bottom; y++) {
+            var offset = y * rowSize;
+            for (var x = left; x < right; x++) {
                 bits[offset + Math.floor(x / 32)] |= ((1 << (x & 0x1f)) & 0xFFFFFFFF);
             }
         }
-    }
+    };
     /**
      * A fast method to retrieve one row of data from the matrix as a BitArray.
      *
@@ -268,37 +270,37 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @return The resulting BitArray - this reference should always be used even when passing
      *         your own row
      */
-    getRow(y /*int*/, row) {
+    BitMatrix.prototype.getRow = function (y /*int*/, row) {
         if (row === null || row === undefined || row.getSize() < this.width) {
-            row = new BitArray(this.width);
+            row = new BitArray_1.default(this.width);
         }
         else {
             row.clear();
         }
-        const rowSize = this.rowSize;
-        const bits = this.bits;
-        const offset = y * rowSize;
-        for (let x = 0; x < rowSize; x++) {
+        var rowSize = this.rowSize;
+        var bits = this.bits;
+        var offset = y * rowSize;
+        for (var x = 0; x < rowSize; x++) {
             row.setBulk(x * 32, bits[offset + x]);
         }
         return row;
-    }
+    };
     /**
      * @param y row to set
      * @param row {@link BitArray} to copy from
      */
-    setRow(y /*int*/, row) {
-        System.arraycopy(row.getBitArray(), 0, this.bits, y * this.rowSize, this.rowSize);
-    }
+    BitMatrix.prototype.setRow = function (y /*int*/, row) {
+        System_1.default.arraycopy(row.getBitArray(), 0, this.bits, y * this.rowSize, this.rowSize);
+    };
     /**
      * Modifies this {@code BitMatrix} to represent the same but rotated 180 degrees
      */
-    rotate180() {
-        const width = this.getWidth();
-        const height = this.getHeight();
-        let topRow = new BitArray(width);
-        let bottomRow = new BitArray(width);
-        for (let i = 0, length = Math.floor((height + 1) / 2); i < length; i++) {
+    BitMatrix.prototype.rotate180 = function () {
+        var width = this.getWidth();
+        var height = this.getHeight();
+        var topRow = new BitArray_1.default(width);
+        var bottomRow = new BitArray_1.default(width);
+        for (var i = 0, length_1 = Math.floor((height + 1) / 2); i < length_1; i++) {
             topRow = this.getRow(i, topRow);
             bottomRow = this.getRow(height - 1 - i, bottomRow);
             topRow.reverse();
@@ -306,24 +308,24 @@ export default class BitMatrix /*implements Cloneable*/ {
             this.setRow(i, bottomRow);
             this.setRow(height - 1 - i, topRow);
         }
-    }
+    };
     /**
      * This is useful in detecting the enclosing rectangle of a 'pure' barcode.
      *
      * @return {@code left,top,width,height} enclosing rectangle of all 1 bits, or null if it is all white
      */
-    getEnclosingRectangle() {
-        const width = this.width;
-        const height = this.height;
-        const rowSize = this.rowSize;
-        const bits = this.bits;
-        let left = width;
-        let top = height;
-        let right = -1;
-        let bottom = -1;
-        for (let y = 0; y < height; y++) {
-            for (let x32 = 0; x32 < rowSize; x32++) {
-                const theBits = bits[y * rowSize + x32];
+    BitMatrix.prototype.getEnclosingRectangle = function () {
+        var width = this.width;
+        var height = this.height;
+        var rowSize = this.rowSize;
+        var bits = this.bits;
+        var left = width;
+        var top = height;
+        var right = -1;
+        var bottom = -1;
+        for (var y = 0; y < height; y++) {
+            for (var x32 = 0; x32 < rowSize; x32++) {
+                var theBits = bits[y * rowSize + x32];
                 if (theBits !== 0) {
                     if (y < top) {
                         top = y;
@@ -332,7 +334,7 @@ export default class BitMatrix /*implements Cloneable*/ {
                         bottom = y;
                     }
                     if (x32 * 32 < left) {
-                        let bit = 0;
+                        var bit = 0;
                         while (((theBits << (31 - bit)) & 0xFFFFFFFF) === 0) {
                             bit++;
                         }
@@ -341,7 +343,7 @@ export default class BitMatrix /*implements Cloneable*/ {
                         }
                     }
                     if (x32 * 32 + 31 > right) {
-                        let bit = 31;
+                        var bit = 31;
                         while ((theBits >>> bit) === 0) {
                             bit--;
                         }
@@ -356,88 +358,88 @@ export default class BitMatrix /*implements Cloneable*/ {
             return null;
         }
         return Int32Array.from([left, top, right - left + 1, bottom - top + 1]);
-    }
+    };
     /**
      * This is useful in detecting a corner of a 'pure' barcode.
      *
      * @return {@code x,y} coordinate of top-left-most 1 bit, or null if it is all white
      */
-    getTopLeftOnBit() {
-        const rowSize = this.rowSize;
-        const bits = this.bits;
-        let bitsOffset = 0;
+    BitMatrix.prototype.getTopLeftOnBit = function () {
+        var rowSize = this.rowSize;
+        var bits = this.bits;
+        var bitsOffset = 0;
         while (bitsOffset < bits.length && bits[bitsOffset] === 0) {
             bitsOffset++;
         }
         if (bitsOffset === bits.length) {
             return null;
         }
-        const y = bitsOffset / rowSize;
-        let x = (bitsOffset % rowSize) * 32;
-        const theBits = bits[bitsOffset];
-        let bit = 0;
+        var y = bitsOffset / rowSize;
+        var x = (bitsOffset % rowSize) * 32;
+        var theBits = bits[bitsOffset];
+        var bit = 0;
         while (((theBits << (31 - bit)) & 0xFFFFFFFF) === 0) {
             bit++;
         }
         x += bit;
         return Int32Array.from([x, y]);
-    }
-    getBottomRightOnBit() {
-        const rowSize = this.rowSize;
-        const bits = this.bits;
-        let bitsOffset = bits.length - 1;
+    };
+    BitMatrix.prototype.getBottomRightOnBit = function () {
+        var rowSize = this.rowSize;
+        var bits = this.bits;
+        var bitsOffset = bits.length - 1;
         while (bitsOffset >= 0 && bits[bitsOffset] === 0) {
             bitsOffset--;
         }
         if (bitsOffset < 0) {
             return null;
         }
-        const y = Math.floor(bitsOffset / rowSize);
-        let x = Math.floor(bitsOffset % rowSize) * 32;
-        const theBits = bits[bitsOffset];
-        let bit = 31;
+        var y = Math.floor(bitsOffset / rowSize);
+        var x = Math.floor(bitsOffset % rowSize) * 32;
+        var theBits = bits[bitsOffset];
+        var bit = 31;
         while ((theBits >>> bit) === 0) {
             bit--;
         }
         x += bit;
         return Int32Array.from([x, y]);
-    }
+    };
     /**
      * @return The width of the matrix
      */
-    getWidth() {
+    BitMatrix.prototype.getWidth = function () {
         return this.width;
-    }
+    };
     /**
      * @return The height of the matrix
      */
-    getHeight() {
+    BitMatrix.prototype.getHeight = function () {
         return this.height;
-    }
+    };
     /**
      * @return The row size of the matrix
      */
-    getRowSize() {
+    BitMatrix.prototype.getRowSize = function () {
         return this.rowSize;
-    }
+    };
     /*@Override*/
-    equals(o) {
+    BitMatrix.prototype.equals = function (o) {
         if (!(o instanceof BitMatrix)) {
             return false;
         }
-        const other = o;
+        var other = o;
         return this.width === other.width && this.height === other.height && this.rowSize === other.rowSize &&
-            Arrays.equals(this.bits, other.bits);
-    }
+            Arrays_1.default.equals(this.bits, other.bits);
+    };
     /*@Override*/
-    hashCode() {
-        let hash = this.width;
+    BitMatrix.prototype.hashCode = function () {
+        var hash = this.width;
         hash = 31 * hash + this.width;
         hash = 31 * hash + this.height;
         hash = 31 * hash + this.rowSize;
-        hash = 31 * hash + Arrays.hashCode(this.bits);
+        hash = 31 * hash + Arrays_1.default.hashCode(this.bits);
         return hash;
-    }
+    };
     /**
      * @return string representation using "X" for set and " " for unset bits
      */
@@ -461,22 +463,27 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @deprecated call {@link #toString(String,String)} only, which uses \n line separator always
      */
     // @Deprecated
-    toString(setString = 'X ', unsetString = '  ', lineSeparator = '\n') {
+    BitMatrix.prototype.toString = function (setString, unsetString, lineSeparator) {
+        if (setString === void 0) { setString = 'X '; }
+        if (unsetString === void 0) { unsetString = '  '; }
+        if (lineSeparator === void 0) { lineSeparator = '\n'; }
         return this.buildToString(setString, unsetString, lineSeparator);
-    }
-    buildToString(setString, unsetString, lineSeparator) {
-        let result = new StringBuilder();
+    };
+    BitMatrix.prototype.buildToString = function (setString, unsetString, lineSeparator) {
+        var result = new StringBuilder_1.default();
         // result.append(lineSeparator);
-        for (let y = 0, height = this.height; y < height; y++) {
-            for (let x = 0, width = this.width; x < width; x++) {
+        for (var y = 0, height = this.height; y < height; y++) {
+            for (var x = 0, width = this.width; x < width; x++) {
                 result.append(this.get(x, y) ? setString : unsetString);
             }
             result.append(lineSeparator);
         }
         return result.toString();
-    }
+    };
     /*@Override*/
-    clone() {
+    BitMatrix.prototype.clone = function () {
         return new BitMatrix(this.width, this.height, this.rowSize, this.bits.slice());
-    }
-}
+    };
+    return BitMatrix;
+}());
+exports.default = BitMatrix;

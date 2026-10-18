@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common {*/
 /*import java.util.List;*/
 /**
@@ -22,14 +24,16 @@
  *
  * @author Sean Owen
  */
-export default class DecoderResult {
+var DecoderResult = /** @class */ (function () {
     // public constructor(rawBytes: Uint8Array,
     //                      text: string,
     //                      List<Uint8Array> byteSegments,
     //                      String ecLevel) {
     //   this(rawBytes, text, byteSegments, ecLevel, -1, -1)
     // }
-    constructor(rawBytes, text, byteSegments, ecLevel, structuredAppendSequenceNumber = -1, structuredAppendParity = -1) {
+    function DecoderResult(rawBytes, text, byteSegments, ecLevel, structuredAppendSequenceNumber, structuredAppendParity) {
+        if (structuredAppendSequenceNumber === void 0) { structuredAppendSequenceNumber = -1; }
+        if (structuredAppendParity === void 0) { structuredAppendParity = -1; }
         this.rawBytes = rawBytes;
         this.text = text;
         this.byteSegments = byteSegments;
@@ -41,75 +45,77 @@ export default class DecoderResult {
     /**
      * @return raw bytes representing the result, or {@code null} if not applicable
      */
-    getRawBytes() {
+    DecoderResult.prototype.getRawBytes = function () {
         return this.rawBytes;
-    }
+    };
     /**
      * @return how many bits of {@link #getRawBytes()} are valid; typically 8 times its length
      * @since 3.3.0
      */
-    getNumBits() {
+    DecoderResult.prototype.getNumBits = function () {
         return this.numBits;
-    }
+    };
     /**
      * @param numBits overrides the number of bits that are valid in {@link #getRawBytes()}
      * @since 3.3.0
      */
-    setNumBits(numBits /*int*/) {
+    DecoderResult.prototype.setNumBits = function (numBits /*int*/) {
         this.numBits = numBits;
-    }
+    };
     /**
      * @return text representation of the result
      */
-    getText() {
+    DecoderResult.prototype.getText = function () {
         return this.text;
-    }
+    };
     /**
      * @return list of byte segments in the result, or {@code null} if not applicable
      */
-    getByteSegments() {
+    DecoderResult.prototype.getByteSegments = function () {
         return this.byteSegments;
-    }
+    };
     /**
      * @return name of error correction level used, or {@code null} if not applicable
      */
-    getECLevel() {
+    DecoderResult.prototype.getECLevel = function () {
         return this.ecLevel;
-    }
+    };
     /**
      * @return number of errors corrected, or {@code null} if not applicable
      */
-    getErrorsCorrected() {
+    DecoderResult.prototype.getErrorsCorrected = function () {
         return this.errorsCorrected;
-    }
-    setErrorsCorrected(errorsCorrected /*Integer*/) {
+    };
+    DecoderResult.prototype.setErrorsCorrected = function (errorsCorrected /*Integer*/) {
         this.errorsCorrected = errorsCorrected;
-    }
+    };
     /**
      * @return number of erasures corrected, or {@code null} if not applicable
      */
-    getErasures() {
+    DecoderResult.prototype.getErasures = function () {
         return this.erasures;
-    }
-    setErasures(erasures /*Integer*/) {
+    };
+    DecoderResult.prototype.setErasures = function (erasures /*Integer*/) {
         this.erasures = erasures;
-    }
+    };
     /**
      * @return arbitrary additional metadata
      */
-    getOther() {
+    DecoderResult.prototype.getOther = function () {
         return this.other;
-    }
-    setOther(other) {
+    };
+    DecoderResult.prototype.setOther = function (other) {
         this.other = other;
-    }
-    hasStructuredAppend() {
+    };
+    DecoderResult.prototype.hasStructuredAppend = function () {
         return this.structuredAppendParity >= 0 && this.structuredAppendSequenceNumber >= 0;
-    }
-    getStructuredAppendParity() {
+    };
+    DecoderResult.prototype.getStructuredAppendParity = function () {
         return this.structuredAppendParity;
-    }
-    getStructuredAppendSequenceNumber() {
+    };
+    DecoderResult.prototype.getStructuredAppendSequenceNumber = function () {
         return this.structuredAppendSequenceNumber;
-    }
-}
+    };
+    return DecoderResult;
+}());
+exports.default = DecoderResult;

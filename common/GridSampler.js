@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import NotFoundException from '../NotFoundException';
+Object.defineProperty(exports, "__esModule", { value: true });
+var NotFoundException_1 = require("../NotFoundException");
 /**
  * Implementations of this class can, given locations of finder patterns for a QR code in an
  * image, sample the right points in the image to reconstruct the QR code, accounting for
@@ -27,7 +29,9 @@ import NotFoundException from '../NotFoundException';
  *
  * @author Sean Owen
  */
-class GridSampler {
+var GridSampler = /** @class */ (function () {
+    function GridSampler() {
+    }
     /**
      * <p>Checks a set of points that have been transformed to sample points on an image against
      * the image's dimensions to see if the point are even within the image.</p>
@@ -43,16 +47,16 @@ class GridSampler {
      * @param points actual points in x1,y1,...,xn,yn form
      * @throws NotFoundException if an endpoint is lies outside the image boundaries
      */
-    static checkAndNudgePoints(image, points) {
-        const width = image.getWidth();
-        const height = image.getHeight();
+    GridSampler.checkAndNudgePoints = function (image, points) {
+        var width = image.getWidth();
+        var height = image.getHeight();
         // Check and nudge points from start until we see some that are OK:
-        let nudged = true;
-        for (let offset = 0; offset < points.length && nudged; offset += 2) {
-            const x = Math.floor(points[offset]);
-            const y = Math.floor(points[offset + 1]);
+        var nudged = true;
+        for (var offset = 0; offset < points.length && nudged; offset += 2) {
+            var x = Math.floor(points[offset]);
+            var y = Math.floor(points[offset + 1]);
             if (x < -1 || x > width || y < -1 || y > height) {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
             nudged = false;
             if (x === -1) {
@@ -74,11 +78,11 @@ class GridSampler {
         }
         // Check and nudge points from end:
         nudged = true;
-        for (let offset = points.length - 2; offset >= 0 && nudged; offset -= 2) {
-            const x = Math.floor(points[offset]);
-            const y = Math.floor(points[offset + 1]);
+        for (var offset = points.length - 2; offset >= 0 && nudged; offset -= 2) {
+            var x = Math.floor(points[offset]);
+            var y = Math.floor(points[offset + 1]);
             if (x < -1 || x > width || y < -1 || y > height) {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
             nudged = false;
             if (x === -1) {
@@ -98,6 +102,7 @@ class GridSampler {
                 nudged = true;
             }
         }
-    }
-}
-export default GridSampler;
+    };
+    return GridSampler;
+}());
+exports.default = GridSampler;

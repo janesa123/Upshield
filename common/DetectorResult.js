@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * <p>Encapsulates the result of detecting a barcode in an image. This includes the raw
  * matrix of black/white pixels corresponding to the barcode, and possibly points of interest
@@ -20,15 +22,17 @@
  *
  * @author Sean Owen
  */
-export default class DetectorResult {
-    constructor(bits, points) {
+var DetectorResult = /** @class */ (function () {
+    function DetectorResult(bits, points) {
         this.bits = bits;
         this.points = points;
     }
-    getBits() {
+    DetectorResult.prototype.getBits = function () {
         return this.bits;
-    }
-    getPoints() {
+    };
+    DetectorResult.prototype.getPoints = function () {
         return this.points;
-    }
-}
+    };
+    return DetectorResult;
+}());
+exports.default = DetectorResult;

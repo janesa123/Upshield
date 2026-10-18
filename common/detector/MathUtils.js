@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2012 ZXing authors
  *
@@ -13,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common.detector {*/
 /**
  * General math-related and numeric utility functions.
  */
-export default class MathUtils {
-    constructor() { }
+var MathUtils = /** @class */ (function () {
+    function MathUtils() {
+    }
     /**
      * Ends up being a bit faster than {@link Math#round(float)}. This merely rounds its
      * argument to the nearest int, where x.5 rounds up to x+1. Semantics of this shortcut
@@ -28,7 +31,7 @@ export default class MathUtils {
      * @param d real value to round
      * @return nearest {@code int}
      */
-    static round(d /*float*/) {
+    MathUtils.round = function (d /*float*/) {
         if (isNaN(d))
             return 0;
         if (d <= Number.MIN_SAFE_INTEGER)
@@ -36,7 +39,7 @@ export default class MathUtils {
         if (d >= Number.MAX_SAFE_INTEGER)
             return Number.MAX_SAFE_INTEGER;
         return /*(int) */ (d + (d < 0.0 ? -0.5 : 0.5)) | 0;
-    }
+    };
     // TYPESCRIPTPORT: maybe remove round method and call directly Math.round, it looks like it doesn't make sense for js
     /**
      * @param aX point A x coordinate
@@ -45,11 +48,11 @@ export default class MathUtils {
      * @param bY point B y coordinate
      * @return Euclidean distance between points A and B
      */
-    static distance(aX /*float|int*/, aY /*float|int*/, bX /*float|int*/, bY /*float|int*/) {
-        const xDiff = aX - bX;
-        const yDiff = aY - bY;
+    MathUtils.distance = function (aX /*float|int*/, aY /*float|int*/, bX /*float|int*/, bY /*float|int*/) {
+        var xDiff = aX - bX;
+        var yDiff = aY - bY;
         return /*(float) */ Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-    }
+    };
     /**
      * @param aX point A x coordinate
      * @param aY point A y coordinate
@@ -66,12 +69,14 @@ export default class MathUtils {
      * @param array values to sum
      * @return sum of values in array
      */
-    static sum(array) {
-        let count = 0;
-        for (let i = 0, length = array.length; i !== length; i++) {
-            const a = array[i];
+    MathUtils.sum = function (array) {
+        var count = 0;
+        for (var i = 0, length_1 = array.length; i !== length_1; i++) {
+            var a = array[i];
             count += a;
         }
         return count;
-    }
-}
+    };
+    return MathUtils;
+}());
+exports.default = MathUtils;

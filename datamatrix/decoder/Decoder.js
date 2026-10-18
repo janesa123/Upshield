@@ -1,9 +1,22 @@
-import ChecksumException from '../../ChecksumException';
-import GenericGF from '../../common/reedsolomon/GenericGF';
-import ReedSolomonDecoder from '../../common/reedsolomon/ReedSolomonDecoder';
-import BitMatrixParser from './BitMatrixParser';
-import DataBlock from './DataBlock';
-import DecodedBitStreamParser from './DecodedBitStreamParser';
+"use strict";
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var ChecksumException_1 = require("../../ChecksumException");
+var GenericGF_1 = require("../../common/reedsolomon/GenericGF");
+var ReedSolomonDecoder_1 = require("../../common/reedsolomon/ReedSolomonDecoder");
+var BitMatrixParser_1 = require("./BitMatrixParser");
+var DataBlock_1 = require("./DataBlock");
+var DecodedBitStreamParser_1 = require("./DecodedBitStreamParser");
 /*
  * Copyright 2007 ZXing authors
  *
@@ -25,9 +38,9 @@ import DecodedBitStreamParser from './DecodedBitStreamParser';
  *
  * @author bbrown@google.com (Brian Brown)
  */
-export default class Decoder {
-    constructor() {
-        this.rsDecoder = new ReedSolomonDecoder(GenericGF.DATA_MATRIX_FIELD_256);
+var Decoder = /** @class */ (function () {
+    function Decoder() {
+        this.rsDecoder = new ReedSolomonDecoder_1.default(GenericGF_1.default.DATA_MATRIX_FIELD_256);
     }
     /**
      * <p>Decodes a Data Matrix Code represented as a {@link BitMatrix}. A 1 or "true" is taken
@@ -38,35 +51,46 @@ export default class Decoder {
      * @throws FormatException if the Data Matrix Code cannot be decoded
      * @throws ChecksumException if error correction fails
      */
-    decode(bits) {
+    Decoder.prototype.decode = function (bits) {
+        var e_1, _a;
         // Construct a parser and read version, error-correction level
-        const parser = new BitMatrixParser(bits);
-        const version = parser.getVersion();
+        var parser = new BitMatrixParser_1.default(bits);
+        var version = parser.getVersion();
         // Read codewords
-        const codewords = parser.readCodewords();
+        var codewords = parser.readCodewords();
         // Separate into data blocks
-        const dataBlocks = DataBlock.getDataBlocks(codewords, version);
+        var dataBlocks = DataBlock_1.default.getDataBlocks(codewords, version);
         // Count total number of data bytes
-        let totalBytes = 0;
-        for (let db of dataBlocks) {
-            totalBytes += db.getNumDataCodewords();
+        var totalBytes = 0;
+        try {
+            for (var dataBlocks_1 = __values(dataBlocks), dataBlocks_1_1 = dataBlocks_1.next(); !dataBlocks_1_1.done; dataBlocks_1_1 = dataBlocks_1.next()) {
+                var db = dataBlocks_1_1.value;
+                totalBytes += db.getNumDataCodewords();
+            }
         }
-        const resultBytes = new Uint8Array(totalBytes);
-        const dataBlocksCount = dataBlocks.length;
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (dataBlocks_1_1 && !dataBlocks_1_1.done && (_a = dataBlocks_1.return)) _a.call(dataBlocks_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        var resultBytes = new Uint8Array(totalBytes);
+        var dataBlocksCount = dataBlocks.length;
         // Error-correct and copy data blocks together into a stream of bytes
-        for (let j = 0; j < dataBlocksCount; j++) {
-            const dataBlock = dataBlocks[j];
-            const codewordBytes = dataBlock.getCodewords();
-            const numDataCodewords = dataBlock.getNumDataCodewords();
+        for (var j = 0; j < dataBlocksCount; j++) {
+            var dataBlock = dataBlocks[j];
+            var codewordBytes = dataBlock.getCodewords();
+            var numDataCodewords = dataBlock.getNumDataCodewords();
             this.correctErrors(codewordBytes, numDataCodewords);
-            for (let i = 0; i < numDataCodewords; i++) {
+            for (var i = 0; i < numDataCodewords; i++) {
                 // De-interlace data blocks.
                 resultBytes[i * dataBlocksCount + j] = codewordBytes[i];
             }
         }
         // Decode the contents of that stream of bytes
-        return DecodedBitStreamParser.decode(resultBytes);
-    }
+        return DecodedBitStreamParser_1.default.decode(resultBytes);
+    };
     /**
      * <p>Given data and error-correction codewords received, possibly corrupted by errors, attempts to
      * correct the errors in-place using Reed-Solomon error correction.</p>
@@ -75,10 +99,10 @@ export default class Decoder {
      * @param numDataCodewords number of codewords that are data bytes
      * @throws ChecksumException if error correction fails
      */
-    correctErrors(codewordBytes, numDataCodewords) {
+    Decoder.prototype.correctErrors = function (codewordBytes, numDataCodewords) {
         // const numCodewords = codewordBytes.length;
         // First read into an array of ints
-        const codewordsInts = new Int32Array(codewordBytes);
+        var codewordsInts = new Int32Array(codewordBytes);
         // for (let i = 0; i < numCodewords; i++) {
         //   codewordsInts[i] = codewordBytes[i] & 0xFF;
         // }
@@ -86,12 +110,14 @@ export default class Decoder {
             this.rsDecoder.decode(codewordsInts, codewordBytes.length - numDataCodewords);
         }
         catch (ignored /* ReedSolomonException */) {
-            throw new ChecksumException();
+            throw new ChecksumException_1.default();
         }
         // Copy back into array of bytes -- only need to worry about the bytes that were data
         // We don't care about errors in the error-correction codewords
-        for (let i = 0; i < numDataCodewords; i++) {
+        for (var i = 0; i < numDataCodewords; i++) {
             codewordBytes[i] = codewordsInts[i];
         }
-    }
-}
+    };
+    return Decoder;
+}());
+exports.default = Decoder;

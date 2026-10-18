@@ -1,68 +1,73 @@
-import BarcodeFormat from '../BarcodeFormat';
-import BitMatrix from '../common/BitMatrix';
-import EncodeHintType from '../EncodeHintType';
-import ByteMatrix from '../qrcode/encoder/ByteMatrix';
-import Charset from '../util/Charset';
-import { DefaultPlacement, ErrorCorrection, HighLevelEncoder, MinimalEncoder, SymbolInfo, } from './encoder';
-export default class DataMatrixWriter {
-    encode(contents, format, width, height, hints = null) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var BarcodeFormat_1 = require("../BarcodeFormat");
+var BitMatrix_1 = require("../common/BitMatrix");
+var EncodeHintType_1 = require("../EncodeHintType");
+var ByteMatrix_1 = require("../qrcode/encoder/ByteMatrix");
+var Charset_1 = require("../util/Charset");
+var encoder_1 = require("./encoder");
+var DataMatrixWriter = /** @class */ (function () {
+    function DataMatrixWriter() {
+    }
+    DataMatrixWriter.prototype.encode = function (contents, format, width, height, hints) {
+        if (hints === void 0) { hints = null; }
         if (contents.trim() === '') {
             throw new Error('Found empty contents');
         }
-        if (format !== BarcodeFormat.DATA_MATRIX) {
+        if (format !== BarcodeFormat_1.default.DATA_MATRIX) {
             throw new Error('Can only encode DATA_MATRIX, but got ' + format);
         }
         if (width < 0 || height < 0) {
             throw new Error('Requested dimensions can\'t be negative: ' + width + 'x' + height);
         }
         // Try to get force shape & min / max size
-        let shape = 0 /* FORCE_NONE */;
-        let minSize = null;
-        let maxSize = null;
+        var shape = 0 /* FORCE_NONE */;
+        var minSize = null;
+        var maxSize = null;
         if (hints != null) {
-            const requestedShape = hints.get(EncodeHintType.DATA_MATRIX_SHAPE);
+            var requestedShape = hints.get(EncodeHintType_1.default.DATA_MATRIX_SHAPE);
             if (requestedShape != null) {
                 shape = requestedShape;
             }
-            const requestedMinSize = hints.get(EncodeHintType.MIN_SIZE);
+            var requestedMinSize = hints.get(EncodeHintType_1.default.MIN_SIZE);
             if (requestedMinSize != null) {
                 minSize = requestedMinSize;
             }
-            const requestedMaxSize = hints.get(EncodeHintType.MAX_SIZE);
+            var requestedMaxSize = hints.get(EncodeHintType_1.default.MAX_SIZE);
             if (requestedMaxSize != null) {
                 maxSize = requestedMaxSize;
             }
         }
         // 1. step: Data encodation
-        let encoded;
-        const hasCompactionHint = hints != null &&
-            hints.has(EncodeHintType.DATA_MATRIX_COMPACT) &&
-            Boolean(hints.get(EncodeHintType.DATA_MATRIX_COMPACT).toString());
+        var encoded;
+        var hasCompactionHint = hints != null &&
+            hints.has(EncodeHintType_1.default.DATA_MATRIX_COMPACT) &&
+            Boolean(hints.get(EncodeHintType_1.default.DATA_MATRIX_COMPACT).toString());
         if (hasCompactionHint) {
-            const hasGS1FormatHint = hints.has(EncodeHintType.GS1_FORMAT) &&
-                Boolean(hints.get(EncodeHintType.GS1_FORMAT).toString());
-            let charset = null;
-            const hasEncodingHint = hints.has(EncodeHintType.CHARACTER_SET);
+            var hasGS1FormatHint = hints.has(EncodeHintType_1.default.GS1_FORMAT) &&
+                Boolean(hints.get(EncodeHintType_1.default.GS1_FORMAT).toString());
+            var charset = null;
+            var hasEncodingHint = hints.has(EncodeHintType_1.default.CHARACTER_SET);
             if (hasEncodingHint) {
-                charset = Charset.forName(hints.get(EncodeHintType.CHARACTER_SET).toString());
+                charset = Charset_1.default.forName(hints.get(EncodeHintType_1.default.CHARACTER_SET).toString());
             }
-            encoded = MinimalEncoder.encodeHighLevel(contents, charset, hasGS1FormatHint ? 0x1d : -1, shape);
+            encoded = encoder_1.MinimalEncoder.encodeHighLevel(contents, charset, hasGS1FormatHint ? 0x1d : -1, shape);
         }
         else {
-            const hasForceC40Hint = hints != null &&
-                hints.has(EncodeHintType.FORCE_C40) &&
-                Boolean(hints.get(EncodeHintType.FORCE_C40).toString());
-            encoded = HighLevelEncoder.encodeHighLevel(contents, shape, minSize, maxSize, hasForceC40Hint);
+            var hasForceC40Hint = hints != null &&
+                hints.has(EncodeHintType_1.default.FORCE_C40) &&
+                Boolean(hints.get(EncodeHintType_1.default.FORCE_C40).toString());
+            encoded = encoder_1.HighLevelEncoder.encodeHighLevel(contents, shape, minSize, maxSize, hasForceC40Hint);
         }
-        const symbolInfo = SymbolInfo.lookup(encoded.length, shape, minSize, maxSize, true);
+        var symbolInfo = encoder_1.SymbolInfo.lookup(encoded.length, shape, minSize, maxSize, true);
         // 2. step: ECC generation
-        const codewords = ErrorCorrection.encodeECC200(encoded, symbolInfo);
+        var codewords = encoder_1.ErrorCorrection.encodeECC200(encoded, symbolInfo);
         // 3. step: Module placement in Matrix
-        const placement = new DefaultPlacement(codewords, symbolInfo.getSymbolDataWidth(), symbolInfo.getSymbolDataHeight());
+        var placement = new encoder_1.DefaultPlacement(codewords, symbolInfo.getSymbolDataWidth(), symbolInfo.getSymbolDataHeight());
         placement.place();
         // 4. step: low-level encoding
         return this.encodeLowLevel(placement, symbolInfo, width, height);
-    }
+    };
     /**
      * Encode the given symbol info to a bit matrix.
      *
@@ -70,24 +75,24 @@ export default class DataMatrixWriter {
      * @param symbolInfo The symbol info to encode.
      * @return The bit matrix generated.
      */
-    encodeLowLevel(placement, symbolInfo, width, height) {
-        const symbolWidth = symbolInfo.getSymbolDataWidth();
-        const symbolHeight = symbolInfo.getSymbolDataHeight();
-        const matrix = new ByteMatrix(symbolInfo.getSymbolWidth(), symbolInfo.getSymbolHeight());
-        let matrixY = 0;
-        for (let y = 0; y < symbolHeight; y++) {
+    DataMatrixWriter.prototype.encodeLowLevel = function (placement, symbolInfo, width, height) {
+        var symbolWidth = symbolInfo.getSymbolDataWidth();
+        var symbolHeight = symbolInfo.getSymbolDataHeight();
+        var matrix = new ByteMatrix_1.default(symbolInfo.getSymbolWidth(), symbolInfo.getSymbolHeight());
+        var matrixY = 0;
+        for (var y = 0; y < symbolHeight; y++) {
             // Fill the top edge with alternate 0 / 1
-            let matrixX;
+            var matrixX = void 0;
             if (y % symbolInfo.matrixHeight === 0) {
                 matrixX = 0;
-                for (let x = 0; x < symbolInfo.getSymbolWidth(); x++) {
+                for (var x = 0; x < symbolInfo.getSymbolWidth(); x++) {
                     matrix.setBoolean(matrixX, matrixY, x % 2 === 0);
                     matrixX++;
                 }
                 matrixY++;
             }
             matrixX = 0;
-            for (let x = 0; x < symbolWidth; x++) {
+            for (var x = 0; x < symbolWidth; x++) {
                 // Fill the right edge with full 1
                 if (x % symbolInfo.matrixWidth === 0) {
                     matrix.setBoolean(matrixX, matrixY, true);
@@ -105,7 +110,7 @@ export default class DataMatrixWriter {
             // Fill the bottom edge with full 1
             if (y % symbolInfo.matrixHeight === symbolInfo.matrixHeight - 1) {
                 matrixX = 0;
-                for (let x = 0; x < symbolInfo.getSymbolWidth(); x++) {
+                for (var x = 0; x < symbolInfo.getSymbolWidth(); x++) {
                     matrix.setBoolean(matrixX, matrixY, true);
                     matrixX++;
                 }
@@ -113,7 +118,7 @@ export default class DataMatrixWriter {
             }
         }
         return this.convertByteMatrixToBitMatrix(matrix, width, height);
-    }
+    };
     /**
      * Convert the ByteMatrix to BitMatrix.
      *
@@ -122,33 +127,35 @@ export default class DataMatrixWriter {
      * @param matrix The input matrix.
      * @return The output matrix.
      */
-    convertByteMatrixToBitMatrix(matrix, reqWidth, reqHeight) {
-        const matrixWidth = matrix.getWidth();
-        const matrixHeight = matrix.getHeight();
-        const outputWidth = Math.max(reqWidth, matrixWidth);
-        const outputHeight = Math.max(reqHeight, matrixHeight);
-        const multiple = Math.min(outputWidth / matrixWidth, outputHeight / matrixHeight);
-        let leftPadding = (outputWidth - matrixWidth * multiple) / 2;
-        let topPadding = (outputHeight - matrixHeight * multiple) / 2;
-        let output;
+    DataMatrixWriter.prototype.convertByteMatrixToBitMatrix = function (matrix, reqWidth, reqHeight) {
+        var matrixWidth = matrix.getWidth();
+        var matrixHeight = matrix.getHeight();
+        var outputWidth = Math.max(reqWidth, matrixWidth);
+        var outputHeight = Math.max(reqHeight, matrixHeight);
+        var multiple = Math.min(outputWidth / matrixWidth, outputHeight / matrixHeight);
+        var leftPadding = (outputWidth - matrixWidth * multiple) / 2;
+        var topPadding = (outputHeight - matrixHeight * multiple) / 2;
+        var output;
         // remove padding if requested width and height are too small
         if (reqHeight < matrixHeight || reqWidth < matrixWidth) {
             leftPadding = 0;
             topPadding = 0;
-            output = new BitMatrix(matrixWidth, matrixHeight);
+            output = new BitMatrix_1.default(matrixWidth, matrixHeight);
         }
         else {
-            output = new BitMatrix(reqWidth, reqHeight);
+            output = new BitMatrix_1.default(reqWidth, reqHeight);
         }
         output.clear();
-        for (let inputY = 0, outputY = topPadding; inputY < matrixHeight; inputY++, outputY += multiple) {
+        for (var inputY = 0, outputY = topPadding; inputY < matrixHeight; inputY++, outputY += multiple) {
             // Write the contents of this row of the bytematrix
-            for (let inputX = 0, outputX = leftPadding; inputX < matrixWidth; inputX++, outputX += multiple) {
+            for (var inputX = 0, outputX = leftPadding; inputX < matrixWidth; inputX++, outputX += multiple) {
                 if (matrix.get(inputX, inputY) === 1) {
                     output.setRegion(outputX, outputY, multiple, multiple);
                 }
             }
         }
         return output;
-    }
-}
+    };
+    return DataMatrixWriter;
+}());
+exports.default = DataMatrixWriter;

@@ -1,14 +1,18 @@
+"use strict";
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BASE256_ENCODATION = exports.EDIFACT_ENCODATION = exports.X12_ENCODATION = exports.TEXT_ENCODATION = exports.C40_ENCODATION = exports.ASCII_ENCODATION = exports.MACRO_TRAILER = exports.MACRO_06_HEADER = exports.MACRO_05_HEADER = exports.X12_UNLATCH = exports.C40_UNLATCH = exports.LATCH_TO_EDIFACT = exports.LATCH_TO_TEXT = exports.LATCH_TO_ANSIX12 = exports.MACRO_06 = exports.MACRO_05 = exports.UPPER_SHIFT = exports.LATCH_TO_BASE256 = exports.LATCH_TO_C40 = exports.PAD = exports.SymbolShapeHint = exports.ALOG = exports.LOG = exports.MODULO_VALUE = exports.FACTORS = exports.FACTOR_SETS = void 0;
 /**
  * Lookup table which factors to use for which number of error correction codewords.
  * See FACTORS.
  */
-export const FACTOR_SETS = [
+exports.FACTOR_SETS = [
     5, 7, 10, 11, 12, 14, 18, 20, 24, 28, 36, 42, 48, 56, 62, 68,
 ];
 /**
  * Precomputed polynomial factors for ECC 200.
  */
-export const FACTORS = [
+exports.FACTORS = [
     [228, 48, 15, 111, 62],
     [23, 68, 144, 134, 240, 92, 254],
     [28, 24, 185, 166, 223, 248, 116, 255, 110, 61],
@@ -66,41 +70,41 @@ export const FACTORS = [
         103, 82, 186,
     ],
 ];
-export const /*final*/ MODULO_VALUE = 0x12d;
-const static_LOG = (LOG, ALOG) => {
-    let p = 1;
-    for (let i = 0; i < 255; i++) {
+exports.MODULO_VALUE = 0x12d;
+var static_LOG = function (LOG, ALOG) {
+    var p = 1;
+    for (var i = 0; i < 255; i++) {
         ALOG[i] = p;
         LOG[p] = i;
         p *= 2;
         if (p >= 256) {
-            p ^= MODULO_VALUE;
+            p ^= exports.MODULO_VALUE;
         }
     }
     return {
-        LOG,
-        ALOG,
+        LOG: LOG,
+        ALOG: ALOG,
     };
 };
-export const { LOG, ALOG } = static_LOG([], []);
-export var SymbolShapeHint;
+exports.LOG = (_a = static_LOG([], []), _a.LOG), exports.ALOG = _a.ALOG;
+var SymbolShapeHint;
 (function (SymbolShapeHint) {
     SymbolShapeHint[SymbolShapeHint["FORCE_NONE"] = 0] = "FORCE_NONE";
     SymbolShapeHint[SymbolShapeHint["FORCE_SQUARE"] = 1] = "FORCE_SQUARE";
     SymbolShapeHint[SymbolShapeHint["FORCE_RECTANGLE"] = 2] = "FORCE_RECTANGLE";
-})(SymbolShapeHint || (SymbolShapeHint = {}));
+})(SymbolShapeHint = exports.SymbolShapeHint || (exports.SymbolShapeHint = {}));
 /**
  * Padding character
  */
-export const PAD = 129;
+exports.PAD = 129;
 /**
  * mode latch to C40 encodation mode
  */
-export const LATCH_TO_C40 = 230;
+exports.LATCH_TO_C40 = 230;
 /**
  * mode latch to Base 256 encodation mode
  */
-export const LATCH_TO_BASE256 = 231;
+exports.LATCH_TO_BASE256 = 231;
 /**
  * FNC1 Codeword
  */
@@ -116,27 +120,27 @@ export const LATCH_TO_BASE256 = 231;
 /**
  * Upper Shift
  */
-export const UPPER_SHIFT = 235;
+exports.UPPER_SHIFT = 235;
 /**
  * 05 Macro
  */
-export const MACRO_05 = 236;
+exports.MACRO_05 = 236;
 /**
  * 06 Macro
  */
-export const MACRO_06 = 237;
+exports.MACRO_06 = 237;
 /**
  * mode latch to ANSI X.12 encodation mode
  */
-export const LATCH_TO_ANSIX12 = 238;
+exports.LATCH_TO_ANSIX12 = 238;
 /**
  * mode latch to Text encodation mode
  */
-export const LATCH_TO_TEXT = 239;
+exports.LATCH_TO_TEXT = 239;
 /**
  * mode latch to EDIFACT encodation mode
  */
-export const LATCH_TO_EDIFACT = 240;
+exports.LATCH_TO_EDIFACT = 240;
 /**
  * ECI character (Extended Channel Interpretation)
  */
@@ -144,26 +148,26 @@ export const LATCH_TO_EDIFACT = 240;
 /**
  * Unlatch from C40 encodation
  */
-export const C40_UNLATCH = 254;
+exports.C40_UNLATCH = 254;
 /**
  * Unlatch from X12 encodation
  */
-export const X12_UNLATCH = 254;
+exports.X12_UNLATCH = 254;
 /**
  * 05 Macro header
  */
-export const MACRO_05_HEADER = '[)>\u001E05\u001D';
+exports.MACRO_05_HEADER = '[)>\u001E05\u001D';
 /**
  * 06 Macro header
  */
-export const MACRO_06_HEADER = '[)>\u001E06\u001D';
+exports.MACRO_06_HEADER = '[)>\u001E06\u001D';
 /**
  * Macro trailer
  */
-export const MACRO_TRAILER = '\u001E\u0004';
-export const ASCII_ENCODATION = 0;
-export const C40_ENCODATION = 1;
-export const TEXT_ENCODATION = 2;
-export const X12_ENCODATION = 3;
-export const EDIFACT_ENCODATION = 4;
-export const BASE256_ENCODATION = 5;
+exports.MACRO_TRAILER = '\u001E\u0004';
+exports.ASCII_ENCODATION = 0;
+exports.C40_ENCODATION = 1;
+exports.TEXT_ENCODATION = 2;
+exports.X12_ENCODATION = 3;
+exports.EDIFACT_ENCODATION = 4;
+exports.BASE256_ENCODATION = 5;

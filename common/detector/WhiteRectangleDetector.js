@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2010 ZXing authors
  *
@@ -13,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.common.detector {*/
-import ResultPoint from '../../ResultPoint';
-import MathUtils from './MathUtils';
-import NotFoundException from '../../NotFoundException';
+var ResultPoint_1 = require("../../ResultPoint");
+var MathUtils_1 = require("./MathUtils");
+var NotFoundException_1 = require("../../NotFoundException");
 /**
  * <p>
  * Detects a candidate barcode-like rectangular region within an image. It
@@ -27,7 +29,7 @@ import NotFoundException from '../../NotFoundException';
  *
  * @author David Olivier
  */
-export default class WhiteRectangleDetector {
+var WhiteRectangleDetector = /** @class */ (function () {
     // public constructor(private image: BitMatrix) /*throws NotFoundException*/ {
     //   this(image, INIT_SIZE, image.getWidth() / 2, image.getHeight() / 2)
     // }
@@ -38,7 +40,7 @@ export default class WhiteRectangleDetector {
      * @param y y position of search center
      * @throws NotFoundException if image is too small to accommodate {@code initSize}
      */
-    constructor(image, initSize /*int*/, x /*int*/, y /*int*/) {
+    function WhiteRectangleDetector(image, initSize /*int*/, x /*int*/, y /*int*/) {
         this.image = image;
         this.height = image.getHeight();
         this.width = image.getWidth();
@@ -51,13 +53,13 @@ export default class WhiteRectangleDetector {
         if (undefined === y || null === y) {
             y = image.getHeight() / 2 | 0;
         }
-        const halfsize = initSize / 2 | 0;
+        var halfsize = initSize / 2 | 0;
         this.leftInit = x - halfsize;
         this.rightInit = x + halfsize;
         this.upInit = y - halfsize;
         this.downInit = y + halfsize;
         if (this.upInit < 0 || this.leftInit < 0 || this.downInit >= this.height || this.rightInit >= this.width) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
     }
     /**
@@ -74,26 +76,26 @@ export default class WhiteRectangleDetector {
      *         leftmost and the third, the rightmost
      * @throws NotFoundException if no Data Matrix Code can be found
      */
-    detect() {
-        let left = this.leftInit;
-        let right = this.rightInit;
-        let up = this.upInit;
-        let down = this.downInit;
-        let sizeExceeded = false;
-        let aBlackPointFoundOnBorder = true;
-        let atLeastOneBlackPointFoundOnBorder = false;
-        let atLeastOneBlackPointFoundOnRight = false;
-        let atLeastOneBlackPointFoundOnBottom = false;
-        let atLeastOneBlackPointFoundOnLeft = false;
-        let atLeastOneBlackPointFoundOnTop = false;
-        const width = this.width;
-        const height = this.height;
+    WhiteRectangleDetector.prototype.detect = function () {
+        var left = this.leftInit;
+        var right = this.rightInit;
+        var up = this.upInit;
+        var down = this.downInit;
+        var sizeExceeded = false;
+        var aBlackPointFoundOnBorder = true;
+        var atLeastOneBlackPointFoundOnBorder = false;
+        var atLeastOneBlackPointFoundOnRight = false;
+        var atLeastOneBlackPointFoundOnBottom = false;
+        var atLeastOneBlackPointFoundOnLeft = false;
+        var atLeastOneBlackPointFoundOnTop = false;
+        var width = this.width;
+        var height = this.height;
         while (aBlackPointFoundOnBorder) {
             aBlackPointFoundOnBorder = false;
             // .....
             // .   |
             // .....
-            let rightBorderNotWhite = true;
+            var rightBorderNotWhite = true;
             while ((rightBorderNotWhite || !atLeastOneBlackPointFoundOnRight) && right < width) {
                 rightBorderNotWhite = this.containsBlackPoint(up, down, right, false);
                 if (rightBorderNotWhite) {
@@ -112,7 +114,7 @@ export default class WhiteRectangleDetector {
             // .....
             // .   .
             // .___.
-            let bottomBorderNotWhite = true;
+            var bottomBorderNotWhite = true;
             while ((bottomBorderNotWhite || !atLeastOneBlackPointFoundOnBottom) && down < height) {
                 bottomBorderNotWhite = this.containsBlackPoint(left, right, down, true);
                 if (bottomBorderNotWhite) {
@@ -131,7 +133,7 @@ export default class WhiteRectangleDetector {
             // .....
             // |   .
             // .....
-            let leftBorderNotWhite = true;
+            var leftBorderNotWhite = true;
             while ((leftBorderNotWhite || !atLeastOneBlackPointFoundOnLeft) && left >= 0) {
                 leftBorderNotWhite = this.containsBlackPoint(up, down, left, false);
                 if (leftBorderNotWhite) {
@@ -150,7 +152,7 @@ export default class WhiteRectangleDetector {
             // .___.
             // .   .
             // .....
-            let topBorderNotWhite = true;
+            var topBorderNotWhite = true;
             while ((topBorderNotWhite || !atLeastOneBlackPointFoundOnTop) && up >= 0) {
                 topBorderNotWhite = this.containsBlackPoint(left, right, up, true);
                 if (topBorderNotWhite) {
@@ -171,58 +173,58 @@ export default class WhiteRectangleDetector {
             }
         }
         if (!sizeExceeded && atLeastOneBlackPointFoundOnBorder) {
-            const maxSize = right - left;
-            let z = null;
-            for (let i = 1; z === null && i < maxSize; i++) {
+            var maxSize = right - left;
+            var z = null;
+            for (var i = 1; z === null && i < maxSize; i++) {
                 z = this.getBlackPointOnSegment(left, down - i, left + i, down);
             }
             if (z == null) {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
-            let t = null;
+            var t = null;
             // go down right
-            for (let i = 1; t === null && i < maxSize; i++) {
+            for (var i = 1; t === null && i < maxSize; i++) {
                 t = this.getBlackPointOnSegment(left, up + i, left + i, up);
             }
             if (t == null) {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
-            let x = null;
+            var x = null;
             // go down left
-            for (let i = 1; x === null && i < maxSize; i++) {
+            for (var i = 1; x === null && i < maxSize; i++) {
                 x = this.getBlackPointOnSegment(right, up + i, right - i, up);
             }
             if (x == null) {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
-            let y = null;
+            var y = null;
             // go up left
-            for (let i = 1; y === null && i < maxSize; i++) {
+            for (var i = 1; y === null && i < maxSize; i++) {
                 y = this.getBlackPointOnSegment(right, down - i, right - i, down);
             }
             if (y == null) {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
             return this.centerEdges(y, z, x, t);
         }
         else {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-    }
-    getBlackPointOnSegment(aX /*float*/, aY /*float*/, bX /*float*/, bY /*float*/) {
-        const dist = MathUtils.round(MathUtils.distance(aX, aY, bX, bY));
-        const xStep = (bX - aX) / dist;
-        const yStep = (bY - aY) / dist;
-        const image = this.image;
-        for (let i = 0; i < dist; i++) {
-            const x = MathUtils.round(aX + i * xStep);
-            const y = MathUtils.round(aY + i * yStep);
+    };
+    WhiteRectangleDetector.prototype.getBlackPointOnSegment = function (aX /*float*/, aY /*float*/, bX /*float*/, bY /*float*/) {
+        var dist = MathUtils_1.default.round(MathUtils_1.default.distance(aX, aY, bX, bY));
+        var xStep = (bX - aX) / dist;
+        var yStep = (bY - aY) / dist;
+        var image = this.image;
+        for (var i = 0; i < dist; i++) {
+            var x = MathUtils_1.default.round(aX + i * xStep);
+            var y = MathUtils_1.default.round(aY + i * yStep);
             if (image.get(x, y)) {
-                return new ResultPoint(x, y);
+                return new ResultPoint_1.default(x, y);
             }
         }
         return null;
-    }
+    };
     /**
      * recenters the points of a constant distance towards the center
      *
@@ -236,39 +238,39 @@ export default class WhiteRectangleDetector {
      *         point and the last, the bottommost. The second point will be
      *         leftmost and the third, the rightmost
      */
-    centerEdges(y, z, x, t) {
+    WhiteRectangleDetector.prototype.centerEdges = function (y, z, x, t) {
         //
         //       t            t
         //  z                      x
         //        x    OR    z
         //   y                    y
         //
-        const yi = y.getX();
-        const yj = y.getY();
-        const zi = z.getX();
-        const zj = z.getY();
-        const xi = x.getX();
-        const xj = x.getY();
-        const ti = t.getX();
-        const tj = t.getY();
-        const CORR = WhiteRectangleDetector.CORR;
+        var yi = y.getX();
+        var yj = y.getY();
+        var zi = z.getX();
+        var zj = z.getY();
+        var xi = x.getX();
+        var xj = x.getY();
+        var ti = t.getX();
+        var tj = t.getY();
+        var CORR = WhiteRectangleDetector.CORR;
         if (yi < this.width / 2.0) {
             return [
-                new ResultPoint(ti - CORR, tj + CORR),
-                new ResultPoint(zi + CORR, zj + CORR),
-                new ResultPoint(xi - CORR, xj - CORR),
-                new ResultPoint(yi + CORR, yj - CORR)
+                new ResultPoint_1.default(ti - CORR, tj + CORR),
+                new ResultPoint_1.default(zi + CORR, zj + CORR),
+                new ResultPoint_1.default(xi - CORR, xj - CORR),
+                new ResultPoint_1.default(yi + CORR, yj - CORR)
             ];
         }
         else {
             return [
-                new ResultPoint(ti + CORR, tj + CORR),
-                new ResultPoint(zi + CORR, zj - CORR),
-                new ResultPoint(xi - CORR, xj + CORR),
-                new ResultPoint(yi - CORR, yj - CORR)
+                new ResultPoint_1.default(ti + CORR, tj + CORR),
+                new ResultPoint_1.default(zi + CORR, zj - CORR),
+                new ResultPoint_1.default(xi - CORR, xj + CORR),
+                new ResultPoint_1.default(yi - CORR, yj - CORR)
             ];
         }
-    }
+    };
     /**
      * Determines whether a segment contains a black point
      *
@@ -278,24 +280,26 @@ export default class WhiteRectangleDetector {
      * @param horizontal set to true if scan must be horizontal, false if vertical
      * @return true if a black point has been found, else false.
      */
-    containsBlackPoint(a /*int*/, b /*int*/, fixed /*int*/, horizontal) {
-        const image = this.image;
+    WhiteRectangleDetector.prototype.containsBlackPoint = function (a /*int*/, b /*int*/, fixed /*int*/, horizontal) {
+        var image = this.image;
         if (horizontal) {
-            for (let x = a; x <= b; x++) {
+            for (var x = a; x <= b; x++) {
                 if (image.get(x, fixed)) {
                     return true;
                 }
             }
         }
         else {
-            for (let y = a; y <= b; y++) {
+            for (var y = a; y <= b; y++) {
                 if (image.get(fixed, y)) {
                     return true;
                 }
             }
         }
         return false;
-    }
-}
-WhiteRectangleDetector.INIT_SIZE = 10;
-WhiteRectangleDetector.CORR = 1;
+    };
+    WhiteRectangleDetector.INIT_SIZE = 10;
+    WhiteRectangleDetector.CORR = 1;
+    return WhiteRectangleDetector;
+}());
+exports.default = WhiteRectangleDetector;
