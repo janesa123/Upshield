@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 /*namespace com.google.zxing.qrcode.encoder {*/
-var BlockPair = /** @class */ (function () {
-    function BlockPair(dataBytes, errorCorrectionBytes) {
+export default class BlockPair {
+    constructor(dataBytes, errorCorrectionBytes) {
         this.dataBytes = dataBytes;
         this.errorCorrectionBytes = errorCorrectionBytes;
     }
-    BlockPair.prototype.getDataBytes = function () {
+    getDataBytes() {
         return this.dataBytes;
-    };
-    BlockPair.prototype.getErrorCorrectionBytes = function () {
+    }
+    getErrorCorrectionBytes() {
         return this.errorCorrectionBytes;
-    };
-    return BlockPair;
-}());
-export default BlockPair;
+    }
+}
