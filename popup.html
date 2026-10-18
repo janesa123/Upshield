@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPShield</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header class="topbar">
+      <div class="mark" aria-hidden="true">U</div>
+      <div><p class="eyebrow">LOCAL PRIVACY SCANNER · DEV BUILD</p><h1>UPShield</h1></div>
+      <span class="local-indicator">LOCAL</span>
+    </header>
+    <section class="workspace">
+      <label class="file-picker" for="imageInput">Choose a PNG or JPG</label>
+      <input id="imageInput" type="file" accept="image/png,image/jpeg">
+      <img id="preview" alt="Selected image preview" hidden>
+      <p id="status" role="status">Select an image to scan on this device.</p>
+      <ul id="findings" aria-label="Sensitive findings"></ul>
+      <p id="metadata" class="metadata"></p>
+      <div class="actions">
+        <button id="cancelButton" class="secondary" type="button" disabled>Clear</button>
+        <button id="scanButton" type="button" disabled>Scan locally</button>
+      </div>
+      <button id="redactButton" class="redact" type="button" disabled>Redact &amp; download</button>
+    </section>
+    <footer>OCR stays local. Only an approved sanitized image is passed to the AI site.</footer>
+  </main>
+  <script src="popup.bundle.js"></script>
+</body>
+</html>

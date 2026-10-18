@@ -1,0 +1,45 @@
+
+{
+  "manifest_version": 3,
+  "name": "UPShield Local Dev - AI Upload Privacy Guard",
+  "version": "1.2.2",
+  "description": "Scan images for possible sensitive information before sharing them with AI tools.",
+  "permissions": ["offscreen"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*",
+        "https://claude.ai/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "vendor/*",
+        "vendor/core/*",
+        "vendor/lang/*",
+        "vendor/mediapipe/wasm/*",
+        "models/*"
+      ],
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*",
+        "https://claude.ai/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "UPShield Local Dev"
+  }
+}

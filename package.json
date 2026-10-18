@@ -1,0 +1,24 @@
+{
+  "name": "upshield",
+  "version": "1.2.2",
+  "description": "Local-first image privacy scanning for AI uploads.",
+  "main": "popup.js",
+  "scripts": {
+    "build": "node build.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^1.1.0",
+    "@tesseract.js-data/eng": "^1.0.0",
+    "@tesseract.js-data/tam": "^1.0.0",
+    "@zxing/library": "^0.21.3",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
