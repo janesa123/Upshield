@@ -1,14 +1,13 @@
 import StringUtils from '../common/StringUtils';
-var StringBuilder = /** @class */ (function () {
-    function StringBuilder(value) {
-        if (value === void 0) { value = ''; }
+export default class StringBuilder {
+    constructor(value = '') {
         this.value = value;
     }
-    StringBuilder.prototype.enableDecoding = function (encoding) {
+    enableDecoding(encoding) {
         this.encoding = encoding;
         return this;
-    };
-    StringBuilder.prototype.append = function (s) {
+    }
+    append(s) {
         if (typeof s === 'string') {
             this.value += s.toString();
         }
@@ -21,40 +20,38 @@ var StringBuilder = /** @class */ (function () {
             this.value += String.fromCharCode(s);
         }
         return this;
-    };
-    StringBuilder.prototype.appendChars = function (str, offset, len) {
-        for (var i = offset; offset < offset + len; i++) {
+    }
+    appendChars(str, offset, len) {
+        for (let i = offset; offset < offset + len; i++) {
             this.append(str[i]);
         }
         return this;
-    };
-    StringBuilder.prototype.length = function () {
+    }
+    length() {
         return this.value.length;
-    };
-    StringBuilder.prototype.charAt = function (n) {
+    }
+    charAt(n) {
         return this.value.charAt(n);
-    };
-    StringBuilder.prototype.deleteCharAt = function (n) {
+    }
+    deleteCharAt(n) {
         this.value = this.value.substr(0, n) + this.value.substring(n + 1);
-    };
-    StringBuilder.prototype.setCharAt = function (n, c) {
+    }
+    setCharAt(n, c) {
         this.value = this.value.substr(0, n) + c + this.value.substr(n + 1);
-    };
-    StringBuilder.prototype.substring = function (start, end) {
+    }
+    substring(start, end) {
         return this.value.substring(start, end);
-    };
+    }
     /**
      * @note helper method for RSS Expanded
      */
-    StringBuilder.prototype.setLengthToZero = function () {
+    setLengthToZero() {
         this.value = '';
-    };
-    StringBuilder.prototype.toString = function () {
+    }
+    toString() {
         return this.value;
-    };
-    StringBuilder.prototype.insert = function (n, c) {
+    }
+    insert(n, c) {
         this.value = this.value.substring(0, n) + c + this.value.substring(n);
-    };
-    return StringBuilder;
-}());
-export default StringBuilder;
+    }
+}
