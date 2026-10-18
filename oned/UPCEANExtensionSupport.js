@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright (C) 2010 ZXing authors
  *
@@ -13,22 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import AbstractUPCEANReader from './AbstractUPCEANReader';
-import UPCEANExtension5Support from './UPCEANExtension5Support';
-import UPCEANExtension2Support from './UPCEANExtension2Support';
-export default class UPCEANExtensionSupport {
-    static decodeRow(rowNumber, row, rowOffset) {
-        let extensionStartRange = AbstractUPCEANReader.findGuardPattern(row, rowOffset, false, this.EXTENSION_START_PATTERN, new Int32Array(this.EXTENSION_START_PATTERN.length).fill(0));
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractUPCEANReader_1 = require("./AbstractUPCEANReader");
+var UPCEANExtension5Support_1 = require("./UPCEANExtension5Support");
+var UPCEANExtension2Support_1 = require("./UPCEANExtension2Support");
+var UPCEANExtensionSupport = /** @class */ (function () {
+    function UPCEANExtensionSupport() {
+    }
+    UPCEANExtensionSupport.decodeRow = function (rowNumber, row, rowOffset) {
+        var extensionStartRange = AbstractUPCEANReader_1.default.findGuardPattern(row, rowOffset, false, this.EXTENSION_START_PATTERN, new Int32Array(this.EXTENSION_START_PATTERN.length).fill(0));
         try {
             // return null;
-            let fiveSupport = new UPCEANExtension5Support();
+            var fiveSupport = new UPCEANExtension5Support_1.default();
             return fiveSupport.decodeRow(rowNumber, row, extensionStartRange);
         }
         catch (err) {
             // return null;
-            let twoSupport = new UPCEANExtension2Support();
+            var twoSupport = new UPCEANExtension2Support_1.default();
             return twoSupport.decodeRow(rowNumber, row, extensionStartRange);
         }
-    }
-}
-UPCEANExtensionSupport.EXTENSION_START_PATTERN = Int32Array.from([1, 1, 2]);
+    };
+    UPCEANExtensionSupport.EXTENSION_START_PATTERN = Int32Array.from([1, 1, 2]);
+    return UPCEANExtensionSupport;
+}());
+exports.default = UPCEANExtensionSupport;

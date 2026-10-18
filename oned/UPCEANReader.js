@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,16 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import BarcodeFormat from '../BarcodeFormat';
-import DecodeHintType from '../DecodeHintType';
-import Result from '../Result';
-import ResultMetadataType from '../ResultMetadataType';
-import ResultPoint from '../ResultPoint';
-import UPCEANExtensionSupport from './UPCEANExtensionSupport';
-import AbstractUPCEANReader from './AbstractUPCEANReader';
-import NotFoundException from '../NotFoundException';
-import FormatException from '../FormatException';
-import ChecksumException from '../ChecksumException';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var BarcodeFormat_1 = require("../BarcodeFormat");
+var DecodeHintType_1 = require("../DecodeHintType");
+var Result_1 = require("../Result");
+var ResultMetadataType_1 = require("../ResultMetadataType");
+var ResultPoint_1 = require("../ResultPoint");
+var UPCEANExtensionSupport_1 = require("./UPCEANExtensionSupport");
+var AbstractUPCEANReader_1 = require("./AbstractUPCEANReader");
+var NotFoundException_1 = require("../NotFoundException");
+var FormatException_1 = require("../FormatException");
+var ChecksumException_1 = require("../ChecksumException");
 /**
  * <p>Encapsulates functionality and implementation that is common to UPC and EAN families
  * of one-dimensional barcodes.</p>
@@ -31,121 +46,125 @@ import ChecksumException from '../ChecksumException';
  * @author Sean Owen
  * @author alasdair@google.com (Alasdair Mackintosh)
  */
-export default class UPCEANReader extends AbstractUPCEANReader {
-    constructor() {
-        super();
-        this.decodeRowStringBuffer = '';
-        UPCEANReader.L_AND_G_PATTERNS = UPCEANReader.L_PATTERNS.map(arr => Int32Array.from(arr));
-        for (let i = 10; i < 20; i++) {
-            let widths = UPCEANReader.L_PATTERNS[i - 10];
-            let reversedWidths = new Int32Array(widths.length);
-            for (let j = 0; j < widths.length; j++) {
+var UPCEANReader = /** @class */ (function (_super) {
+    __extends(UPCEANReader, _super);
+    function UPCEANReader() {
+        var _this = _super.call(this) || this;
+        _this.decodeRowStringBuffer = '';
+        UPCEANReader.L_AND_G_PATTERNS = UPCEANReader.L_PATTERNS.map(function (arr) { return Int32Array.from(arr); });
+        for (var i = 10; i < 20; i++) {
+            var widths = UPCEANReader.L_PATTERNS[i - 10];
+            var reversedWidths = new Int32Array(widths.length);
+            for (var j = 0; j < widths.length; j++) {
                 reversedWidths[j] = widths[widths.length - j - 1];
             }
             UPCEANReader.L_AND_G_PATTERNS[i] = reversedWidths;
         }
+        return _this;
     }
-    decodeRow(rowNumber, row, hints) {
-        let startGuardRange = UPCEANReader.findStartGuardPattern(row);
-        let resultPointCallback = hints == null ? null : hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
+    UPCEANReader.prototype.decodeRow = function (rowNumber, row, hints) {
+        var startGuardRange = UPCEANReader.findStartGuardPattern(row);
+        var resultPointCallback = hints == null ? null : hints.get(DecodeHintType_1.default.NEED_RESULT_POINT_CALLBACK);
         if (resultPointCallback != null) {
-            const resultPoint = new ResultPoint((startGuardRange[0] + startGuardRange[1]) / 2.0, rowNumber);
-            resultPointCallback.foundPossibleResultPoint(resultPoint);
+            var resultPoint_1 = new ResultPoint_1.default((startGuardRange[0] + startGuardRange[1]) / 2.0, rowNumber);
+            resultPointCallback.foundPossibleResultPoint(resultPoint_1);
         }
-        let budello = this.decodeMiddle(row, startGuardRange, this.decodeRowStringBuffer);
-        let endStart = budello.rowOffset;
-        let result = budello.resultString;
+        var budello = this.decodeMiddle(row, startGuardRange, this.decodeRowStringBuffer);
+        var endStart = budello.rowOffset;
+        var result = budello.resultString;
         if (resultPointCallback != null) {
-            const resultPoint = new ResultPoint(endStart, rowNumber);
-            resultPointCallback.foundPossibleResultPoint(resultPoint);
+            var resultPoint_2 = new ResultPoint_1.default(endStart, rowNumber);
+            resultPointCallback.foundPossibleResultPoint(resultPoint_2);
         }
-        let endRange = UPCEANReader.decodeEnd(row, endStart);
+        var endRange = UPCEANReader.decodeEnd(row, endStart);
         if (resultPointCallback != null) {
-            const resultPoint = new ResultPoint((endRange[0] + endRange[1]) / 2.0, rowNumber);
-            resultPointCallback.foundPossibleResultPoint(resultPoint);
+            var resultPoint_3 = new ResultPoint_1.default((endRange[0] + endRange[1]) / 2.0, rowNumber);
+            resultPointCallback.foundPossibleResultPoint(resultPoint_3);
         }
         // Make sure there is a quiet zone at least as big as the end pattern after the barcode. The
         // spec might want more whitespace, but in practice this is the maximum we can count on.
-        let end = endRange[1];
-        let quietEnd = end + (end - endRange[0]);
+        var end = endRange[1];
+        var quietEnd = end + (end - endRange[0]);
         if (quietEnd >= row.getSize() || !row.isRange(end, quietEnd, false)) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-        let resultString = result.toString();
+        var resultString = result.toString();
         // UPC/EAN should never be less than 8 chars anyway
         if (resultString.length < 8) {
-            throw new FormatException();
+            throw new FormatException_1.default();
         }
         if (!UPCEANReader.checkChecksum(resultString)) {
-            throw new ChecksumException();
+            throw new ChecksumException_1.default();
         }
-        let left = (startGuardRange[1] + startGuardRange[0]) / 2.0;
-        let right = (endRange[1] + endRange[0]) / 2.0;
-        let format = this.getBarcodeFormat();
-        let resultPoint = [new ResultPoint(left, rowNumber), new ResultPoint(right, rowNumber)];
-        let decodeResult = new Result(resultString, null, 0, resultPoint, format, new Date().getTime());
-        let extensionLength = 0;
+        var left = (startGuardRange[1] + startGuardRange[0]) / 2.0;
+        var right = (endRange[1] + endRange[0]) / 2.0;
+        var format = this.getBarcodeFormat();
+        var resultPoint = [new ResultPoint_1.default(left, rowNumber), new ResultPoint_1.default(right, rowNumber)];
+        var decodeResult = new Result_1.default(resultString, null, 0, resultPoint, format, new Date().getTime());
+        var extensionLength = 0;
         try {
-            let extensionResult = UPCEANExtensionSupport.decodeRow(rowNumber, row, endRange[1]);
-            decodeResult.putMetadata(ResultMetadataType.UPC_EAN_EXTENSION, extensionResult.getText());
+            var extensionResult = UPCEANExtensionSupport_1.default.decodeRow(rowNumber, row, endRange[1]);
+            decodeResult.putMetadata(ResultMetadataType_1.default.UPC_EAN_EXTENSION, extensionResult.getText());
             decodeResult.putAllMetadata(extensionResult.getResultMetadata());
             decodeResult.addResultPoints(extensionResult.getResultPoints());
             extensionLength = extensionResult.getText().length;
         }
         catch (err) {
         }
-        let allowedExtensions = hints == null ? null : hints.get(DecodeHintType.ALLOWED_EAN_EXTENSIONS);
+        var allowedExtensions = hints == null ? null : hints.get(DecodeHintType_1.default.ALLOWED_EAN_EXTENSIONS);
         if (allowedExtensions != null) {
-            let valid = false;
-            for (let length in allowedExtensions) {
-                if (extensionLength.toString() === length) { // check me
+            var valid = false;
+            for (var length_1 in allowedExtensions) {
+                if (extensionLength.toString() === length_1) { // check me
                     valid = true;
                     break;
                 }
             }
             if (!valid) {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
         }
-        if (format === BarcodeFormat.EAN_13 || format === BarcodeFormat.UPC_A) {
+        if (format === BarcodeFormat_1.default.EAN_13 || format === BarcodeFormat_1.default.UPC_A) {
             // let countryID = eanManSupport.lookupContryIdentifier(resultString); todo
             // if (countryID != null) {
             //     decodeResult.putMetadata(ResultMetadataType.POSSIBLE_COUNTRY, countryID);
             // }
         }
         return decodeResult;
-    }
-    static checkChecksum(s) {
+    };
+    UPCEANReader.checkChecksum = function (s) {
         return UPCEANReader.checkStandardUPCEANChecksum(s);
-    }
-    static checkStandardUPCEANChecksum(s) {
-        let length = s.length;
+    };
+    UPCEANReader.checkStandardUPCEANChecksum = function (s) {
+        var length = s.length;
         if (length === 0)
             return false;
-        let check = parseInt(s.charAt(length - 1), 10);
+        var check = parseInt(s.charAt(length - 1), 10);
         return UPCEANReader.getStandardUPCEANChecksum(s.substring(0, length - 1)) === check;
-    }
-    static getStandardUPCEANChecksum(s) {
-        let length = s.length;
-        let sum = 0;
-        for (let i = length - 1; i >= 0; i -= 2) {
-            let digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
+    };
+    UPCEANReader.getStandardUPCEANChecksum = function (s) {
+        var length = s.length;
+        var sum = 0;
+        for (var i = length - 1; i >= 0; i -= 2) {
+            var digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
             if (digit < 0 || digit > 9) {
-                throw new FormatException();
+                throw new FormatException_1.default();
             }
             sum += digit;
         }
         sum *= 3;
-        for (let i = length - 2; i >= 0; i -= 2) {
-            let digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
+        for (var i = length - 2; i >= 0; i -= 2) {
+            var digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
             if (digit < 0 || digit > 9) {
-                throw new FormatException();
+                throw new FormatException_1.default();
             }
             sum += digit;
         }
         return (1000 - sum) % 10;
-    }
-    static decodeEnd(row, endStart) {
+    };
+    UPCEANReader.decodeEnd = function (row, endStart) {
         return UPCEANReader.findGuardPattern(row, endStart, false, UPCEANReader.START_END_PATTERN, new Int32Array(UPCEANReader.START_END_PATTERN.length).fill(0));
-    }
-}
+    };
+    return UPCEANReader;
+}(AbstractUPCEANReader_1.default));
+exports.default = UPCEANReader;

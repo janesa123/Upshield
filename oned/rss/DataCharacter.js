@@ -1,25 +1,29 @@
-export default class DataCharacter {
-    constructor(value, checksumPortion) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var DataCharacter = /** @class */ (function () {
+    function DataCharacter(value, checksumPortion) {
         this.value = value;
         this.checksumPortion = checksumPortion;
     }
-    getValue() {
+    DataCharacter.prototype.getValue = function () {
         return this.value;
-    }
-    getChecksumPortion() {
+    };
+    DataCharacter.prototype.getChecksumPortion = function () {
         return this.checksumPortion;
-    }
-    toString() {
+    };
+    DataCharacter.prototype.toString = function () {
         return this.value + '(' + this.checksumPortion + ')';
-    }
-    equals(o) {
+    };
+    DataCharacter.prototype.equals = function (o) {
         if (!(o instanceof DataCharacter)) {
             return false;
         }
-        const that = o;
+        var that = o;
         return this.value === that.value && this.checksumPortion === that.checksumPortion;
-    }
-    hashCode() {
+    };
+    DataCharacter.prototype.hashCode = function () {
         return this.value ^ this.checksumPortion;
-    }
-}
+    };
+    return DataCharacter;
+}());
+exports.default = DataCharacter;

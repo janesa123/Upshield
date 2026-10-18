@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import BitArray from '../common/BitArray';
-import DecodeHintType from '../DecodeHintType';
-import ResultMetadataType from '../ResultMetadataType';
-import ResultPoint from '../ResultPoint';
-import NotFoundException from '../NotFoundException';
+Object.defineProperty(exports, "__esModule", { value: true });
+var BitArray_1 = require("../common/BitArray");
+var DecodeHintType_1 = require("../DecodeHintType");
+var ResultMetadataType_1 = require("../ResultMetadataType");
+var ResultPoint_1 = require("../ResultPoint");
+var NotFoundException_1 = require("../NotFoundException");
 /**
  * Encapsulates functionality and implementation that is common to all families
  * of one-dimensional barcodes.
@@ -25,7 +27,9 @@ import NotFoundException from '../NotFoundException';
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-export default class OneDReader {
+var OneDReader = /** @class */ (function () {
+    function OneDReader() {
+    }
     /*
     @Override
     public Result decode(BinaryBitmap image) throws NotFoundException, FormatException {
@@ -34,42 +38,42 @@ export default class OneDReader {
     */
     // Note that we don't try rotation without the try harder flag, even if rotation was supported.
     // @Override
-    decode(image, hints) {
+    OneDReader.prototype.decode = function (image, hints) {
         try {
             return this.doDecode(image, hints);
         }
         catch (nfe) {
-            const tryHarder = hints && (hints.get(DecodeHintType.TRY_HARDER) === true);
+            var tryHarder = hints && (hints.get(DecodeHintType_1.default.TRY_HARDER) === true);
             if (tryHarder && image.isRotateSupported()) {
-                const rotatedImage = image.rotateCounterClockwise();
-                const result = this.doDecode(rotatedImage, hints);
+                var rotatedImage = image.rotateCounterClockwise();
+                var result = this.doDecode(rotatedImage, hints);
                 // Record that we found it rotated 90 degrees CCW / 270 degrees CW
-                const metadata = result.getResultMetadata();
-                let orientation = 270;
-                if (metadata !== null && (metadata.get(ResultMetadataType.ORIENTATION) === true)) {
+                var metadata = result.getResultMetadata();
+                var orientation_1 = 270;
+                if (metadata !== null && (metadata.get(ResultMetadataType_1.default.ORIENTATION) === true)) {
                     // But if we found it reversed in doDecode(), add in that result here:
-                    orientation = (orientation + metadata.get(ResultMetadataType.ORIENTATION) % 360);
+                    orientation_1 = (orientation_1 + metadata.get(ResultMetadataType_1.default.ORIENTATION) % 360);
                 }
-                result.putMetadata(ResultMetadataType.ORIENTATION, orientation);
+                result.putMetadata(ResultMetadataType_1.default.ORIENTATION, orientation_1);
                 // Update result points
-                const points = result.getResultPoints();
+                var points = result.getResultPoints();
                 if (points !== null) {
-                    const height = rotatedImage.getHeight();
-                    for (let i = 0; i < points.length; i++) {
-                        points[i] = new ResultPoint(height - points[i].getY() - 1, points[i].getX());
+                    var height = rotatedImage.getHeight();
+                    for (var i = 0; i < points.length; i++) {
+                        points[i] = new ResultPoint_1.default(height - points[i].getY() - 1, points[i].getX());
                     }
                 }
                 return result;
             }
             else {
-                throw new NotFoundException();
+                throw new NotFoundException_1.default();
             }
         }
-    }
+    };
     // @Override
-    reset() {
+    OneDReader.prototype.reset = function () {
         // do nothing
-    }
+    };
     /**
      * We're going to examine rows from the middle outward, searching alternately above and below the
      * middle, and farther out each time. rowStep is the number of rows between each successive
@@ -84,25 +88,25 @@ export default class OneDReader {
      * @return The contents of the decoded barcode
      * @throws NotFoundException Any spontaneous errors which occur
      */
-    doDecode(image, hints) {
-        const width = image.getWidth();
-        const height = image.getHeight();
-        let row = new BitArray(width);
-        const tryHarder = hints && (hints.get(DecodeHintType.TRY_HARDER) === true);
-        const rowStep = Math.max(1, height >> (tryHarder ? 8 : 5));
-        let maxLines;
+    OneDReader.prototype.doDecode = function (image, hints) {
+        var width = image.getWidth();
+        var height = image.getHeight();
+        var row = new BitArray_1.default(width);
+        var tryHarder = hints && (hints.get(DecodeHintType_1.default.TRY_HARDER) === true);
+        var rowStep = Math.max(1, height >> (tryHarder ? 8 : 5));
+        var maxLines;
         if (tryHarder) {
             maxLines = height; // Look at the whole image, not just the center
         }
         else {
             maxLines = 15; // 15 rows spaced 1/32 apart is roughly the middle half of the image
         }
-        const middle = Math.trunc(height / 2);
-        for (let x = 0; x < maxLines; x++) {
+        var middle = Math.trunc(height / 2);
+        for (var x = 0; x < maxLines; x++) {
             // Scanning from the middle out. Determine which row we're looking at next:
-            const rowStepsAboveOrBelow = Math.trunc((x + 1) / 2);
-            const isAbove = (x & 0x01) === 0; // i.e. is x even?
-            const rowNumber = middle + rowStep * (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);
+            var rowStepsAboveOrBelow = Math.trunc((x + 1) / 2);
+            var isAbove = (x & 0x01) === 0; // i.e. is x even?
+            var rowNumber = middle + rowStep * (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);
             if (rowNumber < 0 || rowNumber >= height) {
                 // Oops, if we run off the top or bottom, stop
                 break;
@@ -114,45 +118,51 @@ export default class OneDReader {
             catch (ignored) {
                 continue;
             }
-            // While we have the image data in a BitArray, it's fairly cheap to reverse it in place to
-            // handle decoding upside down barcodes.
-            for (let attempt = 0; attempt < 2; attempt++) {
+            var _loop_1 = function (attempt) {
                 if (attempt === 1) { // trying again?
                     row.reverse(); // reverse the row and continue
                     // This means we will only ever draw result points *once* in the life of this method
                     // since we want to avoid drawing the wrong points after flipping the row, and,
                     // don't want to clutter with noise from every single row scan -- just the scans
                     // that start on the center line.
-                    if (hints && (hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK) === true)) {
-                        const newHints = new Map();
-                        hints.forEach((hint, key) => newHints.set(key, hint));
-                        newHints.delete(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
-                        hints = newHints;
+                    if (hints && (hints.get(DecodeHintType_1.default.NEED_RESULT_POINT_CALLBACK) === true)) {
+                        var newHints_1 = new Map();
+                        hints.forEach(function (hint, key) { return newHints_1.set(key, hint); });
+                        newHints_1.delete(DecodeHintType_1.default.NEED_RESULT_POINT_CALLBACK);
+                        hints = newHints_1;
                     }
                 }
                 try {
                     // Look for a barcode
-                    const result = this.decodeRow(rowNumber, row, hints);
+                    var result = this_1.decodeRow(rowNumber, row, hints);
                     // We found our barcode
                     if (attempt === 1) {
                         // But it was upside down, so note that
-                        result.putMetadata(ResultMetadataType.ORIENTATION, 180);
+                        result.putMetadata(ResultMetadataType_1.default.ORIENTATION, 180);
                         // And remember to flip the result points horizontally.
-                        const points = result.getResultPoints();
+                        var points = result.getResultPoints();
                         if (points !== null) {
-                            points[0] = new ResultPoint(width - points[0].getX() - 1, points[0].getY());
-                            points[1] = new ResultPoint(width - points[1].getX() - 1, points[1].getY());
+                            points[0] = new ResultPoint_1.default(width - points[0].getX() - 1, points[0].getY());
+                            points[1] = new ResultPoint_1.default(width - points[1].getX() - 1, points[1].getY());
                         }
                     }
-                    return result;
+                    return { value: result };
                 }
                 catch (re) {
                     // continue -- just couldn't decode this row
                 }
+            };
+            var this_1 = this;
+            // While we have the image data in a BitArray, it's fairly cheap to reverse it in place to
+            // handle decoding upside down barcodes.
+            for (var attempt = 0; attempt < 2; attempt++) {
+                var state_1 = _loop_1(attempt);
+                if (typeof state_1 === "object")
+                    return state_1.value;
             }
         }
-        throw new NotFoundException();
-    }
+        throw new NotFoundException_1.default();
+    };
     /**
      * Records the size of successive runs of white and black pixels in a row, starting at a given point.
      * The values are recorded in the given array, and the number of runs recorded is equal to the size
@@ -166,17 +176,17 @@ export default class OneDReader {
      * @throws NotFoundException if counters cannot be filled entirely from row before running out
      *  of pixels
      */
-    static recordPattern(row, start, counters) {
-        const numCounters = counters.length;
-        for (let index = 0; index < numCounters; index++)
+    OneDReader.recordPattern = function (row, start, counters) {
+        var numCounters = counters.length;
+        for (var index = 0; index < numCounters; index++)
             counters[index] = 0;
-        const end = row.getSize();
+        var end = row.getSize();
         if (start >= end) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-        let isWhite = !row.get(start);
-        let counterPosition = 0;
-        let i = start;
+        var isWhite = !row.get(start);
+        var counterPosition = 0;
+        var i = start;
         while (i < end) {
             if (row.get(i) !== isWhite) {
                 counters[counterPosition]++;
@@ -195,13 +205,13 @@ export default class OneDReader {
         // If we read fully the last section of pixels and filled up our counters -- or filled
         // the last counter but ran off the side of the image, OK. Otherwise, a problem.
         if (!(counterPosition === numCounters || (counterPosition === numCounters - 1 && i === end))) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-    }
-    static recordPatternInReverse(row, start, counters) {
+    };
+    OneDReader.recordPatternInReverse = function (row, start, counters) {
         // This could be more efficient I guess
-        let numTransitionsLeft = counters.length;
-        let last = row.get(start);
+        var numTransitionsLeft = counters.length;
+        var last = row.get(start);
         while (start > 0 && numTransitionsLeft >= 0) {
             if (row.get(--start) !== last) {
                 numTransitionsLeft--;
@@ -209,10 +219,10 @@ export default class OneDReader {
             }
         }
         if (numTransitionsLeft >= 0) {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
         OneDReader.recordPattern(row, start + 1, counters);
-    }
+    };
     /**
      * Determines how closely a set of observed counts of runs of black/white values matches a given
      * target pattern. This is reported as the ratio of the total variance from the expected pattern
@@ -223,11 +233,11 @@ export default class OneDReader {
      * @param maxIndividualVariance The most any counter can differ before we give up
      * @return ratio of total variance between counters and pattern compared to total pattern size
      */
-    static patternMatchVariance(counters, pattern, maxIndividualVariance) {
-        const numCounters = counters.length;
-        let total = 0;
-        let patternLength = 0;
-        for (let i = 0; i < numCounters; i++) {
+    OneDReader.patternMatchVariance = function (counters, pattern, maxIndividualVariance) {
+        var numCounters = counters.length;
+        var total = 0;
+        var patternLength = 0;
+        for (var i = 0; i < numCounters; i++) {
             total += counters[i];
             patternLength += pattern[i];
         }
@@ -236,18 +246,20 @@ export default class OneDReader {
             // to reliably match, so fail:
             return Number.POSITIVE_INFINITY;
         }
-        const unitBarWidth = total / patternLength;
+        var unitBarWidth = total / patternLength;
         maxIndividualVariance *= unitBarWidth;
-        let totalVariance = 0.0;
-        for (let x = 0; x < numCounters; x++) {
-            const counter = counters[x];
-            const scaledPattern = pattern[x] * unitBarWidth;
-            const variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
+        var totalVariance = 0.0;
+        for (var x = 0; x < numCounters; x++) {
+            var counter = counters[x];
+            var scaledPattern = pattern[x] * unitBarWidth;
+            var variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
             if (variance > maxIndividualVariance) {
                 return Number.POSITIVE_INFINITY;
             }
             totalVariance += variance;
         }
         return totalVariance / total;
-    }
-}
+    };
+    return OneDReader;
+}());
+exports.default = OneDReader;

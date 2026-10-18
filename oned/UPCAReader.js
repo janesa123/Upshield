@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,12 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing.oned {*/
-import BarcodeFormat from '../BarcodeFormat';
-import Result from '../Result';
-import NotFoundException from '../NotFoundException';
-import EAN13Reader from './EAN13Reader';
-import UPCEANReader from './UPCEANReader';
+var BarcodeFormat_1 = require("../BarcodeFormat");
+var Result_1 = require("../Result");
+var NotFoundException_1 = require("../NotFoundException");
+var EAN13Reader_1 = require("./EAN13Reader");
+var UPCEANReader_1 = require("./UPCEANReader");
 /**
  * Encapsulates functionality and implementation that is common to all families
  * of one-dimensional barcodes.
@@ -31,42 +46,46 @@ import UPCEANReader from './UPCEANReader';
  *
  * @experimental
  */
-export default class UPCAReader extends UPCEANReader {
-    constructor() {
-        super(...arguments);
-        this.ean13Reader = new EAN13Reader();
+var UPCAReader = /** @class */ (function (_super) {
+    __extends(UPCAReader, _super);
+    function UPCAReader() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.ean13Reader = new EAN13Reader_1.default();
+        return _this;
     }
     // @Override
-    getBarcodeFormat() {
-        return BarcodeFormat.UPC_A;
-    }
+    UPCAReader.prototype.getBarcodeFormat = function () {
+        return BarcodeFormat_1.default.UPC_A;
+    };
     // Note that we don't try rotation without the try harder flag, even if rotation was supported.
     // @Override
-    decode(image, hints) {
+    UPCAReader.prototype.decode = function (image, hints) {
         return this.maybeReturnResult(this.ean13Reader.decode(image));
-    }
+    };
     // @Override
-    decodeRow(rowNumber, row, hints) {
+    UPCAReader.prototype.decodeRow = function (rowNumber, row, hints) {
         return this.maybeReturnResult(this.ean13Reader.decodeRow(rowNumber, row, hints));
-    }
+    };
     // @Override
-    decodeMiddle(row, startRange, resultString) {
+    UPCAReader.prototype.decodeMiddle = function (row, startRange, resultString) {
         return this.ean13Reader.decodeMiddle(row, startRange, resultString);
-    }
-    maybeReturnResult(result) {
-        let text = result.getText();
+    };
+    UPCAReader.prototype.maybeReturnResult = function (result) {
+        var text = result.getText();
         if (text.charAt(0) === '0') {
-            let upcaResult = new Result(text.substring(1), null, null, result.getResultPoints(), BarcodeFormat.UPC_A);
+            var upcaResult = new Result_1.default(text.substring(1), null, null, result.getResultPoints(), BarcodeFormat_1.default.UPC_A);
             if (result.getResultMetadata() != null) {
                 upcaResult.putAllMetadata(result.getResultMetadata());
             }
             return upcaResult;
         }
         else {
-            throw new NotFoundException();
+            throw new NotFoundException_1.default();
         }
-    }
-    reset() {
+    };
+    UPCAReader.prototype.reset = function () {
         this.ean13Reader.reset();
-    }
-}
+    };
+    return UPCAReader;
+}(UPCEANReader_1.default));
+exports.default = UPCAReader;

@@ -1,39 +1,43 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var State;
 (function (State) {
     State[State["NUMERIC"] = 0] = "NUMERIC";
     State[State["ALPHA"] = 1] = "ALPHA";
     State[State["ISO_IEC_646"] = 2] = "ISO_IEC_646";
 })(State || (State = {}));
-export default class CurrentParsingState {
-    constructor() {
+var CurrentParsingState = /** @class */ (function () {
+    function CurrentParsingState() {
         this.position = 0;
         this.encoding = State.NUMERIC;
     }
-    getPosition() {
+    CurrentParsingState.prototype.getPosition = function () {
         return this.position;
-    }
-    setPosition(position) {
+    };
+    CurrentParsingState.prototype.setPosition = function (position) {
         this.position = position;
-    }
-    incrementPosition(delta) {
+    };
+    CurrentParsingState.prototype.incrementPosition = function (delta) {
         this.position += delta;
-    }
-    isAlpha() {
+    };
+    CurrentParsingState.prototype.isAlpha = function () {
         return this.encoding === State.ALPHA;
-    }
-    isNumeric() {
+    };
+    CurrentParsingState.prototype.isNumeric = function () {
         return this.encoding === State.NUMERIC;
-    }
-    isIsoIec646() {
+    };
+    CurrentParsingState.prototype.isIsoIec646 = function () {
         return this.encoding === State.ISO_IEC_646;
-    }
-    setNumeric() {
+    };
+    CurrentParsingState.prototype.setNumeric = function () {
         this.encoding = State.NUMERIC;
-    }
-    setAlpha() {
+    };
+    CurrentParsingState.prototype.setAlpha = function () {
         this.encoding = State.ALPHA;
-    }
-    setIsoIec646() {
+    };
+    CurrentParsingState.prototype.setIsoIec646 = function () {
         this.encoding = State.ISO_IEC_646;
-    }
-}
+    };
+    return CurrentParsingState;
+}());
+exports.default = CurrentParsingState;

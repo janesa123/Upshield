@@ -1,31 +1,35 @@
-import ResultPoint from '../../ResultPoint';
-export default class FinderPattern {
-    constructor(value, startEnd, start, end, rowNumber) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var ResultPoint_1 = require("../../ResultPoint");
+var FinderPattern = /** @class */ (function () {
+    function FinderPattern(value, startEnd, start, end, rowNumber) {
         this.value = value;
         this.startEnd = startEnd;
         this.value = value;
         this.startEnd = startEnd;
         this.resultPoints = new Array();
-        this.resultPoints.push(new ResultPoint(start, rowNumber));
-        this.resultPoints.push(new ResultPoint(end, rowNumber));
+        this.resultPoints.push(new ResultPoint_1.default(start, rowNumber));
+        this.resultPoints.push(new ResultPoint_1.default(end, rowNumber));
     }
-    getValue() {
+    FinderPattern.prototype.getValue = function () {
         return this.value;
-    }
-    getStartEnd() {
+    };
+    FinderPattern.prototype.getStartEnd = function () {
         return this.startEnd;
-    }
-    getResultPoints() {
+    };
+    FinderPattern.prototype.getResultPoints = function () {
         return this.resultPoints;
-    }
-    equals(o) {
+    };
+    FinderPattern.prototype.equals = function (o) {
         if (!(o instanceof FinderPattern)) {
             return false;
         }
-        const that = o;
+        var that = o;
         return this.value === that.value;
-    }
-    hashCode() {
+    };
+    FinderPattern.prototype.hashCode = function () {
         return this.value;
-    }
-}
+    };
+    return FinderPattern;
+}());
+exports.default = FinderPattern;

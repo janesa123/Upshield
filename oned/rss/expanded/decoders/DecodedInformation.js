@@ -1,24 +1,43 @@
-import DecodedObject from './DecodedObject';
-export default class DecodedInformation extends DecodedObject {
-    constructor(newPosition, newString, remainingValue) {
-        super(newPosition);
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var DecodedObject_1 = require("./DecodedObject");
+var DecodedInformation = /** @class */ (function (_super) {
+    __extends(DecodedInformation, _super);
+    function DecodedInformation(newPosition, newString, remainingValue) {
+        var _this = _super.call(this, newPosition) || this;
         if (remainingValue) {
-            this.remaining = true;
-            this.remainingValue = this.remainingValue;
+            _this.remaining = true;
+            _this.remainingValue = _this.remainingValue;
         }
         else {
-            this.remaining = false;
-            this.remainingValue = 0;
+            _this.remaining = false;
+            _this.remainingValue = 0;
         }
-        this.newString = newString;
+        _this.newString = newString;
+        return _this;
     }
-    getNewString() {
+    DecodedInformation.prototype.getNewString = function () {
         return this.newString;
-    }
-    isRemaining() {
+    };
+    DecodedInformation.prototype.isRemaining = function () {
         return this.remaining;
-    }
-    getRemainingValue() {
+    };
+    DecodedInformation.prototype.getRemainingValue = function () {
         return this.remainingValue;
-    }
-}
+    };
+    return DecodedInformation;
+}(DecodedObject_1.default));
+exports.default = DecodedInformation;
