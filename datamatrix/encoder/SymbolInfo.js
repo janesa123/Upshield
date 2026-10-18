@@ -1,34 +1,8 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 /**
  * Symbol info table for DataMatrix.
  */
-var SymbolInfo = /** @class */ (function () {
-    function SymbolInfo(rectangular, dataCapacity, errorCodewords, matrixWidth, matrixHeight, dataRegions, rsBlockData, rsBlockError) {
-        if (rsBlockData === void 0) { rsBlockData = 0; }
-        if (rsBlockError === void 0) { rsBlockError = 0; }
+class SymbolInfo {
+    constructor(rectangular, dataCapacity, errorCodewords, matrixWidth, matrixHeight, dataRegions, rsBlockData = 0, rsBlockError = 0) {
         this.rectangular = rectangular;
         this.dataCapacity = dataCapacity;
         this.errorCodewords = errorCodewords;
@@ -38,50 +12,35 @@ var SymbolInfo = /** @class */ (function () {
         this.rsBlockData = rsBlockData;
         this.rsBlockError = rsBlockError;
     }
-    SymbolInfo.lookup = function (dataCodewords, shape, minSize, maxSize, fail) {
-        var e_1, _a;
-        if (shape === void 0) { shape = 0 /* FORCE_NONE */; }
-        if (minSize === void 0) { minSize = null; }
-        if (maxSize === void 0) { maxSize = null; }
-        if (fail === void 0) { fail = true; }
-        try {
-            for (var PROD_SYMBOLS_1 = __values(PROD_SYMBOLS), PROD_SYMBOLS_1_1 = PROD_SYMBOLS_1.next(); !PROD_SYMBOLS_1_1.done; PROD_SYMBOLS_1_1 = PROD_SYMBOLS_1.next()) {
-                var symbol = PROD_SYMBOLS_1_1.value;
-                if (shape === 1 /* FORCE_SQUARE */ && symbol.rectangular) {
-                    continue;
-                }
-                if (shape === 2 /* FORCE_RECTANGLE */ && !symbol.rectangular) {
-                    continue;
-                }
-                if (minSize != null &&
-                    (symbol.getSymbolWidth() < minSize.getWidth() ||
-                        symbol.getSymbolHeight() < minSize.getHeight())) {
-                    continue;
-                }
-                if (maxSize != null &&
-                    (symbol.getSymbolWidth() > maxSize.getWidth() ||
-                        symbol.getSymbolHeight() > maxSize.getHeight())) {
-                    continue;
-                }
-                if (dataCodewords <= symbol.dataCapacity) {
-                    return symbol;
-                }
+    static lookup(dataCodewords, shape = 0 /* FORCE_NONE */, minSize = null, maxSize = null, fail = true) {
+        for (const symbol of PROD_SYMBOLS) {
+            if (shape === 1 /* FORCE_SQUARE */ && symbol.rectangular) {
+                continue;
             }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (PROD_SYMBOLS_1_1 && !PROD_SYMBOLS_1_1.done && (_a = PROD_SYMBOLS_1.return)) _a.call(PROD_SYMBOLS_1);
+            if (shape === 2 /* FORCE_RECTANGLE */ && !symbol.rectangular) {
+                continue;
             }
-            finally { if (e_1) throw e_1.error; }
+            if (minSize != null &&
+                (symbol.getSymbolWidth() < minSize.getWidth() ||
+                    symbol.getSymbolHeight() < minSize.getHeight())) {
+                continue;
+            }
+            if (maxSize != null &&
+                (symbol.getSymbolWidth() > maxSize.getWidth() ||
+                    symbol.getSymbolHeight() > maxSize.getHeight())) {
+                continue;
+            }
+            if (dataCodewords <= symbol.dataCapacity) {
+                return symbol;
+            }
         }
         if (fail) {
             throw new Error("Can't find a symbol arrangement that matches the message. Data codewords: " +
                 dataCodewords);
         }
         return null;
-    };
-    SymbolInfo.prototype.getHorizontalDataRegions = function () {
+    }
+    getHorizontalDataRegions() {
         switch (this.dataRegions) {
             case 1:
                 return 1;
@@ -95,8 +54,8 @@ var SymbolInfo = /** @class */ (function () {
             default:
                 throw new Error('Cannot handle this number of data regions');
         }
-    };
-    SymbolInfo.prototype.getVerticalDataRegions = function () {
+    }
+    getVerticalDataRegions() {
         switch (this.dataRegions) {
             case 1:
             case 2:
@@ -110,56 +69,53 @@ var SymbolInfo = /** @class */ (function () {
             default:
                 throw new Error('Cannot handle this number of data regions');
         }
-    };
-    SymbolInfo.prototype.getSymbolDataWidth = function () {
+    }
+    getSymbolDataWidth() {
         return this.getHorizontalDataRegions() * this.matrixWidth;
-    };
-    SymbolInfo.prototype.getSymbolDataHeight = function () {
+    }
+    getSymbolDataHeight() {
         return this.getVerticalDataRegions() * this.matrixHeight;
-    };
-    SymbolInfo.prototype.getSymbolWidth = function () {
+    }
+    getSymbolWidth() {
         return this.getSymbolDataWidth() + this.getHorizontalDataRegions() * 2;
-    };
-    SymbolInfo.prototype.getSymbolHeight = function () {
+    }
+    getSymbolHeight() {
         return this.getSymbolDataHeight() + this.getVerticalDataRegions() * 2;
-    };
-    SymbolInfo.prototype.getCodewordCount = function () {
+    }
+    getCodewordCount() {
         return this.dataCapacity + this.errorCodewords;
-    };
-    SymbolInfo.prototype.getInterleavedBlockCount = function () {
+    }
+    getInterleavedBlockCount() {
         if (!this.rsBlockData)
             return 1;
         return this.dataCapacity / this.rsBlockData;
-    };
-    SymbolInfo.prototype.getDataCapacity = function () {
-        return this.dataCapacity;
-    };
-    SymbolInfo.prototype.getErrorCodewords = function () {
-        return this.errorCodewords;
-    };
-    SymbolInfo.prototype.getDataLengthForInterleavedBlock = function (index) {
-        return this.rsBlockData;
-    };
-    SymbolInfo.prototype.getErrorLengthForInterleavedBlock = function (index) {
-        return this.rsBlockError;
-    };
-    return SymbolInfo;
-}());
-export default SymbolInfo;
-var DataMatrixSymbolInfo144 = /** @class */ (function (_super) {
-    __extends(DataMatrixSymbolInfo144, _super);
-    function DataMatrixSymbolInfo144() {
-        return _super.call(this, false, 1558, 620, 22, 22, 36, -1, 62) || this;
     }
-    DataMatrixSymbolInfo144.prototype.getInterleavedBlockCount = function () {
+    getDataCapacity() {
+        return this.dataCapacity;
+    }
+    getErrorCodewords() {
+        return this.errorCodewords;
+    }
+    getDataLengthForInterleavedBlock(index) {
+        return this.rsBlockData;
+    }
+    getErrorLengthForInterleavedBlock(index) {
+        return this.rsBlockError;
+    }
+}
+export default SymbolInfo;
+class DataMatrixSymbolInfo144 extends SymbolInfo {
+    constructor() {
+        super(false, 1558, 620, 22, 22, 36, -1, 62);
+    }
+    getInterleavedBlockCount() {
         return 10;
-    };
-    DataMatrixSymbolInfo144.prototype.getDataLengthForInterleavedBlock = function (index) {
+    }
+    getDataLengthForInterleavedBlock(index) {
         return index <= 8 ? 156 : 155;
-    };
-    return DataMatrixSymbolInfo144;
-}(SymbolInfo));
-export var PROD_SYMBOLS = [
+    }
+}
+export const PROD_SYMBOLS = [
     new SymbolInfo(false, 3, 5, 8, 8, 1),
     new SymbolInfo(false, 5, 7, 10, 10, 1),
     /*rect*/ new SymbolInfo(true, 5, 7, 16, 6, 1),

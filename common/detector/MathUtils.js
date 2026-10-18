@@ -17,9 +17,8 @@
 /**
  * General math-related and numeric utility functions.
  */
-var MathUtils = /** @class */ (function () {
-    function MathUtils() {
-    }
+export default class MathUtils {
+    constructor() { }
     /**
      * Ends up being a bit faster than {@link Math#round(float)}. This merely rounds its
      * argument to the nearest int, where x.5 rounds up to x+1. Semantics of this shortcut
@@ -29,7 +28,7 @@ var MathUtils = /** @class */ (function () {
      * @param d real value to round
      * @return nearest {@code int}
      */
-    MathUtils.round = function (d /*float*/) {
+    static round(d /*float*/) {
         if (isNaN(d))
             return 0;
         if (d <= Number.MIN_SAFE_INTEGER)
@@ -37,7 +36,7 @@ var MathUtils = /** @class */ (function () {
         if (d >= Number.MAX_SAFE_INTEGER)
             return Number.MAX_SAFE_INTEGER;
         return /*(int) */ (d + (d < 0.0 ? -0.5 : 0.5)) | 0;
-    };
+    }
     // TYPESCRIPTPORT: maybe remove round method and call directly Math.round, it looks like it doesn't make sense for js
     /**
      * @param aX point A x coordinate
@@ -46,11 +45,11 @@ var MathUtils = /** @class */ (function () {
      * @param bY point B y coordinate
      * @return Euclidean distance between points A and B
      */
-    MathUtils.distance = function (aX /*float|int*/, aY /*float|int*/, bX /*float|int*/, bY /*float|int*/) {
-        var xDiff = aX - bX;
-        var yDiff = aY - bY;
+    static distance(aX /*float|int*/, aY /*float|int*/, bX /*float|int*/, bY /*float|int*/) {
+        const xDiff = aX - bX;
+        const yDiff = aY - bY;
         return /*(float) */ Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-    };
+    }
     /**
      * @param aX point A x coordinate
      * @param aY point A y coordinate
@@ -67,14 +66,12 @@ var MathUtils = /** @class */ (function () {
      * @param array values to sum
      * @return sum of values in array
      */
-    MathUtils.sum = function (array) {
-        var count = 0;
-        for (var i = 0, length_1 = array.length; i !== length_1; i++) {
-            var a = array[i];
+    static sum(array) {
+        let count = 0;
+        for (let i = 0, length = array.length; i !== length; i++) {
+            const a = array[i];
             count += a;
         }
         return count;
-    };
-    return MathUtils;
-}());
-export default MathUtils;
+    }
+}

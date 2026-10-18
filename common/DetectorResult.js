@@ -20,17 +20,15 @@
  *
  * @author Sean Owen
  */
-var DetectorResult = /** @class */ (function () {
-    function DetectorResult(bits, points) {
+export default class DetectorResult {
+    constructor(bits, points) {
         this.bits = bits;
         this.points = points;
     }
-    DetectorResult.prototype.getBits = function () {
+    getBits() {
         return this.bits;
-    };
-    DetectorResult.prototype.getPoints = function () {
+    }
+    getPoints() {
         return this.points;
-    };
-    return DetectorResult;
-}());
-export default DetectorResult;
+    }
+}

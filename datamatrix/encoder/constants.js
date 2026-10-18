@@ -1,15 +1,14 @@
-var _a;
 /**
  * Lookup table which factors to use for which number of error correction codewords.
  * See FACTORS.
  */
-export var FACTOR_SETS = [
+export const FACTOR_SETS = [
     5, 7, 10, 11, 12, 14, 18, 20, 24, 28, 36, 42, 48, 56, 62, 68,
 ];
 /**
  * Precomputed polynomial factors for ECC 200.
  */
-export var FACTORS = [
+export const FACTORS = [
     [228, 48, 15, 111, 62],
     [23, 68, 144, 134, 240, 92, 254],
     [28, 24, 185, 166, 223, 248, 116, 255, 110, 61],
@@ -67,10 +66,10 @@ export var FACTORS = [
         103, 82, 186,
     ],
 ];
-export var /*final*/ MODULO_VALUE = 0x12d;
-var static_LOG = function (LOG, ALOG) {
-    var p = 1;
-    for (var i = 0; i < 255; i++) {
+export const /*final*/ MODULO_VALUE = 0x12d;
+const static_LOG = (LOG, ALOG) => {
+    let p = 1;
+    for (let i = 0; i < 255; i++) {
         ALOG[i] = p;
         LOG[p] = i;
         p *= 2;
@@ -79,11 +78,11 @@ var static_LOG = function (LOG, ALOG) {
         }
     }
     return {
-        LOG: LOG,
-        ALOG: ALOG,
+        LOG,
+        ALOG,
     };
 };
-export var LOG = (_a = static_LOG([], []), _a.LOG), ALOG = _a.ALOG;
+export const { LOG, ALOG } = static_LOG([], []);
 export var SymbolShapeHint;
 (function (SymbolShapeHint) {
     SymbolShapeHint[SymbolShapeHint["FORCE_NONE"] = 0] = "FORCE_NONE";
@@ -93,15 +92,15 @@ export var SymbolShapeHint;
 /**
  * Padding character
  */
-export var PAD = 129;
+export const PAD = 129;
 /**
  * mode latch to C40 encodation mode
  */
-export var LATCH_TO_C40 = 230;
+export const LATCH_TO_C40 = 230;
 /**
  * mode latch to Base 256 encodation mode
  */
-export var LATCH_TO_BASE256 = 231;
+export const LATCH_TO_BASE256 = 231;
 /**
  * FNC1 Codeword
  */
@@ -117,27 +116,27 @@ export var LATCH_TO_BASE256 = 231;
 /**
  * Upper Shift
  */
-export var UPPER_SHIFT = 235;
+export const UPPER_SHIFT = 235;
 /**
  * 05 Macro
  */
-export var MACRO_05 = 236;
+export const MACRO_05 = 236;
 /**
  * 06 Macro
  */
-export var MACRO_06 = 237;
+export const MACRO_06 = 237;
 /**
  * mode latch to ANSI X.12 encodation mode
  */
-export var LATCH_TO_ANSIX12 = 238;
+export const LATCH_TO_ANSIX12 = 238;
 /**
  * mode latch to Text encodation mode
  */
-export var LATCH_TO_TEXT = 239;
+export const LATCH_TO_TEXT = 239;
 /**
  * mode latch to EDIFACT encodation mode
  */
-export var LATCH_TO_EDIFACT = 240;
+export const LATCH_TO_EDIFACT = 240;
 /**
  * ECI character (Extended Channel Interpretation)
  */
@@ -145,26 +144,26 @@ export var LATCH_TO_EDIFACT = 240;
 /**
  * Unlatch from C40 encodation
  */
-export var C40_UNLATCH = 254;
+export const C40_UNLATCH = 254;
 /**
  * Unlatch from X12 encodation
  */
-export var X12_UNLATCH = 254;
+export const X12_UNLATCH = 254;
 /**
  * 05 Macro header
  */
-export var MACRO_05_HEADER = '[)>\u001E05\u001D';
+export const MACRO_05_HEADER = '[)>\u001E05\u001D';
 /**
  * 06 Macro header
  */
-export var MACRO_06_HEADER = '[)>\u001E06\u001D';
+export const MACRO_06_HEADER = '[)>\u001E06\u001D';
 /**
  * Macro trailer
  */
-export var MACRO_TRAILER = '\u001E\u0004';
-export var ASCII_ENCODATION = 0;
-export var C40_ENCODATION = 1;
-export var TEXT_ENCODATION = 2;
-export var X12_ENCODATION = 3;
-export var EDIFACT_ENCODATION = 4;
-export var BASE256_ENCODATION = 5;
+export const MACRO_TRAILER = '\u001E\u0004';
+export const ASCII_ENCODATION = 0;
+export const C40_ENCODATION = 1;
+export const TEXT_ENCODATION = 2;
+export const X12_ENCODATION = 3;
+export const EDIFACT_ENCODATION = 4;
+export const BASE256_ENCODATION = 5;

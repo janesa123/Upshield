@@ -18,14 +18,12 @@ import Integer from '../../util/Integer';
  * DataMatrix ECC 200 data encoder following the algorithm described in ISO/IEC 16022:200(E) in
  * annex S.
  */
-var HighLevelEncoder = /** @class */ (function () {
-    function HighLevelEncoder() {
-    }
-    HighLevelEncoder.randomize253State = function (codewordPosition) {
-        var pseudoRandom = ((149 * codewordPosition) % 253) + 1;
-        var tempVariable = PAD + pseudoRandom;
+class HighLevelEncoder {
+    static randomize253State(codewordPosition) {
+        const pseudoRandom = ((149 * codewordPosition) % 253) + 1;
+        const tempVariable = PAD + pseudoRandom;
         return tempVariable <= 254 ? tempVariable : tempVariable - 254;
-    };
+    }
     /**
      * Performs message encoding of a DataMatrix message using the algorithm described in annex P
      * of ISO/IEC 16022:2000(E).
@@ -38,14 +36,10 @@ var HighLevelEncoder = /** @class */ (function () {
      * @param forceC40 enforce C40 encoding
      * @return the encoded message (the char values range from 0 to 255)
      */
-    HighLevelEncoder.encodeHighLevel = function (msg, shape, minSize, maxSize, forceC40) {
-        if (shape === void 0) { shape = 0 /* FORCE_NONE */; }
-        if (minSize === void 0) { minSize = null; }
-        if (maxSize === void 0) { maxSize = null; }
-        if (forceC40 === void 0) { forceC40 = false; }
+    static encodeHighLevel(msg, shape = 0 /* FORCE_NONE */, minSize = null, maxSize = null, forceC40 = false) {
         // the codewords 0..255 are encoded as Unicode characters
-        var c40Encoder = new C40Encoder();
-        var encoders = [
+        const c40Encoder = new C40Encoder();
+        const encoders = [
             new ASCIIEncoder(),
             c40Encoder,
             new TextEncoder(),
@@ -53,7 +47,7 @@ var HighLevelEncoder = /** @class */ (function () {
             new EdifactEncoder(),
             new Base256Encoder(),
         ];
-        var context = new EncoderContext(msg);
+        const context = new EncoderContext(msg);
         context.setSymbolShape(shape);
         context.setSizeConstraints(minSize, maxSize);
         if (msg.startsWith(MACRO_05_HEADER) && msg.endsWith(MACRO_TRAILER)) {
@@ -66,7 +60,7 @@ var HighLevelEncoder = /** @class */ (function () {
             context.setSkipAtEnd(2);
             context.pos += MACRO_06_HEADER.length;
         }
-        var encodingMode = ASCII_ENCODATION; // Default mode
+        let encodingMode = ASCII_ENCODATION; // Default mode
         if (forceC40) {
             c40Encoder.encodeMaximal(context);
             encodingMode = context.getNewEncoding();
@@ -79,9 +73,9 @@ var HighLevelEncoder = /** @class */ (function () {
                 context.resetEncoderSignal();
             }
         }
-        var len = context.getCodewordCount();
+        const len = context.getCodewordCount();
         context.updateSymbolInfo();
-        var capacity = context.getSymbolInfo().getDataCapacity();
+        const capacity = context.getSymbolInfo().getDataCapacity();
         if (len < capacity &&
             encodingMode !== ASCII_ENCODATION &&
             encodingMode !== BASE256_ENCODATION &&
@@ -89,7 +83,7 @@ var HighLevelEncoder = /** @class */ (function () {
             context.writeCodeword('\u00fe'); // Unlatch (254)
         }
         // Padding
-        var codewords = context.getCodewords();
+        const codewords = context.getCodewords();
         if (codewords.length() < capacity) {
             codewords.append(PAD);
         }
@@ -97,12 +91,12 @@ var HighLevelEncoder = /** @class */ (function () {
             codewords.append(this.randomize253State(codewords.length() + 1));
         }
         return context.getCodewords().toString();
-    };
-    HighLevelEncoder.lookAheadTest = function (msg, startpos, currentMode) {
-        var newMode = this.lookAheadTestIntern(msg, startpos, currentMode);
+    }
+    static lookAheadTest(msg, startpos, currentMode) {
+        const newMode = this.lookAheadTestIntern(msg, startpos, currentMode);
         if (currentMode === X12_ENCODATION && newMode === X12_ENCODATION) {
-            var endpos = Math.min(startpos + 3, msg.length);
-            for (var i = startpos; i < endpos; i++) {
+            const endpos = Math.min(startpos + 3, msg.length);
+            for (let i = startpos; i < endpos; i++) {
                 if (!this.isNativeX12(msg.charCodeAt(i))) {
                     return ASCII_ENCODATION;
                 }
@@ -110,20 +104,20 @@ var HighLevelEncoder = /** @class */ (function () {
         }
         else if (currentMode === EDIFACT_ENCODATION &&
             newMode === EDIFACT_ENCODATION) {
-            var endpos = Math.min(startpos + 4, msg.length);
-            for (var i = startpos; i < endpos; i++) {
+            const endpos = Math.min(startpos + 4, msg.length);
+            for (let i = startpos; i < endpos; i++) {
                 if (!this.isNativeEDIFACT(msg.charCodeAt(i))) {
                     return ASCII_ENCODATION;
                 }
             }
         }
         return newMode;
-    };
-    HighLevelEncoder.lookAheadTestIntern = function (msg, startpos, currentMode) {
+    }
+    static lookAheadTestIntern(msg, startpos, currentMode) {
         if (startpos >= msg.length) {
             return currentMode;
         }
-        var charCounts;
+        let charCounts;
         // step J
         if (currentMode === ASCII_ENCODATION) {
             charCounts = [0, 1, 1, 1, 1, 1.25];
@@ -132,16 +126,16 @@ var HighLevelEncoder = /** @class */ (function () {
             charCounts = [1, 2, 2, 2, 2, 2.25];
             charCounts[currentMode] = 0;
         }
-        var charsProcessed = 0;
-        var mins = new Uint8Array(6);
-        var intCharCounts = [];
+        let charsProcessed = 0;
+        const mins = new Uint8Array(6);
+        const intCharCounts = [];
         while (true) {
             // step K
             if (startpos + charsProcessed === msg.length) {
                 Arrays.fill(mins, 0);
                 Arrays.fill(intCharCounts, 0);
-                var min = this.findMinimums(charCounts, intCharCounts, Integer.MAX_VALUE, mins);
-                var minCount = this.getMinimumCount(mins);
+                const min = this.findMinimums(charCounts, intCharCounts, Integer.MAX_VALUE, mins);
+                const minCount = this.getMinimumCount(mins);
                 if (intCharCounts[ASCII_ENCODATION] === min) {
                     return ASCII_ENCODATION;
                 }
@@ -161,7 +155,7 @@ var HighLevelEncoder = /** @class */ (function () {
                 }
                 return C40_ENCODATION;
             }
-            var c = msg.charCodeAt(startpos + charsProcessed);
+            const c = msg.charCodeAt(startpos + charsProcessed);
             charsProcessed++;
             // step L
             if (this.isDigit(c)) {
@@ -254,9 +248,9 @@ var HighLevelEncoder = /** @class */ (function () {
                         return C40_ENCODATION;
                     }
                     if (intCharCounts[C40_ENCODATION] === intCharCounts[X12_ENCODATION]) {
-                        var p = startpos + charsProcessed + 1;
+                        let p = startpos + charsProcessed + 1;
                         while (p < msg.length) {
-                            var tc = msg.charCodeAt(p);
+                            const tc = msg.charCodeAt(p);
                             if (this.isX12TermSep(tc)) {
                                 return X12_ENCODATION;
                             }
@@ -270,19 +264,19 @@ var HighLevelEncoder = /** @class */ (function () {
                 }
             }
         }
-    };
-    HighLevelEncoder.min = function (f1, f2, f3, f4, f5) {
-        var val = Math.min(f1, Math.min(f2, Math.min(f3, f4)));
+    }
+    static min(f1, f2, f3, f4, f5) {
+        const val = Math.min(f1, Math.min(f2, Math.min(f3, f4)));
         if (f5 === undefined) {
             return val;
         }
         else {
             return Math.min(val, f5);
         }
-    };
-    HighLevelEncoder.findMinimums = function (charCounts, intCharCounts, min, mins) {
-        for (var i = 0; i < 6; i++) {
-            var current = (intCharCounts[i] = Math.ceil(charCounts[i]));
+    }
+    static findMinimums(charCounts, intCharCounts, min, mins) {
+        for (let i = 0; i < 6; i++) {
+            const current = (intCharCounts[i] = Math.ceil(charCounts[i]));
             if (min > current) {
                 min = current;
                 Arrays.fill(mins, 0);
@@ -292,47 +286,47 @@ var HighLevelEncoder = /** @class */ (function () {
             }
         }
         return min;
-    };
-    HighLevelEncoder.getMinimumCount = function (mins) {
-        var minCount = 0;
-        for (var i = 0; i < 6; i++) {
+    }
+    static getMinimumCount(mins) {
+        let minCount = 0;
+        for (let i = 0; i < 6; i++) {
             minCount += mins[i];
         }
         return minCount || 0;
-    };
-    HighLevelEncoder.isDigit = function (ch) {
+    }
+    static isDigit(ch) {
         return ch >= '0'.charCodeAt(0) && ch <= '9'.charCodeAt(0);
-    };
-    HighLevelEncoder.isExtendedASCII = function (ch) {
+    }
+    static isExtendedASCII(ch) {
         return ch >= 128 && ch <= 255;
-    };
-    HighLevelEncoder.isNativeC40 = function (ch) {
+    }
+    static isNativeC40(ch) {
         return (ch === ' '.charCodeAt(0) ||
             (ch >= '0'.charCodeAt(0) && ch <= '9'.charCodeAt(0)) ||
             (ch >= 'A'.charCodeAt(0) && ch <= 'Z'.charCodeAt(0)));
-    };
-    HighLevelEncoder.isNativeText = function (ch) {
+    }
+    static isNativeText(ch) {
         return (ch === ' '.charCodeAt(0) ||
             (ch >= '0'.charCodeAt(0) && ch <= '9'.charCodeAt(0)) ||
             (ch >= 'a'.charCodeAt(0) && ch <= 'z'.charCodeAt(0)));
-    };
-    HighLevelEncoder.isNativeX12 = function (ch) {
+    }
+    static isNativeX12(ch) {
         return (this.isX12TermSep(ch) ||
             ch === ' '.charCodeAt(0) ||
             (ch >= '0'.charCodeAt(0) && ch <= '9'.charCodeAt(0)) ||
             (ch >= 'A'.charCodeAt(0) && ch <= 'Z'.charCodeAt(0)));
-    };
-    HighLevelEncoder.isX12TermSep = function (ch) {
+    }
+    static isX12TermSep(ch) {
         return (ch === 13 || // CR
             ch === '*'.charCodeAt(0) ||
             ch === '>'.charCodeAt(0));
-    };
-    HighLevelEncoder.isNativeEDIFACT = function (ch) {
+    }
+    static isNativeEDIFACT(ch) {
         return ch >= ' '.charCodeAt(0) && ch <= '^'.charCodeAt(0);
-    };
-    HighLevelEncoder.isSpecialB256 = function (ch) {
+    }
+    static isSpecialB256(ch) {
         return false; // TODO NOT IMPLEMENTED YET!!!
-    };
+    }
     /**
      * Determines the number of consecutive characters that are encodable using numeric compaction.
      *
@@ -340,20 +334,18 @@ var HighLevelEncoder = /** @class */ (function () {
      * @param startpos the start position within the message
      * @return the requested character count
      */
-    HighLevelEncoder.determineConsecutiveDigitCount = function (msg, startpos) {
-        if (startpos === void 0) { startpos = 0; }
-        var len = msg.length;
-        var idx = startpos;
+    static determineConsecutiveDigitCount(msg, startpos = 0) {
+        const len = msg.length;
+        let idx = startpos;
         while (idx < len && this.isDigit(msg.charCodeAt(idx))) {
             idx++;
         }
         return idx - startpos;
-    };
-    HighLevelEncoder.illegalCharacter = function (singleCharacter) {
-        var hex = Integer.toHexString(singleCharacter.charCodeAt(0));
+    }
+    static illegalCharacter(singleCharacter) {
+        let hex = Integer.toHexString(singleCharacter.charCodeAt(0));
         hex = '0000'.substring(0, 4 - hex.length) + hex;
         throw new Error('Illegal character: ' + singleCharacter + ' (0x' + hex + ')');
-    };
-    return HighLevelEncoder;
-}());
+    }
+}
 export default HighLevelEncoder;

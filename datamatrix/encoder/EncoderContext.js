@@ -1,15 +1,15 @@
 import StringBuilder from '../../util/StringBuilder';
 import SymbolInfo from './SymbolInfo';
-var EncoderContext = /** @class */ (function () {
-    function EncoderContext(msg) {
+export class EncoderContext {
+    constructor(msg) {
         this.msg = msg;
         this.pos = 0;
         this.skipAtEnd = 0;
         // From this point on Strings are not Unicode anymore!
-        var msgBinary = msg.split('').map(function (c) { return c.charCodeAt(0); });
-        var sb = new StringBuilder();
-        for (var i = 0, c = msgBinary.length; i < c; i++) {
-            var ch = String.fromCharCode(msgBinary[i] & 0xff);
+        const msgBinary = msg.split('').map(c => c.charCodeAt(0));
+        const sb = new StringBuilder();
+        for (let i = 0, c = msgBinary.length; i < c; i++) {
+            const ch = String.fromCharCode(msgBinary[i] & 0xff);
             if (ch === '?' && msg.charAt(i) !== '?') {
                 throw new Error('Message contains characters outside ISO-8859-1 encoding.');
             }
@@ -20,67 +20,64 @@ var EncoderContext = /** @class */ (function () {
         this.codewords = new StringBuilder();
         this.newEncoding = -1;
     }
-    EncoderContext.prototype.setSymbolShape = function (shape) {
+    setSymbolShape(shape) {
         this.shape = shape;
-    };
-    EncoderContext.prototype.setSizeConstraints = function (minSize, maxSize) {
+    }
+    setSizeConstraints(minSize, maxSize) {
         this.minSize = minSize;
         this.maxSize = maxSize;
-    };
-    EncoderContext.prototype.getMessage = function () {
+    }
+    getMessage() {
         return this.msg;
-    };
-    EncoderContext.prototype.setSkipAtEnd = function (count) {
+    }
+    setSkipAtEnd(count) {
         this.skipAtEnd = count;
-    };
-    EncoderContext.prototype.getCurrentChar = function () {
+    }
+    getCurrentChar() {
         return this.msg.charCodeAt(this.pos);
-    };
-    EncoderContext.prototype.getCurrent = function () {
+    }
+    getCurrent() {
         return this.msg.charCodeAt(this.pos);
-    };
-    EncoderContext.prototype.getCodewords = function () {
+    }
+    getCodewords() {
         return this.codewords;
-    };
-    EncoderContext.prototype.writeCodewords = function (codewords) {
+    }
+    writeCodewords(codewords) {
         this.codewords.append(codewords);
-    };
-    EncoderContext.prototype.writeCodeword = function (codeword) {
+    }
+    writeCodeword(codeword) {
         this.codewords.append(codeword);
-    };
-    EncoderContext.prototype.getCodewordCount = function () {
+    }
+    getCodewordCount() {
         return this.codewords.length();
-    };
-    EncoderContext.prototype.getNewEncoding = function () {
+    }
+    getNewEncoding() {
         return this.newEncoding;
-    };
-    EncoderContext.prototype.signalEncoderChange = function (encoding) {
+    }
+    signalEncoderChange(encoding) {
         this.newEncoding = encoding;
-    };
-    EncoderContext.prototype.resetEncoderSignal = function () {
+    }
+    resetEncoderSignal() {
         this.newEncoding = -1;
-    };
-    EncoderContext.prototype.hasMoreCharacters = function () {
+    }
+    hasMoreCharacters() {
         return this.pos < this.getTotalMessageCharCount();
-    };
-    EncoderContext.prototype.getTotalMessageCharCount = function () {
+    }
+    getTotalMessageCharCount() {
         return this.msg.length - this.skipAtEnd;
-    };
-    EncoderContext.prototype.getRemainingCharacters = function () {
+    }
+    getRemainingCharacters() {
         return this.getTotalMessageCharCount() - this.pos;
-    };
-    EncoderContext.prototype.getSymbolInfo = function () {
+    }
+    getSymbolInfo() {
         return this.symbolInfo;
-    };
-    EncoderContext.prototype.updateSymbolInfo = function (len) {
-        if (len === void 0) { len = this.getCodewordCount(); }
+    }
+    updateSymbolInfo(len = this.getCodewordCount()) {
         if (this.symbolInfo == null || len > this.symbolInfo.getDataCapacity()) {
             this.symbolInfo = SymbolInfo.lookup(len, this.shape, this.minSize, this.maxSize, true);
         }
-    };
-    EncoderContext.prototype.resetSymbolInfo = function () {
+    }
+    resetSymbolInfo() {
         this.symbolInfo = null;
-    };
-    return EncoderContext;
-}());
-export { EncoderContext };
+    }
+}
