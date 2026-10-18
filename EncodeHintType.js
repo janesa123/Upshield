@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing {*/
 /**
  * These are a set of hints that you may pass to Writers to specify their behavior.
@@ -115,4 +117,4 @@ var EncodeHintType;
      */
     EncodeHintType[EncodeHintType["FORCE_C40"] = 13] = "FORCE_C40";
 })(EncodeHintType || (EncodeHintType = {}));
-export default EncodeHintType;
+exports.default = EncodeHintType;

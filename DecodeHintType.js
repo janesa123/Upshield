@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing {*/
 /**
  * Encapsulates a type of hint that a caller may pass to a barcode reader to help it
@@ -104,4 +106,4 @@ var DecodeHintType;
     //   return valueType
     // }
 })(DecodeHintType || (DecodeHintType = {}));
-export default DecodeHintType;
+exports.default = DecodeHintType;

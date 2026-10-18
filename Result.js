@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import System from './util/System';
+Object.defineProperty(exports, "__esModule", { value: true });
+var System_1 = require("./util/System");
 /**
  * <p>Encapsulates the result of decoding a barcode within an image.</p>
  *
  * @author Sean Owen
  */
-export default class Result {
+var Result = /** @class */ (function () {
     // public constructor(private text: string,
     //               Uint8Array rawBytes,
     //               ResultPoconst resultPoints: Int32Array,
@@ -34,7 +36,9 @@ export default class Result {
     //   this(text, rawBytes, rawBytes == null ? 0 : 8 * rawBytes.length,
     //        resultPoints, format, timestamp)
     // }
-    constructor(text, rawBytes, numBits = rawBytes == null ? 0 : 8 * rawBytes.length, resultPoints, format, timestamp = System.currentTimeMillis()) {
+    function Result(text, rawBytes, numBits, resultPoints, format, timestamp) {
+        if (numBits === void 0) { numBits = rawBytes == null ? 0 : 8 * rawBytes.length; }
+        if (timestamp === void 0) { timestamp = System_1.default.currentTimeMillis(); }
         this.text = text;
         this.rawBytes = rawBytes;
         this.numBits = numBits;
@@ -53,7 +57,7 @@ export default class Result {
         this.format = format;
         this.resultMetadata = null;
         if (undefined === timestamp || null === timestamp) {
-            this.timestamp = System.currentTimeMillis();
+            this.timestamp = System_1.default.currentTimeMillis();
         }
         else {
             this.timestamp = timestamp;
@@ -62,51 +66,51 @@ export default class Result {
     /**
      * @return raw text encoded by the barcode
      */
-    getText() {
+    Result.prototype.getText = function () {
         return this.text;
-    }
+    };
     /**
      * @return raw bytes encoded by the barcode, if applicable, otherwise {@code null}
      */
-    getRawBytes() {
+    Result.prototype.getRawBytes = function () {
         return this.rawBytes;
-    }
+    };
     /**
      * @return how many bits of {@link #getRawBytes()} are valid; typically 8 times its length
      * @since 3.3.0
      */
-    getNumBits() {
+    Result.prototype.getNumBits = function () {
         return this.numBits;
-    }
+    };
     /**
      * @return points related to the barcode in the image. These are typically points
      *         identifying finder patterns or the corners of the barcode. The exact meaning is
      *         specific to the type of barcode that was decoded.
      */
-    getResultPoints() {
+    Result.prototype.getResultPoints = function () {
         return this.resultPoints;
-    }
+    };
     /**
      * @return {@link BarcodeFormat} representing the format of the barcode that was decoded
      */
-    getBarcodeFormat() {
+    Result.prototype.getBarcodeFormat = function () {
         return this.format;
-    }
+    };
     /**
      * @return {@link Map} mapping {@link ResultMetadataType} keys to values. May be
      *   {@code null}. This contains optional metadata about what was detected about the barcode,
      *   like orientation.
      */
-    getResultMetadata() {
+    Result.prototype.getResultMetadata = function () {
         return this.resultMetadata;
-    }
-    putMetadata(type, value) {
+    };
+    Result.prototype.putMetadata = function (type, value) {
         if (this.resultMetadata === null) {
             this.resultMetadata = new Map();
         }
         this.resultMetadata.set(type, value);
-    }
-    putAllMetadata(metadata) {
+    };
+    Result.prototype.putAllMetadata = function (metadata) {
         if (metadata !== null) {
             if (this.resultMetadata === null) {
                 this.resultMetadata = metadata;
@@ -115,24 +119,26 @@ export default class Result {
                 this.resultMetadata = new Map(metadata);
             }
         }
-    }
-    addResultPoints(newPoints) {
-        const oldPoints = this.resultPoints;
+    };
+    Result.prototype.addResultPoints = function (newPoints) {
+        var oldPoints = this.resultPoints;
         if (oldPoints === null) {
             this.resultPoints = newPoints;
         }
         else if (newPoints !== null && newPoints.length > 0) {
-            const allPoints = new Array(oldPoints.length + newPoints.length);
-            System.arraycopy(oldPoints, 0, allPoints, 0, oldPoints.length);
-            System.arraycopy(newPoints, 0, allPoints, oldPoints.length, newPoints.length);
+            var allPoints = new Array(oldPoints.length + newPoints.length);
+            System_1.default.arraycopy(oldPoints, 0, allPoints, 0, oldPoints.length);
+            System_1.default.arraycopy(newPoints, 0, allPoints, oldPoints.length, newPoints.length);
             this.resultPoints = allPoints;
         }
-    }
-    getTimestamp() {
+    };
+    Result.prototype.getTimestamp = function () {
         return this.timestamp;
-    }
+    };
     /*@Override*/
-    toString() {
+    Result.prototype.toString = function () {
         return this.text;
-    }
-}
+    };
+    return Result;
+}());
+exports.default = Result;

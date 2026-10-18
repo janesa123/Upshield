@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,39 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import IllegalArgumentException from './IllegalArgumentException';
+Object.defineProperty(exports, "__esModule", { value: true });
+var IllegalArgumentException_1 = require("./IllegalArgumentException");
 /*namespace com.google.zxing {*/
 /**
  * Simply encapsulates a width and height.
  */
-export default class Dimension {
-    constructor(width /*int*/, height /*int*/) {
+var Dimension = /** @class */ (function () {
+    function Dimension(width /*int*/, height /*int*/) {
         this.width = width;
         this.height = height;
         if (width < 0 || height < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException_1.default();
         }
     }
-    getWidth() {
+    Dimension.prototype.getWidth = function () {
         return this.width;
-    }
-    getHeight() {
+    };
+    Dimension.prototype.getHeight = function () {
         return this.height;
-    }
+    };
     /*@Override*/
-    equals(other) {
+    Dimension.prototype.equals = function (other) {
         if (other instanceof Dimension) {
-            const d = other;
+            var d = other;
             return this.width === d.width && this.height === d.height;
         }
         return false;
-    }
+    };
     /*@Override*/
-    hashCode() {
+    Dimension.prototype.hashCode = function () {
         return this.width * 32713 + this.height;
-    }
+    };
     /*@Override*/
-    toString() {
+    Dimension.prototype.toString = function () {
         return this.width + 'x' + this.height;
-    }
-}
+    };
+    return Dimension;
+}());
+exports.default = Dimension;

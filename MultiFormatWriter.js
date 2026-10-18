@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // import DataMatrixWriter from './datamatrix/DataMatrixWriter'
 // import CodaBarWriter from './oned/CodaBarWriter'
 // import Code128Writer from './oned/Code128Writer'
@@ -24,9 +26,9 @@
 // import UPCAWriter from './oned/UPCAWriter'
 // import UPCEWriter from './oned/UPCEWriter'
 // import PDF417Writer from './pdf417/PDF417Writer'
-import QRCodeWriter from './qrcode/QRCodeWriter';
-import BarcodeFormat from './BarcodeFormat';
-import IllegalArgumentException from './IllegalArgumentException';
+var QRCodeWriter_1 = require("./qrcode/QRCodeWriter");
+var BarcodeFormat_1 = require("./BarcodeFormat");
+var IllegalArgumentException_1 = require("./IllegalArgumentException");
 /*import java.util.Map;*/
 /**
  * This is a factory class which finds the appropriate Writer subclass for the BarcodeFormat
@@ -34,7 +36,9 @@ import IllegalArgumentException from './IllegalArgumentException';
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-export default class MultiFormatWriter {
+var MultiFormatWriter = /** @class */ (function () {
+    function MultiFormatWriter() {
+    }
     /*@Override*/
     // public encode(contents: string,
     //                         format: BarcodeFormat,
@@ -43,8 +47,8 @@ export default class MultiFormatWriter {
     //   return encode(contents, format, width, height, null)
     // }
     /*@Override*/
-    encode(contents, format, width /*int*/, height /*int*/, hints) {
-        let writer;
+    MultiFormatWriter.prototype.encode = function (contents, format, width /*int*/, height /*int*/, hints) {
+        var writer;
         switch (format) {
             // case BarcodeFormat.EAN_8:
             //   writer = new EAN8Writer()
@@ -58,8 +62,8 @@ export default class MultiFormatWriter {
             // case BarcodeFormat.UPC_A:
             //   writer = new UPCAWriter()
             //   break
-            case BarcodeFormat.QR_CODE:
-                writer = new QRCodeWriter();
+            case BarcodeFormat_1.default.QR_CODE:
+                writer = new QRCodeWriter_1.default();
                 break;
             // case BarcodeFormat.CODE_39:
             //   writer = new Code39Writer()
@@ -86,8 +90,10 @@ export default class MultiFormatWriter {
             //   writer = new AztecWriter()
             //   break
             default:
-                throw new IllegalArgumentException('No encoder available for format ' + format);
+                throw new IllegalArgumentException_1.default('No encoder available for format ' + format);
         }
         return writer.encode(contents, format, width, height, hints);
-    }
-}
+    };
+    return MultiFormatWriter;
+}());
+exports.default = MultiFormatWriter;

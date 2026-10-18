@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,26 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import IllegalArgumentException from './IllegalArgumentException';
-export default class BinaryBitmap {
-    constructor(binarizer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+var IllegalArgumentException_1 = require("./IllegalArgumentException");
+var BinaryBitmap = /** @class */ (function () {
+    function BinaryBitmap(binarizer) {
         this.binarizer = binarizer;
         if (binarizer === null) {
-            throw new IllegalArgumentException('Binarizer must be non-null.');
+            throw new IllegalArgumentException_1.default('Binarizer must be non-null.');
         }
     }
     /**
      * @return The width of the bitmap.
      */
-    getWidth() {
+    BinaryBitmap.prototype.getWidth = function () {
         return this.binarizer.getWidth();
-    }
+    };
     /**
      * @return The height of the bitmap.
      */
-    getHeight() {
+    BinaryBitmap.prototype.getHeight = function () {
         return this.binarizer.getHeight();
-    }
+    };
     /**
      * Converts one row of luminance data to 1 bit data. May actually do the conversion, or return
      * cached data. Callers should assume this method is expensive and call it as seldom as possible.
@@ -44,9 +46,9 @@ export default class BinaryBitmap {
      * @return The array of bits for this row (true means black).
      * @throws NotFoundException if row can't be binarized
      */
-    getBlackRow(y /*int*/, row) {
+    BinaryBitmap.prototype.getBlackRow = function (y /*int*/, row) {
         return this.binarizer.getBlackRow(y, row);
-    }
+    };
     /**
      * Converts a 2D array of luminance data to 1 bit. As above, assume this method is expensive
      * and do not call it repeatedly. This method is intended for decoding 2D barcodes and may or
@@ -56,7 +58,7 @@ export default class BinaryBitmap {
      * @return The 2D array of bits for the image (true means black).
      * @throws NotFoundException if image can't be binarized to make a matrix
      */
-    getBlackMatrix() {
+    BinaryBitmap.prototype.getBlackMatrix = function () {
         // The matrix is created on demand the first time it is requested, then cached. There are two
         // reasons for this:
         // 1. This work will never be done if the caller only installs 1D Reader objects, or if a
@@ -66,13 +68,13 @@ export default class BinaryBitmap {
             this.matrix = this.binarizer.getBlackMatrix();
         }
         return this.matrix;
-    }
+    };
     /**
      * @return Whether this bitmap can be cropped.
      */
-    isCropSupported() {
+    BinaryBitmap.prototype.isCropSupported = function () {
         return this.binarizer.getLuminanceSource().isCropSupported();
-    }
+    };
     /**
      * Returns a new object with cropped image data. Implementations may keep a reference to the
      * original data rather than a copy. Only callable if isCropSupported() is true.
@@ -83,43 +85,45 @@ export default class BinaryBitmap {
      * @param height The height of the rectangle to crop.
      * @return A cropped version of this object.
      */
-    crop(left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
-        const newSource = this.binarizer.getLuminanceSource().crop(left, top, width, height);
+    BinaryBitmap.prototype.crop = function (left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
+        var newSource = this.binarizer.getLuminanceSource().crop(left, top, width, height);
         return new BinaryBitmap(this.binarizer.createBinarizer(newSource));
-    }
+    };
     /**
      * @return Whether this bitmap supports counter-clockwise rotation.
      */
-    isRotateSupported() {
+    BinaryBitmap.prototype.isRotateSupported = function () {
         return this.binarizer.getLuminanceSource().isRotateSupported();
-    }
+    };
     /**
      * Returns a new object with rotated image data by 90 degrees counterclockwise.
      * Only callable if {@link #isRotateSupported()} is true.
      *
      * @return A rotated version of this object.
      */
-    rotateCounterClockwise() {
-        const newSource = this.binarizer.getLuminanceSource().rotateCounterClockwise();
+    BinaryBitmap.prototype.rotateCounterClockwise = function () {
+        var newSource = this.binarizer.getLuminanceSource().rotateCounterClockwise();
         return new BinaryBitmap(this.binarizer.createBinarizer(newSource));
-    }
+    };
     /**
      * Returns a new object with rotated image data by 45 degrees counterclockwise.
      * Only callable if {@link #isRotateSupported()} is true.
      *
      * @return A rotated version of this object.
      */
-    rotateCounterClockwise45() {
-        const newSource = this.binarizer.getLuminanceSource().rotateCounterClockwise45();
+    BinaryBitmap.prototype.rotateCounterClockwise45 = function () {
+        var newSource = this.binarizer.getLuminanceSource().rotateCounterClockwise45();
         return new BinaryBitmap(this.binarizer.createBinarizer(newSource));
-    }
+    };
     /*@Override*/
-    toString() {
+    BinaryBitmap.prototype.toString = function () {
         try {
             return this.getBlackMatrix().toString();
         }
         catch (e /*: NotFoundException*/) {
             return '';
         }
-    }
-}
+    };
+    return BinaryBitmap;
+}());
+exports.default = BinaryBitmap;

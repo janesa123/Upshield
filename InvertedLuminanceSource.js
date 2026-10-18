@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,7 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import LuminanceSource from './LuminanceSource';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var LuminanceSource_1 = require("./LuminanceSource");
 /*namespace com.google.zxing {*/
 /**
  * A wrapper implementation of {@link LuminanceSource} which inverts the luminances it returns -- black becomes
@@ -21,55 +36,59 @@ import LuminanceSource from './LuminanceSource';
  *
  * @author Sean Owen
  */
-export default class InvertedLuminanceSource extends LuminanceSource {
-    constructor(delegate) {
-        super(delegate.getWidth(), delegate.getHeight());
-        this.delegate = delegate;
+var InvertedLuminanceSource = /** @class */ (function (_super) {
+    __extends(InvertedLuminanceSource, _super);
+    function InvertedLuminanceSource(delegate) {
+        var _this = _super.call(this, delegate.getWidth(), delegate.getHeight()) || this;
+        _this.delegate = delegate;
+        return _this;
     }
     /*@Override*/
-    getRow(y /*int*/, row) {
-        const sourceRow = this.delegate.getRow(y, row);
-        const width = this.getWidth();
-        for (let i = 0; i < width; i++) {
+    InvertedLuminanceSource.prototype.getRow = function (y /*int*/, row) {
+        var sourceRow = this.delegate.getRow(y, row);
+        var width = this.getWidth();
+        for (var i = 0; i < width; i++) {
             sourceRow[i] = /*(byte)*/ (255 - (sourceRow[i] & 0xFF));
         }
         return sourceRow;
-    }
+    };
     /*@Override*/
-    getMatrix() {
-        const matrix = this.delegate.getMatrix();
-        const length = this.getWidth() * this.getHeight();
-        const invertedMatrix = new Uint8ClampedArray(length);
-        for (let i = 0; i < length; i++) {
+    InvertedLuminanceSource.prototype.getMatrix = function () {
+        var matrix = this.delegate.getMatrix();
+        var length = this.getWidth() * this.getHeight();
+        var invertedMatrix = new Uint8ClampedArray(length);
+        for (var i = 0; i < length; i++) {
             invertedMatrix[i] = /*(byte)*/ (255 - (matrix[i] & 0xFF));
         }
         return invertedMatrix;
-    }
+    };
     /*@Override*/
-    isCropSupported() {
+    InvertedLuminanceSource.prototype.isCropSupported = function () {
         return this.delegate.isCropSupported();
-    }
+    };
     /*@Override*/
-    crop(left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
+    InvertedLuminanceSource.prototype.crop = function (left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
         return new InvertedLuminanceSource(this.delegate.crop(left, top, width, height));
-    }
+    };
     /*@Override*/
-    isRotateSupported() {
+    InvertedLuminanceSource.prototype.isRotateSupported = function () {
         return this.delegate.isRotateSupported();
-    }
+    };
     /**
      * @return original delegate {@link LuminanceSource} since invert undoes itself
      */
     /*@Override*/
-    invert() {
+    InvertedLuminanceSource.prototype.invert = function () {
         return this.delegate;
-    }
+    };
     /*@Override*/
-    rotateCounterClockwise() {
+    InvertedLuminanceSource.prototype.rotateCounterClockwise = function () {
         return new InvertedLuminanceSource(this.delegate.rotateCounterClockwise());
-    }
+    };
     /*@Override*/
-    rotateCounterClockwise45() {
+    InvertedLuminanceSource.prototype.rotateCounterClockwise45 = function () {
         return new InvertedLuminanceSource(this.delegate.rotateCounterClockwise45());
-    }
-}
+    };
+    return InvertedLuminanceSource;
+}(LuminanceSource_1.default));
+exports.default = InvertedLuminanceSource;

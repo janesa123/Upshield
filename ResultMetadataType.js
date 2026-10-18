@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2008 ZXing authors
  *
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing {*/
 /**
  * Represents some type of metadata about the result of the decoding that the decoder
@@ -82,4 +84,4 @@ var ResultMetadataType;
      */
     ResultMetadataType[ResultMetadataType["STRUCTURED_APPEND_PARITY"] = 10] = "STRUCTURED_APPEND_PARITY";
 })(ResultMetadataType || (ResultMetadataType = {}));
-export default ResultMetadataType;
+exports.default = ResultMetadataType;

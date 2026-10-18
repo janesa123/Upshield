@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2007 ZXing authors
  *
@@ -13,56 +14,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing {*/
-import MathUtils from './common/detector/MathUtils';
-import Float from './util/Float';
+var MathUtils_1 = require("./common/detector/MathUtils");
+var Float_1 = require("./util/Float");
 /**
  * <p>Encapsulates a point of interest in an image containing a barcode. Typically, this
  * would be the location of a finder pattern or the corner of the barcode, for example.</p>
  *
  * @author Sean Owen
  */
-export default class ResultPoint {
-    constructor(x, y) {
+var ResultPoint = /** @class */ (function () {
+    function ResultPoint(x, y) {
         this.x = x;
         this.y = y;
     }
-    getX() {
+    ResultPoint.prototype.getX = function () {
         return this.x;
-    }
-    getY() {
+    };
+    ResultPoint.prototype.getY = function () {
         return this.y;
-    }
+    };
     /*@Override*/
-    equals(other) {
+    ResultPoint.prototype.equals = function (other) {
         if (other instanceof ResultPoint) {
-            const otherPoint = other;
+            var otherPoint = other;
             return this.x === otherPoint.x && this.y === otherPoint.y;
         }
         return false;
-    }
+    };
     /*@Override*/
-    hashCode() {
-        return 31 * Float.floatToIntBits(this.x) + Float.floatToIntBits(this.y);
-    }
+    ResultPoint.prototype.hashCode = function () {
+        return 31 * Float_1.default.floatToIntBits(this.x) + Float_1.default.floatToIntBits(this.y);
+    };
     /*@Override*/
-    toString() {
+    ResultPoint.prototype.toString = function () {
         return '(' + this.x + ',' + this.y + ')';
-    }
+    };
     /**
      * Orders an array of three ResultPoints in an order [A,B,C] such that AB is less than AC
      * and BC is less than AC, and the angle between BC and BA is less than 180 degrees.
      *
      * @param patterns array of three {@code ResultPoint} to order
      */
-    static orderBestPatterns(patterns) {
+    ResultPoint.orderBestPatterns = function (patterns) {
         // Find distances between pattern centers
-        const zeroOneDistance = this.distance(patterns[0], patterns[1]);
-        const oneTwoDistance = this.distance(patterns[1], patterns[2]);
-        const zeroTwoDistance = this.distance(patterns[0], patterns[2]);
-        let pointA;
-        let pointB;
-        let pointC;
+        var zeroOneDistance = this.distance(patterns[0], patterns[1]);
+        var oneTwoDistance = this.distance(patterns[1], patterns[2]);
+        var zeroTwoDistance = this.distance(patterns[0], patterns[2]);
+        var pointA;
+        var pointB;
+        var pointC;
         // Assume one closest to other two is B; A and C will just be guesses at first
         if (oneTwoDistance >= zeroOneDistance && oneTwoDistance >= zeroTwoDistance) {
             pointB = patterns[0];
@@ -84,28 +86,30 @@ export default class ResultPoint {
         // we want for A, B, C. If it's negative, then we've got it flipped around and
         // should swap A and C.
         if (this.crossProductZ(pointA, pointB, pointC) < 0.0) {
-            const temp = pointA;
+            var temp = pointA;
             pointA = pointC;
             pointC = temp;
         }
         patterns[0] = pointA;
         patterns[1] = pointB;
         patterns[2] = pointC;
-    }
+    };
     /**
      * @param pattern1 first pattern
      * @param pattern2 second pattern
      * @return distance between two points
      */
-    static distance(pattern1, pattern2) {
-        return MathUtils.distance(pattern1.x, pattern1.y, pattern2.x, pattern2.y);
-    }
+    ResultPoint.distance = function (pattern1, pattern2) {
+        return MathUtils_1.default.distance(pattern1.x, pattern1.y, pattern2.x, pattern2.y);
+    };
     /**
      * Returns the z component of the cross product between vectors BC and BA.
      */
-    static crossProductZ(pointA, pointB, pointC) {
-        const bX = pointB.x;
-        const bY = pointB.y;
+    ResultPoint.crossProductZ = function (pointA, pointB, pointC) {
+        var bX = pointB.x;
+        var bY = pointB.y;
         return ((pointC.x - bX) * (pointA.y - bY)) - ((pointC.y - bY) * (pointA.x - bX));
-    }
-}
+    };
+    return ResultPoint;
+}());
+exports.default = ResultPoint;

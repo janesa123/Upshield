@@ -1,6 +1,8 @@
+"use strict";
 /*
  * Direct port to TypeScript of ZXing by Adrian Toșcă
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /*
  * Copyright 2009 ZXing authors
  *
@@ -59,4 +61,4 @@ var BarcodeFormat;
     /** UPC/EAN extension format. Not a stand-alone format. */
     BarcodeFormat[BarcodeFormat["UPC_EAN_EXTENSION"] = 16] = "UPC_EAN_EXTENSION";
 })(BarcodeFormat || (BarcodeFormat = {}));
-export default BarcodeFormat;
+exports.default = BarcodeFormat;

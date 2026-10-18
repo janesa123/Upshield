@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,12 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 /*namespace com.google.zxing {*/
-import './InvertedLuminanceSource'; // required because of circular dependencies between LuminanceSource and InvertedLuminanceSource
-import InvertedLuminanceSource from './InvertedLuminanceSource';
-import LuminanceSource from './LuminanceSource';
-import System from './util/System';
-import IllegalArgumentException from './IllegalArgumentException';
+require("./InvertedLuminanceSource"); // required because of circular dependencies between LuminanceSource and InvertedLuminanceSource
+var InvertedLuminanceSource_1 = require("./InvertedLuminanceSource");
+var LuminanceSource_1 = require("./LuminanceSource");
+var System_1 = require("./util/System");
+var IllegalArgumentException_1 = require("./IllegalArgumentException");
 /**
  * This class is used to help decode images from files which arrive as RGB data from
  * an ARGB pixel array. It does not support rotation.
@@ -26,92 +41,96 @@ import IllegalArgumentException from './IllegalArgumentException';
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Betaminos
  */
-export default class RGBLuminanceSource extends LuminanceSource {
-    constructor(luminances, width /*int*/, height /*int*/, dataWidth /*int*/, dataHeight /*int*/, left /*int*/, top /*int*/) {
-        super(width, height);
-        this.dataWidth = dataWidth;
-        this.dataHeight = dataHeight;
-        this.left = left;
-        this.top = top;
+var RGBLuminanceSource = /** @class */ (function (_super) {
+    __extends(RGBLuminanceSource, _super);
+    function RGBLuminanceSource(luminances, width /*int*/, height /*int*/, dataWidth /*int*/, dataHeight /*int*/, left /*int*/, top /*int*/) {
+        var _this = _super.call(this, width, height) || this;
+        _this.dataWidth = dataWidth;
+        _this.dataHeight = dataHeight;
+        _this.left = left;
+        _this.top = top;
         if (luminances.BYTES_PER_ELEMENT === 4) { // Int32Array
-            const size = width * height;
-            const luminancesUint8Array = new Uint8ClampedArray(size);
-            for (let offset = 0; offset < size; offset++) {
-                const pixel = luminances[offset];
-                const r = (pixel >> 16) & 0xff; // red
-                const g2 = (pixel >> 7) & 0x1fe; // 2 * green
-                const b = pixel & 0xff; // blue
+            var size = width * height;
+            var luminancesUint8Array = new Uint8ClampedArray(size);
+            for (var offset = 0; offset < size; offset++) {
+                var pixel = luminances[offset];
+                var r = (pixel >> 16) & 0xff; // red
+                var g2 = (pixel >> 7) & 0x1fe; // 2 * green
+                var b = pixel & 0xff; // blue
                 // Calculate green-favouring average cheaply
                 luminancesUint8Array[offset] = /*(byte) */ ((r + g2 + b) / 4) & 0xFF;
             }
-            this.luminances = luminancesUint8Array;
+            _this.luminances = luminancesUint8Array;
         }
         else {
-            this.luminances = luminances;
+            _this.luminances = luminances;
         }
         if (undefined === dataWidth) {
-            this.dataWidth = width;
+            _this.dataWidth = width;
         }
         if (undefined === dataHeight) {
-            this.dataHeight = height;
+            _this.dataHeight = height;
         }
         if (undefined === left) {
-            this.left = 0;
+            _this.left = 0;
         }
         if (undefined === top) {
-            this.top = 0;
+            _this.top = 0;
         }
-        if (this.left + width > this.dataWidth || this.top + height > this.dataHeight) {
-            throw new IllegalArgumentException('Crop rectangle does not fit within image data.');
+        if (_this.left + width > _this.dataWidth || _this.top + height > _this.dataHeight) {
+            throw new IllegalArgumentException_1.default('Crop rectangle does not fit within image data.');
         }
+        return _this;
     }
     /*@Override*/
-    getRow(y /*int*/, row) {
+    RGBLuminanceSource.prototype.getRow = function (y /*int*/, row) {
         if (y < 0 || y >= this.getHeight()) {
-            throw new IllegalArgumentException('Requested row is outside the image: ' + y);
+            throw new IllegalArgumentException_1.default('Requested row is outside the image: ' + y);
         }
-        const width = this.getWidth();
+        var width = this.getWidth();
         if (row === null || row === undefined || row.length < width) {
             row = new Uint8ClampedArray(width);
         }
-        const offset = (y + this.top) * this.dataWidth + this.left;
-        System.arraycopy(this.luminances, offset, row, 0, width);
+        var offset = (y + this.top) * this.dataWidth + this.left;
+        System_1.default.arraycopy(this.luminances, offset, row, 0, width);
         return row;
-    }
+    };
     /*@Override*/
-    getMatrix() {
-        const width = this.getWidth();
-        const height = this.getHeight();
+    RGBLuminanceSource.prototype.getMatrix = function () {
+        var width = this.getWidth();
+        var height = this.getHeight();
         // If the caller asks for the entire underlying image, save the copy and give them the
         // original data. The docs specifically warn that result.length must be ignored.
         if (width === this.dataWidth && height === this.dataHeight) {
             return this.luminances;
         }
-        const area = width * height;
-        const matrix = new Uint8ClampedArray(area);
-        let inputOffset = this.top * this.dataWidth + this.left;
+        var area = width * height;
+        var matrix = new Uint8ClampedArray(area);
+        var inputOffset = this.top * this.dataWidth + this.left;
         // If the width matches the full width of the underlying data, perform a single copy.
         if (width === this.dataWidth) {
-            System.arraycopy(this.luminances, inputOffset, matrix, 0, area);
+            System_1.default.arraycopy(this.luminances, inputOffset, matrix, 0, area);
             return matrix;
         }
         // Otherwise copy one cropped row at a time.
-        for (let y = 0; y < height; y++) {
-            const outputOffset = y * width;
-            System.arraycopy(this.luminances, inputOffset, matrix, outputOffset, width);
+        for (var y = 0; y < height; y++) {
+            var outputOffset = y * width;
+            System_1.default.arraycopy(this.luminances, inputOffset, matrix, outputOffset, width);
             inputOffset += this.dataWidth;
         }
         return matrix;
-    }
+    };
     /*@Override*/
-    isCropSupported() {
+    RGBLuminanceSource.prototype.isCropSupported = function () {
         return true;
-    }
+    };
     /*@Override*/
-    crop(left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
+    RGBLuminanceSource.prototype.crop = function (left /*int*/, top /*int*/, width /*int*/, height /*int*/) {
         return new RGBLuminanceSource(this.luminances, width, height, this.dataWidth, this.dataHeight, this.left + left, this.top + top);
-    }
-    invert() {
-        return new InvertedLuminanceSource(this);
-    }
-}
+    };
+    RGBLuminanceSource.prototype.invert = function () {
+        return new InvertedLuminanceSource_1.default(this);
+    };
+    return RGBLuminanceSource;
+}(LuminanceSource_1.default));
+exports.default = RGBLuminanceSource;

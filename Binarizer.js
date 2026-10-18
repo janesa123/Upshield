@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2009 ZXing authors
  *
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * This class hierarchy provides a set of methods to convert luminance data to 1 bit data.
  * It allows the algorithm to vary polymorphically, for example allowing a very expensive
@@ -21,18 +23,19 @@
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-class Binarizer {
-    constructor(source) {
+var Binarizer = /** @class */ (function () {
+    function Binarizer(source) {
         this.source = source;
     }
-    getLuminanceSource() {
+    Binarizer.prototype.getLuminanceSource = function () {
         return this.source;
-    }
-    getWidth() {
+    };
+    Binarizer.prototype.getWidth = function () {
         return this.source.getWidth();
-    }
-    getHeight() {
+    };
+    Binarizer.prototype.getHeight = function () {
         return this.source.getHeight();
-    }
-}
-export default Binarizer;
+    };
+    return Binarizer;
+}());
+exports.default = Binarizer;
