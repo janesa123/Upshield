@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2013 ZXing authors
 *
@@ -13,11 +14,14 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-export default class Token {
-    constructor(previous) {
+Object.defineProperty(exports, "__esModule", { value: true });
+var Token = /** @class */ (function () {
+    function Token(previous) {
         this.previous = previous;
     }
-    getPrevious() {
+    Token.prototype.getPrevious = function () {
         return this.previous;
-    }
-}
+    };
+    return Token;
+}());
+exports.default = Token;

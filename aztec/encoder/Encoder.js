@@ -1,12 +1,25 @@
-import BitArray from '../../common/BitArray';
-import IllegalArgumentException from '../../IllegalArgumentException';
-import StringUtils from '../../common/StringUtils';
-import BitMatrix from '../../common/BitMatrix';
-import AztecCode from './AztecCode';
-import ReedSolomonEncoder from '../../common/reedsolomon/ReedSolomonEncoder';
-import GenericGF from '../../common/reedsolomon/GenericGF';
-import HighLevelEncoder from './HighLevelEncoder';
-import Integer from '../../util/Integer';
+"use strict";
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var BitArray_1 = require("../../common/BitArray");
+var IllegalArgumentException_1 = require("../../IllegalArgumentException");
+var StringUtils_1 = require("../../common/StringUtils");
+var BitMatrix_1 = require("../../common/BitMatrix");
+var AztecCode_1 = require("./AztecCode");
+var ReedSolomonEncoder_1 = require("../../common/reedsolomon/ReedSolomonEncoder");
+var GenericGF_1 = require("../../common/reedsolomon/GenericGF");
+var HighLevelEncoder_1 = require("./HighLevelEncoder");
+var Integer_1 = require("../../util/Integer");
 /*
  * Copyright 2013 ZXing authors
  *
@@ -32,8 +45,8 @@ import Integer from '../../util/Integer';
  *
  * @author Rustam Abdullaev
  */
-export default /*public final*/ class Encoder {
-    constructor() {
+var Encoder = /** @class */ (function () {
+    function Encoder() {
     }
     /**
      * Encodes the given binary content as an Aztec symbol
@@ -41,9 +54,9 @@ export default /*public final*/ class Encoder {
      * @param data input data string
      * @return Aztec symbol matrix with metadata
      */
-    static encodeBytes(data) {
+    Encoder.encodeBytes = function (data) {
         return Encoder.encode(data, Encoder.DEFAULT_EC_PERCENT, Encoder.DEFAULT_AZTEC_LAYERS);
-    }
+    };
     /**
      * Encodes the given binary content as an Aztec symbol
      *
@@ -53,33 +66,33 @@ export default /*public final*/ class Encoder {
      * @param userSpecifiedLayers if non-zero, a user-specified value for the number of layers
      * @return Aztec symbol matrix with metadata
      */
-    static encode(data, minECCPercent, userSpecifiedLayers) {
+    Encoder.encode = function (data, minECCPercent, userSpecifiedLayers) {
         // High-level encode
-        let bits = new HighLevelEncoder(data).encode();
+        var bits = new HighLevelEncoder_1.default(data).encode();
         // stuff bits and choose symbol size
-        let eccBits = Integer.truncDivision((bits.getSize() * minECCPercent), 100) + 11;
-        let totalSizeBits = bits.getSize() + eccBits;
-        let compact;
-        let layers;
-        let totalBitsInLayer;
-        let wordSize;
-        let stuffedBits;
+        var eccBits = Integer_1.default.truncDivision((bits.getSize() * minECCPercent), 100) + 11;
+        var totalSizeBits = bits.getSize() + eccBits;
+        var compact;
+        var layers;
+        var totalBitsInLayer;
+        var wordSize;
+        var stuffedBits;
         if (userSpecifiedLayers !== Encoder.DEFAULT_AZTEC_LAYERS) {
             compact = userSpecifiedLayers < 0;
             layers = Math.abs(userSpecifiedLayers);
             if (layers > (compact ? Encoder.MAX_NB_BITS_COMPACT : Encoder.MAX_NB_BITS)) {
-                throw new IllegalArgumentException(StringUtils.format('Illegal value %s for layers', userSpecifiedLayers));
+                throw new IllegalArgumentException_1.default(StringUtils_1.default.format('Illegal value %s for layers', userSpecifiedLayers));
             }
             totalBitsInLayer = Encoder.totalBitsInLayer(layers, compact);
             wordSize = Encoder.WORD_SIZE[layers];
-            let usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
+            var usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
             stuffedBits = Encoder.stuffBits(bits, wordSize);
             if (stuffedBits.getSize() + eccBits > usableBitsInLayers) {
-                throw new IllegalArgumentException('Data to large for user specified layer');
+                throw new IllegalArgumentException_1.default('Data to large for user specified layer');
             }
             if (compact && stuffedBits.getSize() > wordSize * 64) {
                 // Compact format only allows 64 data words, though C4 can hold more words than that
-                throw new IllegalArgumentException('Data to large for user specified layer');
+                throw new IllegalArgumentException_1.default('Data to large for user specified layer');
             }
         }
         else {
@@ -88,9 +101,9 @@ export default /*public final*/ class Encoder {
             // We look at the possible table sizes in the order Compact1, Compact2, Compact3,
             // Compact4, Normal4,...  Normal(i) for i < 4 isn't typically used since Compact(i+1)
             // is the same size, but has more data.
-            for (let i /*int*/ = 0;; i++) {
+            for (var i /*int*/ = 0;; i++) {
                 if (i > Encoder.MAX_NB_BITS) {
-                    throw new IllegalArgumentException('Data too large for an Aztec code');
+                    throw new IllegalArgumentException_1.default('Data too large for an Aztec code');
                 }
                 compact = i <= 3;
                 layers = compact ? i + 1 : i;
@@ -104,7 +117,7 @@ export default /*public final*/ class Encoder {
                     wordSize = Encoder.WORD_SIZE[layers];
                     stuffedBits = Encoder.stuffBits(bits, wordSize);
                 }
-                let usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
+                var usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
                 if (compact && stuffedBits.getSize() > wordSize * 64) {
                     // Compact format only allows 64 data words, though C4 can hold more words than that
                     continue;
@@ -114,38 +127,38 @@ export default /*public final*/ class Encoder {
                 }
             }
         }
-        let messageBits = Encoder.generateCheckWords(stuffedBits, totalBitsInLayer, wordSize);
+        var messageBits = Encoder.generateCheckWords(stuffedBits, totalBitsInLayer, wordSize);
         // generate mode message
-        let messageSizeInWords = stuffedBits.getSize() / wordSize;
-        let modeMessage = Encoder.generateModeMessage(compact, layers, messageSizeInWords);
+        var messageSizeInWords = stuffedBits.getSize() / wordSize;
+        var modeMessage = Encoder.generateModeMessage(compact, layers, messageSizeInWords);
         // allocate symbol
-        let baseMatrixSize = (compact ? 11 : 14) + layers * 4; // not including alignment lines
-        let alignmentMap = new Int32Array(baseMatrixSize);
-        let matrixSize;
+        var baseMatrixSize = (compact ? 11 : 14) + layers * 4; // not including alignment lines
+        var alignmentMap = new Int32Array(baseMatrixSize);
+        var matrixSize;
         if (compact) {
             // no alignment marks in compact mode, alignmentMap is a no-op
             matrixSize = baseMatrixSize;
-            for (let i /*int*/ = 0; i < alignmentMap.length; i++) {
+            for (var i /*int*/ = 0; i < alignmentMap.length; i++) {
                 alignmentMap[i] = i;
             }
         }
         else {
-            matrixSize = baseMatrixSize + 1 + 2 * Integer.truncDivision((Integer.truncDivision(baseMatrixSize, 2) - 1), 15);
-            let origCenter = Integer.truncDivision(baseMatrixSize, 2);
-            let center = Integer.truncDivision(matrixSize, 2);
-            for (let i /*int*/ = 0; i < origCenter; i++) {
-                let newOffset = i + Integer.truncDivision(i, 15);
+            matrixSize = baseMatrixSize + 1 + 2 * Integer_1.default.truncDivision((Integer_1.default.truncDivision(baseMatrixSize, 2) - 1), 15);
+            var origCenter = Integer_1.default.truncDivision(baseMatrixSize, 2);
+            var center = Integer_1.default.truncDivision(matrixSize, 2);
+            for (var i /*int*/ = 0; i < origCenter; i++) {
+                var newOffset = i + Integer_1.default.truncDivision(i, 15);
                 alignmentMap[origCenter - i - 1] = center - newOffset - 1;
                 alignmentMap[origCenter + i] = center + newOffset + 1;
             }
         }
-        let matrix = new BitMatrix(matrixSize);
+        var matrix = new BitMatrix_1.default(matrixSize);
         // draw data bits
-        for (let i /*int*/ = 0, rowOffset = 0; i < layers; i++) {
-            let rowSize = (layers - i) * 4 + (compact ? 9 : 12);
-            for (let j /*int*/ = 0; j < rowSize; j++) {
-                let columnOffset = j * 2;
-                for (let k /*int*/ = 0; k < 2; k++) {
+        for (var i /*int*/ = 0, rowOffset = 0; i < layers; i++) {
+            var rowSize = (layers - i) * 4 + (compact ? 9 : 12);
+            for (var j /*int*/ = 0; j < rowSize; j++) {
+                var columnOffset = j * 2;
+                for (var k /*int*/ = 0; k < 2; k++) {
                     if (messageBits.get(rowOffset + columnOffset + k)) {
                         matrix.set(alignmentMap[i * 2 + k], alignmentMap[i * 2 + j]);
                     }
@@ -166,30 +179,30 @@ export default /*public final*/ class Encoder {
         Encoder.drawModeMessage(matrix, compact, matrixSize, modeMessage);
         // draw alignment marks
         if (compact) {
-            Encoder.drawBullsEye(matrix, Integer.truncDivision(matrixSize, 2), 5);
+            Encoder.drawBullsEye(matrix, Integer_1.default.truncDivision(matrixSize, 2), 5);
         }
         else {
-            Encoder.drawBullsEye(matrix, Integer.truncDivision(matrixSize, 2), 7);
-            for (let i /*int*/ = 0, j = 0; i < Integer.truncDivision(baseMatrixSize, 2) - 1; i += 15, j += 16) {
-                for (let k /*int*/ = Integer.truncDivision(matrixSize, 2) & 1; k < matrixSize; k += 2) {
-                    matrix.set(Integer.truncDivision(matrixSize, 2) - j, k);
-                    matrix.set(Integer.truncDivision(matrixSize, 2) + j, k);
-                    matrix.set(k, Integer.truncDivision(matrixSize, 2) - j);
-                    matrix.set(k, Integer.truncDivision(matrixSize, 2) + j);
+            Encoder.drawBullsEye(matrix, Integer_1.default.truncDivision(matrixSize, 2), 7);
+            for (var i /*int*/ = 0, j = 0; i < Integer_1.default.truncDivision(baseMatrixSize, 2) - 1; i += 15, j += 16) {
+                for (var k /*int*/ = Integer_1.default.truncDivision(matrixSize, 2) & 1; k < matrixSize; k += 2) {
+                    matrix.set(Integer_1.default.truncDivision(matrixSize, 2) - j, k);
+                    matrix.set(Integer_1.default.truncDivision(matrixSize, 2) + j, k);
+                    matrix.set(k, Integer_1.default.truncDivision(matrixSize, 2) - j);
+                    matrix.set(k, Integer_1.default.truncDivision(matrixSize, 2) + j);
                 }
             }
         }
-        let aztec = new AztecCode();
+        var aztec = new AztecCode_1.default();
         aztec.setCompact(compact);
         aztec.setSize(matrixSize);
         aztec.setLayers(layers);
         aztec.setCodeWords(messageSizeInWords);
         aztec.setMatrix(matrix);
         return aztec;
-    }
-    static drawBullsEye(matrix, center, size) {
-        for (let i /*int*/ = 0; i < size; i += 2) {
-            for (let j /*int*/ = center - i; j <= center + i; j++) {
+    };
+    Encoder.drawBullsEye = function (matrix, center, size) {
+        for (var i /*int*/ = 0; i < size; i += 2) {
+            for (var j /*int*/ = center - i; j <= center + i; j++) {
                 matrix.set(j, center - i);
                 matrix.set(j, center + i);
                 matrix.set(center - i, j);
@@ -202,9 +215,9 @@ export default /*public final*/ class Encoder {
         matrix.set(center + size, center - size);
         matrix.set(center + size, center - size + 1);
         matrix.set(center + size, center + size - 1);
-    }
-    static generateModeMessage(compact, layers, messageSizeInWords) {
-        let modeMessage = new BitArray();
+    };
+    Encoder.generateModeMessage = function (compact, layers, messageSizeInWords) {
+        var modeMessage = new BitArray_1.default();
         if (compact) {
             modeMessage.appendBits(layers - 1, 2);
             modeMessage.appendBits(messageSizeInWords - 1, 6);
@@ -216,12 +229,12 @@ export default /*public final*/ class Encoder {
             modeMessage = Encoder.generateCheckWords(modeMessage, 40, 4);
         }
         return modeMessage;
-    }
-    static drawModeMessage(matrix, compact, matrixSize, modeMessage) {
-        let center = Integer.truncDivision(matrixSize, 2);
+    };
+    Encoder.drawModeMessage = function (matrix, compact, matrixSize, modeMessage) {
+        var center = Integer_1.default.truncDivision(matrixSize, 2);
         if (compact) {
-            for (let i /*int*/ = 0; i < 7; i++) {
-                let offset = center - 3 + i;
+            for (var i /*int*/ = 0; i < 7; i++) {
+                var offset = center - 3 + i;
                 if (modeMessage.get(i)) {
                     matrix.set(offset, center - 5);
                 }
@@ -237,8 +250,8 @@ export default /*public final*/ class Encoder {
             }
         }
         else {
-            for (let i /*int*/ = 0; i < 10; i++) {
-                let offset = center - 5 + i + Integer.truncDivision(i, 5);
+            for (var i /*int*/ = 0; i < 10; i++) {
+                var offset = center - 5 + i + Integer_1.default.truncDivision(i, 5);
                 if (modeMessage.get(i)) {
                     matrix.set(offset, center - 7);
                 }
@@ -253,58 +266,69 @@ export default /*public final*/ class Encoder {
                 }
             }
         }
-    }
-    static generateCheckWords(bitArray, totalBits, wordSize) {
+    };
+    Encoder.generateCheckWords = function (bitArray, totalBits, wordSize) {
+        var e_1, _a;
         // bitArray is guaranteed to be a multiple of the wordSize, so no padding needed
-        let messageSizeInWords = bitArray.getSize() / wordSize;
-        let rs = new ReedSolomonEncoder(Encoder.getGF(wordSize));
-        let totalWords = Integer.truncDivision(totalBits, wordSize);
-        let messageWords = Encoder.bitsToWords(bitArray, wordSize, totalWords);
+        var messageSizeInWords = bitArray.getSize() / wordSize;
+        var rs = new ReedSolomonEncoder_1.default(Encoder.getGF(wordSize));
+        var totalWords = Integer_1.default.truncDivision(totalBits, wordSize);
+        var messageWords = Encoder.bitsToWords(bitArray, wordSize, totalWords);
         rs.encode(messageWords, totalWords - messageSizeInWords);
-        let startPad = totalBits % wordSize;
-        let messageBits = new BitArray();
+        var startPad = totalBits % wordSize;
+        var messageBits = new BitArray_1.default();
         messageBits.appendBits(0, startPad);
-        for (const messageWord /*: int*/ of Array.from(messageWords)) {
-            messageBits.appendBits(messageWord, wordSize);
+        try {
+            for (var _b = __values(Array.from(messageWords)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var messageWord = _c.value /*: int*/;
+                messageBits.appendBits(messageWord, wordSize);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         return messageBits;
-    }
-    static bitsToWords(stuffedBits, wordSize, totalWords) {
-        let message = new Int32Array(totalWords);
-        let i;
-        let n;
+    };
+    Encoder.bitsToWords = function (stuffedBits, wordSize, totalWords) {
+        var message = new Int32Array(totalWords);
+        var i;
+        var n;
         for (i = 0, n = stuffedBits.getSize() / wordSize; i < n; i++) {
-            let value = 0;
-            for (let j /*int*/ = 0; j < wordSize; j++) {
+            var value = 0;
+            for (var j /*int*/ = 0; j < wordSize; j++) {
                 value |= stuffedBits.get(i * wordSize + j) ? (1 << wordSize - j - 1) : 0;
             }
             message[i] = value;
         }
         return message;
-    }
-    static getGF(wordSize) {
+    };
+    Encoder.getGF = function (wordSize) {
         switch (wordSize) {
             case 4:
-                return GenericGF.AZTEC_PARAM;
+                return GenericGF_1.default.AZTEC_PARAM;
             case 6:
-                return GenericGF.AZTEC_DATA_6;
+                return GenericGF_1.default.AZTEC_DATA_6;
             case 8:
-                return GenericGF.AZTEC_DATA_8;
+                return GenericGF_1.default.AZTEC_DATA_8;
             case 10:
-                return GenericGF.AZTEC_DATA_10;
+                return GenericGF_1.default.AZTEC_DATA_10;
             case 12:
-                return GenericGF.AZTEC_DATA_12;
+                return GenericGF_1.default.AZTEC_DATA_12;
             default:
-                throw new IllegalArgumentException('Unsupported word size ' + wordSize);
+                throw new IllegalArgumentException_1.default('Unsupported word size ' + wordSize);
         }
-    }
-    static stuffBits(bits, wordSize) {
-        let out = new BitArray();
-        let n = bits.getSize();
-        let mask = (1 << wordSize) - 2;
-        for (let i /*int*/ = 0; i < n; i += wordSize) {
-            let word = 0;
-            for (let j /*int*/ = 0; j < wordSize; j++) {
+    };
+    Encoder.stuffBits = function (bits, wordSize) {
+        var out = new BitArray_1.default();
+        var n = bits.getSize();
+        var mask = (1 << wordSize) - 2;
+        for (var i /*int*/ = 0; i < n; i += wordSize) {
+            var word = 0;
+            for (var j /*int*/ = 0; j < wordSize; j++) {
                 if (i + j >= n || bits.get(i + j)) {
                     word |= 1 << (wordSize - 1 - j);
                 }
@@ -322,16 +346,18 @@ export default /*public final*/ class Encoder {
             }
         }
         return out;
-    }
-    static totalBitsInLayer(layers, compact) {
+    };
+    Encoder.totalBitsInLayer = function (layers, compact) {
         return ((compact ? 88 : 112) + 16 * layers) * layers;
-    }
-}
-Encoder.DEFAULT_EC_PERCENT = 33; // default minimal percentage of error check words
-Encoder.DEFAULT_AZTEC_LAYERS = 0;
-Encoder.MAX_NB_BITS = 32;
-Encoder.MAX_NB_BITS_COMPACT = 4;
-Encoder.WORD_SIZE = Int32Array.from([
-    4, 6, 6, 8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-    12, 12, 12, 12, 12, 12, 12, 12, 12, 12
-]);
+    };
+    Encoder.DEFAULT_EC_PERCENT = 33; // default minimal percentage of error check words
+    Encoder.DEFAULT_AZTEC_LAYERS = 0;
+    Encoder.MAX_NB_BITS = 32;
+    Encoder.MAX_NB_BITS_COMPACT = 4;
+    Encoder.WORD_SIZE = Int32Array.from([
+        4, 6, 6, 8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+        12, 12, 12, 12, 12, 12, 12, 12, 12, 12
+    ]);
+    return Encoder;
+}());
+exports.default = Encoder;

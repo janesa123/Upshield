@@ -1,31 +1,34 @@
-import * as C from './EncoderConstants';
-import Arrays from '../../util/Arrays';
-import StringUtils from '../../common/StringUtils';
-export function static_CHAR_MAP(CHAR_MAP) {
-    const spaceCharCode = StringUtils.getCharCode(' ');
-    const pointCharCode = StringUtils.getCharCode('.');
-    const commaCharCode = StringUtils.getCharCode(',');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CHAR_MAP = exports.static_CHAR_MAP = void 0;
+var C = require("./EncoderConstants");
+var Arrays_1 = require("../../util/Arrays");
+var StringUtils_1 = require("../../common/StringUtils");
+function static_CHAR_MAP(CHAR_MAP) {
+    var spaceCharCode = StringUtils_1.default.getCharCode(' ');
+    var pointCharCode = StringUtils_1.default.getCharCode('.');
+    var commaCharCode = StringUtils_1.default.getCharCode(',');
     CHAR_MAP[C.MODE_UPPER][spaceCharCode] = 1;
-    const zUpperCharCode = StringUtils.getCharCode('Z');
-    const aUpperCharCode = StringUtils.getCharCode('A');
-    for (let c = aUpperCharCode; c <= zUpperCharCode; c++) {
+    var zUpperCharCode = StringUtils_1.default.getCharCode('Z');
+    var aUpperCharCode = StringUtils_1.default.getCharCode('A');
+    for (var c = aUpperCharCode; c <= zUpperCharCode; c++) {
         CHAR_MAP[C.MODE_UPPER][c] = c - aUpperCharCode + 2;
     }
     CHAR_MAP[C.MODE_LOWER][spaceCharCode] = 1;
-    const zLowerCharCode = StringUtils.getCharCode('z');
-    const aLowerCharCode = StringUtils.getCharCode('a');
-    for (let c = aLowerCharCode; c <= zLowerCharCode; c++) {
+    var zLowerCharCode = StringUtils_1.default.getCharCode('z');
+    var aLowerCharCode = StringUtils_1.default.getCharCode('a');
+    for (var c = aLowerCharCode; c <= zLowerCharCode; c++) {
         CHAR_MAP[C.MODE_LOWER][c] = c - aLowerCharCode + 2;
     }
     CHAR_MAP[C.MODE_DIGIT][spaceCharCode] = 1;
-    const nineCharCode = StringUtils.getCharCode('9');
-    const zeroCharCode = StringUtils.getCharCode('0');
-    for (let c = zeroCharCode; c <= nineCharCode; c++) {
+    var nineCharCode = StringUtils_1.default.getCharCode('9');
+    var zeroCharCode = StringUtils_1.default.getCharCode('0');
+    for (var c = zeroCharCode; c <= nineCharCode; c++) {
         CHAR_MAP[C.MODE_DIGIT][c] = c - zeroCharCode + 2;
     }
     CHAR_MAP[C.MODE_DIGIT][commaCharCode] = 12;
     CHAR_MAP[C.MODE_DIGIT][pointCharCode] = 13;
-    const mixedTable = [
+    var mixedTable = [
         '\x00',
         ' ',
         '\x01',
@@ -55,10 +58,10 @@ export function static_CHAR_MAP(CHAR_MAP) {
         '~',
         '\x7f'
     ];
-    for (let i = 0; i < mixedTable.length; i++) {
-        CHAR_MAP[C.MODE_MIXED][StringUtils.getCharCode(mixedTable[i])] = i;
+    for (var i = 0; i < mixedTable.length; i++) {
+        CHAR_MAP[C.MODE_MIXED][StringUtils_1.default.getCharCode(mixedTable[i])] = i;
     }
-    const punctTable = [
+    var punctTable = [
         '\x00',
         '\r',
         '\x00',
@@ -91,11 +94,12 @@ export function static_CHAR_MAP(CHAR_MAP) {
         '{',
         '}'
     ];
-    for (let i = 0; i < punctTable.length; i++) {
-        if (StringUtils.getCharCode(punctTable[i]) > 0) {
-            CHAR_MAP[C.MODE_PUNCT][StringUtils.getCharCode(punctTable[i])] = i;
+    for (var i = 0; i < punctTable.length; i++) {
+        if (StringUtils_1.default.getCharCode(punctTable[i]) > 0) {
+            CHAR_MAP[C.MODE_PUNCT][StringUtils_1.default.getCharCode(punctTable[i])] = i;
         }
     }
     return CHAR_MAP;
 }
-export const CHAR_MAP = static_CHAR_MAP(Arrays.createInt32Array(5, 256));
+exports.static_CHAR_MAP = static_CHAR_MAP;
+exports.CHAR_MAP = static_CHAR_MAP(Arrays_1.default.createInt32Array(5, 256));

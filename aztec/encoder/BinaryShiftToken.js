@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2013 ZXing authors
 *
@@ -13,18 +14,34 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-import SimpleToken from './SimpleToken';
-export default /*final*/ class BinaryShiftToken extends SimpleToken {
-    constructor(previous, binaryShiftStart, binaryShiftByteCount) {
-        super(previous, 0, 0);
-        this.binaryShiftStart = binaryShiftStart;
-        this.binaryShiftByteCount = binaryShiftByteCount;
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var SimpleToken_1 = require("./SimpleToken");
+var BinaryShiftToken = /** @class */ (function (_super) {
+    __extends(BinaryShiftToken, _super);
+    function BinaryShiftToken(previous, binaryShiftStart, binaryShiftByteCount) {
+        var _this = _super.call(this, previous, 0, 0) || this;
+        _this.binaryShiftStart = binaryShiftStart;
+        _this.binaryShiftByteCount = binaryShiftByteCount;
+        return _this;
     }
     /**
      * @Override
      */
-    appendTo(bitArray, text) {
-        for (let i = 0; i < this.binaryShiftByteCount; i++) {
+    BinaryShiftToken.prototype.appendTo = function (bitArray, text) {
+        for (var i = 0; i < this.binaryShiftByteCount; i++) {
             if (i === 0 || (i === 31 && this.binaryShiftByteCount <= 62)) {
                 // We need a header before the first character, and before
                 // character 31 when the total byte code is <= 62
@@ -43,15 +60,17 @@ export default /*final*/ class BinaryShiftToken extends SimpleToken {
             }
             bitArray.appendBits(text[this.binaryShiftStart + i], 8);
         }
-    }
-    addBinaryShift(start, byteCount) {
+    };
+    BinaryShiftToken.prototype.addBinaryShift = function (start, byteCount) {
         // int bitCount = (byteCount * 8) + (byteCount <= 31 ? 10 : byteCount <= 62 ? 20 : 21);
         return new BinaryShiftToken(this, start, byteCount);
-    }
+    };
     /**
      * @Override
      */
-    toString() {
+    BinaryShiftToken.prototype.toString = function () {
         return '<' + this.binaryShiftStart + '::' + (this.binaryShiftStart + this.binaryShiftByteCount - 1) + '>';
-    }
-}
+    };
+    return BinaryShiftToken;
+}(SimpleToken_1.default));
+exports.default = BinaryShiftToken;

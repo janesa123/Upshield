@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright 2010 ZXing authors
  *
@@ -13,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Result from '../Result';
-import BarcodeFormat from '../BarcodeFormat';
-import DecodeHintType from '../DecodeHintType';
-import ResultMetadataType from '../ResultMetadataType';
-import System from '../util/System';
-import Decoder from './decoder/Decoder';
-import Detector from './detector/Detector';
+Object.defineProperty(exports, "__esModule", { value: true });
+var Result_1 = require("../Result");
+var BarcodeFormat_1 = require("../BarcodeFormat");
+var DecodeHintType_1 = require("../DecodeHintType");
+var ResultMetadataType_1 = require("../ResultMetadataType");
+var System_1 = require("../util/System");
+var Decoder_1 = require("./decoder/Decoder");
+var Detector_1 = require("./detector/Detector");
 // import java.util.List;
 // import java.util.Map;
 /**
@@ -27,7 +29,9 @@ import Detector from './detector/Detector';
  *
  * @author David Olivier
  */
-export default class AztecReader {
+var AztecReader = /** @class */ (function () {
+    function AztecReader() {
+    }
     /**
      * Locates and decodes a Data Matrix code in an image.
      *
@@ -35,26 +39,27 @@ export default class AztecReader {
      * @throws NotFoundException if a Data Matrix code cannot be found
      * @throws FormatException if a Data Matrix code cannot be decoded
      */
-    decode(image, hints = null) {
-        let exception = null;
-        let detector = new Detector(image.getBlackMatrix());
-        let points = null;
-        let decoderResult = null;
+    AztecReader.prototype.decode = function (image, hints) {
+        if (hints === void 0) { hints = null; }
+        var exception = null;
+        var detector = new Detector_1.default(image.getBlackMatrix());
+        var points = null;
+        var decoderResult = null;
         try {
-            let detectorResult = detector.detectMirror(false);
+            var detectorResult = detector.detectMirror(false);
             points = detectorResult.getPoints();
             this.reportFoundResultPoints(hints, points);
-            decoderResult = new Decoder().decode(detectorResult);
+            decoderResult = new Decoder_1.default().decode(detectorResult);
         }
         catch (e) {
             exception = e;
         }
         if (decoderResult == null) {
             try {
-                let detectorResult = detector.detectMirror(true);
+                var detectorResult = detector.detectMirror(true);
                 points = detectorResult.getPoints();
                 this.reportFoundResultPoints(hints, points);
-                decoderResult = new Decoder().decode(detectorResult);
+                decoderResult = new Decoder_1.default().decode(detectorResult);
             }
             catch (e) {
                 if (exception != null) {
@@ -63,29 +68,31 @@ export default class AztecReader {
                 throw e;
             }
         }
-        let result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), decoderResult.getNumBits(), points, BarcodeFormat.AZTEC, System.currentTimeMillis());
-        let byteSegments = decoderResult.getByteSegments();
+        var result = new Result_1.default(decoderResult.getText(), decoderResult.getRawBytes(), decoderResult.getNumBits(), points, BarcodeFormat_1.default.AZTEC, System_1.default.currentTimeMillis());
+        var byteSegments = decoderResult.getByteSegments();
         if (byteSegments != null) {
-            result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);
+            result.putMetadata(ResultMetadataType_1.default.BYTE_SEGMENTS, byteSegments);
         }
-        let ecLevel = decoderResult.getECLevel();
+        var ecLevel = decoderResult.getECLevel();
         if (ecLevel != null) {
-            result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, ecLevel);
+            result.putMetadata(ResultMetadataType_1.default.ERROR_CORRECTION_LEVEL, ecLevel);
         }
         return result;
-    }
-    reportFoundResultPoints(hints, points) {
+    };
+    AztecReader.prototype.reportFoundResultPoints = function (hints, points) {
         if (hints != null) {
-            let rpcb = hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
-            if (rpcb != null) {
-                points.forEach((point, idx, arr) => {
-                    rpcb.foundPossibleResultPoint(point);
+            var rpcb_1 = hints.get(DecodeHintType_1.default.NEED_RESULT_POINT_CALLBACK);
+            if (rpcb_1 != null) {
+                points.forEach(function (point, idx, arr) {
+                    rpcb_1.foundPossibleResultPoint(point);
                 });
             }
         }
-    }
+    };
     // @Override
-    reset() {
+    AztecReader.prototype.reset = function () {
         // do nothing
-    }
-}
+    };
+    return AztecReader;
+}());
+exports.default = AztecReader;

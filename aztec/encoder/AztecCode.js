@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Copyright 2013 ZXing authors
 *
@@ -13,55 +14,60 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Aztec 2D code representation
  *
  * @author Rustam Abdullaev
  */
-export default /*public final*/ class AztecCode {
+var AztecCode = /** @class */ (function () {
+    function AztecCode() {
+    }
     /**
      * @return {@code true} if compact instead of full mode
      */
-    isCompact() {
+    AztecCode.prototype.isCompact = function () {
         return this.compact;
-    }
-    setCompact(compact) {
+    };
+    AztecCode.prototype.setCompact = function (compact) {
         this.compact = compact;
-    }
+    };
     /**
      * @return size in pixels (width and height)
      */
-    getSize() {
+    AztecCode.prototype.getSize = function () {
         return this.size;
-    }
-    setSize(size) {
+    };
+    AztecCode.prototype.setSize = function (size) {
         this.size = size;
-    }
+    };
     /**
      * @return number of levels
      */
-    getLayers() {
+    AztecCode.prototype.getLayers = function () {
         return this.layers;
-    }
-    setLayers(layers) {
+    };
+    AztecCode.prototype.setLayers = function (layers) {
         this.layers = layers;
-    }
+    };
     /**
      * @return number of data codewords
      */
-    getCodeWords() {
+    AztecCode.prototype.getCodeWords = function () {
         return this.codeWords;
-    }
-    setCodeWords(codeWords) {
+    };
+    AztecCode.prototype.setCodeWords = function (codeWords) {
         this.codeWords = codeWords;
-    }
+    };
     /**
      * @return the symbol image
      */
-    getMatrix() {
+    AztecCode.prototype.getMatrix = function () {
         return this.matrix;
-    }
-    setMatrix(matrix) {
+    };
+    AztecCode.prototype.setMatrix = function (matrix) {
         this.matrix = matrix;
-    }
-}
+    };
+    return AztecCode;
+}());
+exports.default = AztecCode;

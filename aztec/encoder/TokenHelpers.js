@@ -1,9 +1,14 @@
-import SimpleToken from './SimpleToken';
-import BinaryShiftToken from './BinaryShiftToken';
-export function addBinaryShift(token, start, byteCount) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.add = exports.addBinaryShift = void 0;
+var SimpleToken_1 = require("./SimpleToken");
+var BinaryShiftToken_1 = require("./BinaryShiftToken");
+function addBinaryShift(token, start, byteCount) {
     // int bitCount = (byteCount * 8) + (byteCount <= 31 ? 10 : byteCount <= 62 ? 20 : 21);
-    return new BinaryShiftToken(token, start, byteCount);
+    return new BinaryShiftToken_1.default(token, start, byteCount);
 }
-export function add(token, value, bitCount) {
-    return new SimpleToken(token, value, bitCount);
+exports.addBinaryShift = addBinaryShift;
+function add(token, value, bitCount) {
+    return new SimpleToken_1.default(token, value, bitCount);
 }
+exports.add = add;
